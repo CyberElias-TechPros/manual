@@ -236,7 +236,11 @@ level · a diagram and a case study everywhere · every course priced); `apps/we
 `tools/leak-audit.mjs` (no answer-bearing field in any learner file, and no path by which
 `keys/` could be served); the corpus lint gate with `--fail-on-critical`; and
 `tools/smoke-api.mjs` (51 black-box assertions: auth, CSRF, locks, XP, idempotency, quotas,
-uploads, payments, certificates, admin) run against both runtimes. `.github/workflows/ci.yml`
+uploads, payments, certificates, admin) run against both runtimes; `tools/route-walk.mjs` (35
+routes fetched: expected status, a phrase that proves the page rendered *its* content, no
+answer-key pattern anywhere in the HTML, and a 900 KB ceiling per page so a hydration payload
+cannot silently double); `tools/assert-bundle-size.mjs` (the corpus may not shrink — 16 courses,
+141 levels, ≥900 questions, ≥800k words, every course priced and every lint code non-critical). `.github/workflows/ci.yml`
 runs all of it on every PR. `packages/content` has vitest unit tests for the parser/lint.
 Measured where a build can measure: `next build` reports **87.2 kB of shared First Load JS** and
 prerenders 45 routes, so 10.2's "initial JS < 150 KB" is a fact rather than an intention, and it is

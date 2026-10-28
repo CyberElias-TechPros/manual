@@ -17,9 +17,10 @@ Dates: built 2026-10-28, on branch `arena/d2855a1d-manual`.
 
 **How "verified" is earned here** — not by eyeballing:
 `pnpm test` = 23 Vitest assertions (parser, quiz extraction, corpus integration) + the leak
-audit + the corpus lint gate (0 critical); `pnpm typecheck` = 4 projects; `next build`; a walk
-of every route with `curl`; `node tools/smoke-api.mjs` = 51 black-box HTTP assertions run
-against both runtimes.
+audit + the corpus lint gate (0 critical); `pnpm typecheck` = 4 projects; `next build`; `tools/route-walk.mjs` = 35 routes fetched and asserted
+(status, a page-defining phrase, no answer-key pattern in the HTML, a size ceiling);
+`tools/assert-bundle-size.mjs` = the corpus may not shrink; `node tools/smoke-api.mjs` = 51
+black-box HTTP assertions run against both runtimes.
 
 ---
 
@@ -186,7 +187,7 @@ against both runtimes.
 |---|---|---|
 | 10.1 unit tests | ✅ | XP/streak/rank/gating/scoring are covered by the API smoke suite; parser + quiz extraction + corpus invariants by Vitest (`packages/content/test`, 17 tests) |
 | 10.2 API integration tests | ✅ | `tools/smoke-api.mjs` — 51 assertions: auth, CSRF, progress, quiz grading, gating (402), payment approval, uploads, certificates, admin, caps |
-| 10.3 E2E (Playwright) | ❌ | not built; the route walk + smoke cover server behaviour, browser flows are the beta's job (11.1) |
+| 10.3 E2E (Playwright) | 🔶 | `tools/route-walk.mjs` fetches and asserts all 35 routes in CI (status, content marker, no answer-key pattern, size ceiling) and the smoke suite drives the API end to end — what is missing is real *browser* interaction (hydration, offline queue, upload widget), which needs Playwright in the beta phase |
 | 10.4 device/browser matrix | ⏳ | needs real hardware; the layout is mobile-first at 360 px and the PWA path is exercised manually |
 | 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens — **no automated axe pass**; drag ARIA n/a (6.2) |
 | 10.6 security review | 🔶 | OWASP-shaped: parameterised SQL only, CSP with nonces-free strict sources, no `dangerouslySetInnerHTML` except JSON-LD, upload type+size+ownership checks, IDOR guards on progress/payments/uploads, CSRF double submit, no secrets in the bundle (leak audit). A third-party pen test is out of reach here |

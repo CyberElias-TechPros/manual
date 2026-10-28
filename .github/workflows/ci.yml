@@ -64,28 +64,20 @@ jobs:
 
       # The route handler in apps/web mounts the same Hono app as the Worker, so building the
       # web app and pointing the smoke suite at it tests the API contract in one process.
-      - name: Smoke-test the API (51 assertions)
+      - name: Smoke-test the API + walk every route (against the built app)
         run: |
           pnpm --filter @cea/web start &
           pid=$!
           for i in $(seq 1 40); do
             sleep 2
-            curl -fsS http://127.0.0.1:3000/api/health && break
+            curl -fsS http://127.0.0.1:3000/api/health > /dev/null && break
           done
           node tools/smoke-api.mjs http://127.0.0.1:3000
+          node tools/route-walk.mjs http://127.0.0.1:3000
           kill $pid
 
-      - name: Assert the bundle is not silently shrinking
-        run: node -e "
-          const r=require('./apps/web/.content/report.json');
-          const t=r.totals;
-          const fail=(m)=>{console.error(m);process.exit(1)};
-          if(t.courses!==16) fail('expected 16 courses, got '+t.courses);
-          if(t.sessions!==141) fail('expected 141 levels, got '+t.sessions);
-          if(t.questions<900) fail('quiz extraction regressed: '+t.questions+' questions');
-          if(t.words<800000) fail('corpus word count regressed: '+t.words);
-          console.log('✓ 16 courses · '+t.sessions+' levels · '+t.questions+' questions · '+t.words.toLocaleString()+' words');
-        "
+      - name: Assert the corpus has not shrunk
+        run: node tools/assert-bundle-size.mjs
 
   # Deploy only from main, and only once the academy's bindings exist. Both steps are written
   # to skip cleanly when the secret is absent, so a fork never shows a red X it cannot fix.

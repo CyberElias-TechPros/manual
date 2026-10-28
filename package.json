@@ -18,11 +18,13 @@
     "content:watch": "pnpm --filter @cea/content watch",
     "content:lint": "pnpm --filter @cea/content lint:content",
     "db:seed": "node tools/seed.mjs",
-    "test": "pnpm --filter @cea/content test && pnpm --filter @cea/web test && node tools/leak-audit.mjs && pnpm content:lint",
+    "test": "pnpm --filter @cea/content test && pnpm --filter @cea/web test && node tools/leak-audit.mjs && node tools/assert-bundle-size.mjs",
     "worker:dev": "pnpm --filter @cea/api dev",
     "worker:deploy": "pnpm --filter @cea/api deploy",
     "test:smoke": "node tools/smoke-api.mjs",
-    "content:publish": "node tools/publish-content.mjs"
+    "content:publish": "node tools/publish-content.mjs",
+    "content:check": "node tools/assert-bundle-size.mjs",
+    "routes:walk": "node tools/route-walk.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
