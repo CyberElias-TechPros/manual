@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@cea/content": [
+        "./src/index.ts"
+      ],
+      "@cea/content/*": [
+        "./src/*"
+      ],
+      "@cea/config": [
+        "../../packages/config/index.js"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
