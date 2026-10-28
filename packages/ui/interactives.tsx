@@ -9,7 +9,7 @@
  */
 import { useMemo, useState } from 'react'
 import type { Exercise, Flashcard, Scenario } from '@cea/content/schema'
-import { Button, Card, Chip, ProgressBar, cx } from './primitives'
+import { Button, Card, Label, Pill, ProgressBar, cx } from './primitives'
 
 // ---------------------------------------------------------------------------
 // 6.1 / 6.9 — guided + independent practice, with the rubric in view
@@ -30,84 +30,84 @@ export function ExerciseBox({ exercise, modelAnswer, submittedText, onSubmit, bu
   const hasRubric = exercise.rubric?.length > 0
 
   return (
-    <Card as="section" className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-lg font-semibold text-navy dark:text-light">{exercise.title}</h3>
-        <Chip tone={exercise.kind === 'assignment' ? 'gold' : 'navy'}>{exercise.kind === 'assignment' ? 'Assignment' : exercise.kind === 'guided' ? 'Guided practice' : 'Your turn'}</Chip>
+    <Card as="section" variant="ring" className="space-y-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h3 className="text-lg font-medium text-ink dark:text-light">{exercise.title}</h3>
+        <Label>{exercise.kind === 'assignment' ? 'Assignment' : exercise.kind === 'guided' ? 'Guided practice' : 'Your turn'}</Label>
       </div>
-      <p className="whitespace-pre-line text-[15px]">{exercise.prompt}</p>
+      <p className="whitespace-pre-line text-base leading-relaxed text-ink-700 dark:text-light/85">{exercise.prompt}</p>
 
       {exercise.steps?.length > 0 && (
-        <ol className="list-decimal space-y-1 pl-5 text-sm">
+        <ol className="list-decimal space-y-1.5 pl-5 text-[0.9375rem] leading-relaxed marker:text-ink-400">
           {exercise.steps.map((s, i) => <li key={i}>{s}</li>)}
         </ol>
       )}
 
       <div className="grid gap-3 sm:grid-cols-2">
         {exercise.successCriteria?.length > 0 && (
-          <div className="rounded-card border border-success/35 bg-success/6 p-3">
-            <div className="text-xs font-semibold uppercase tracking-wide text-success">You have it when</div>
-            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-sm">{exercise.successCriteria.map((c, i) => <li key={i}>{c}</li>)}</ul>
+          <div className="border-l-2 border-success pl-4">
+            <div className="text-[0.8125rem] font-medium text-ink-600 dark:text-light/65">You have it when</div>
+            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[0.9375rem] leading-relaxed text-ink-700 marker:text-ink-300 dark:text-light/85">{exercise.successCriteria.map((c, i) => <li key={i}>{c}</li>)}</ul>
           </div>
         )}
         {exercise.deliverables?.length > 0 && (
-          <div className="rounded-card border border-surface-line bg-surface-muted p-3 dark:border-surface-dark-line dark:bg-surface-dark-muted">
-            <div className="text-xs font-semibold uppercase tracking-wide text-ink/70 dark:text-light/70">Submit</div>
-            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-sm">{exercise.deliverables.map((c, i) => <li key={i}>{c}</li>)}</ul>
+          <div className="border-l-2 border-ink-200 pl-4 dark:border-surface-dark-line-strong">
+            <div className="text-[0.8125rem] font-medium text-ink-600 dark:text-light/65">What to submit</div>
+            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[0.9375rem] leading-relaxed text-ink-700 marker:text-ink-300 dark:text-light/85">{exercise.deliverables.map((c, i) => <li key={i}>{c}</li>)}</ul>
           </div>
         )}
       </div>
 
       {hasRubric && (
-        <details className="rounded-card border border-surface-line p-3 dark:border-surface-dark-line" open={!!submittedText}>
-          <summary className="cursor-pointer text-sm font-semibold">Marking rubric ({exercise.rubric.reduce((n, r) => n + (r.marks || 0), 0) || '—'} marks)</summary>
-          <table className="mt-2 w-full text-sm">
+        <details open={!!submittedText}>
+          <summary className="min-h-[36px] cursor-pointer text-[0.9375rem] font-medium text-ink underline-offset-4 hover:underline dark:text-light">Marking rubric ({exercise.rubric.reduce((n, r) => n + (r.marks || 0), 0) || '—'} marks)</summary>
+          <table className="mt-3 w-full text-[0.875rem]">
             <tbody>
               {exercise.rubric.map((r, i) => (
                 <tr key={i} className="border-t border-surface-line align-top dark:border-surface-dark-line">
-                  <td className="w-16 py-1.5 pr-2 font-mono text-xs text-ink/60 dark:text-light/60">{r.marks != null ? `${r.marks} mk` : ''}</td>
-                  <td className="py-1.5 pr-2 font-medium">{r.criterion}</td>
-                  <td className="py-1.5 text-ink/75 dark:text-light/75">{r.description}</td>
+                  <td className="w-14 py-2 pr-2 text-[0.8125rem] tabular-nums text-ink-500 dark:text-light/55">{r.marks != null ? `${r.marks} mk` : ''}</td>
+                  <td className="py-2 pr-3 font-medium text-ink dark:text-light">{r.criterion}</td>
+                  <td className="py-2 text-ink-500 dark:text-light/60">{r.description}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           {exercise.markingGuidance?.length > 0 && (
-            <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-ink/70 dark:text-light/70">{exercise.markingGuidance.map((g, i) => <li key={i}>{g}</li>)}</ul>
+            <ul className="mt-3 list-disc space-y-1 pl-4 text-[0.8125rem] text-ink-500 dark:text-light/60">{exercise.markingGuidance.map((g, i) => <li key={i}>{g}</li>)}</ul>
           )}
         </details>
       )}
 
       {onSubmit && (
-        <div className="space-y-2">
-          <label className="block text-sm font-medium" htmlFor={`ex-${exercise.id}`}>What did you produce? Write it out or describe the steps.</label>
+        <div className="space-y-2.5">
+          <label className="block text-[0.9375rem] font-medium text-ink dark:text-light" htmlFor={`ex-${exercise.id}`}>What did you produce? Write it out or describe the steps.</label>
           <textarea
             id={`ex-${exercise.id}`} value={text} rows={6} onChange={e => setText(e.target.value)}
-            className="w-full rounded-card border border-surface-line bg-surface p-3 text-[15px] dark:border-surface-dark-line dark:bg-surface-dark"
+            className="w-full rounded-card border border-surface-line bg-surface p-3.5 text-base leading-relaxed text-ink dark:border-surface-dark-line dark:bg-surface-dark dark:text-light"
             placeholder="e.g. I made a 12-column grid in Figma, set the gutter to 16px, and checked it against the flyer brief…"
           />
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             <Button size="sm" loading={busy} disabled={!text.trim() || !dirty} onClick={() => onSubmit(text, self)}>
               {submittedText ? 'Update my attempt' : 'Submit for the model answer'}
             </Button>
-            <label className="flex items-center gap-2 text-xs text-ink/70 dark:text-light/70">
+            <label className="flex items-center gap-2.5 text-[0.8125rem] text-ink-500 dark:text-light/55">
               How well do you think you did?
-              <input type="range" min={0} max={10} value={self} onChange={e => setSelf(Number(e.target.value))} className="accent-[#d69e2e]" />
-              <span className="w-8 font-mono tabular-nums">{self}/10</span>
+              <input type="range" aria-label="Self-assessment, 0 to 10" min={0} max={10} value={self} onChange={e => setSelf(Number(e.target.value))} className="accent-[#1a365d]" />
+              <span className="w-9 tabular-nums">{self}/10</span>
             </label>
           </div>
-          {!dirty && submittedText && <p className="text-xs text-ink/55 dark:text-light/55">Already saved — edit the text to submit again.</p>}
+          {!dirty && submittedText && <p className="text-[0.8125rem] text-ink-500 dark:text-light/55">Already saved — edit the text to submit again.</p>}
         </div>
       )}
 
       {modelAnswer !== undefined && (
-        <div className="rounded-card border border-gold/45 bg-gold/8 p-3">
-          <div className="text-xs font-semibold uppercase tracking-wide text-[#8a5b0d] dark:text-gold">Model answer</div>
-          <p className="mt-1 whitespace-pre-line text-sm">{modelAnswer || 'The manual gives no model answer for this task — take it to your instructor.'}</p>
+        <div className="border-l-2 border-gold pl-4">
+          <div className="text-[0.8125rem] font-medium text-ink-600 dark:text-light/65">Model answer</div>
+          <p className="mt-1 whitespace-pre-line text-[0.9375rem] leading-relaxed text-ink-700 dark:text-light/85">{modelAnswer || 'The manual gives no model answer for this task — take it to your instructor.'}</p>
         </div>
       )}
       {exercise.code && (
-        <pre className="overflow-x-auto rounded-card bg-deep p-3 text-[13px] text-[#eaf2fb]" tabIndex={0}><code className="font-mono">{exercise.code}</code></pre>
+        <pre className="overflow-x-auto rounded-card bg-deep p-4 text-[0.875rem] leading-relaxed text-[#e6eefb]" tabIndex={0}><code className="font-mono">{exercise.code}</code></pre>
       )}
     </Card>
   )
@@ -123,47 +123,47 @@ export function ScenarioRunner({ scenario, onPick, chosen, correctId, resolution
   const active = pick ?? chosen
   const verdict = active && correctId ? (active === correctId ? 'right' : 'wrong') : active ? 'seen' : null
   return (
-    <Card as="section" className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-lg font-semibold text-navy dark:text-light">{scenario.title}</h3>
-        <Chip tone="navy">Case study</Chip>
+    <Card as="section" variant="ring" className="space-y-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h3 className="text-lg font-medium text-ink dark:text-light">{scenario.title}</h3>
+        <Label>Case study</Label>
       </div>
-      <p className="text-[15px]">{scenario.situation}</p>
+      <p className="text-base leading-relaxed text-ink-700 dark:text-light/85">{scenario.situation}</p>
       {scenario.facts?.length > 0 && (
-        <ul className="list-disc space-y-1 pl-5 text-sm text-ink/80 dark:text-light/80">
+        <ul className="list-disc space-y-1.5 pl-5 text-[0.9375rem] leading-relaxed text-ink-700 marker:text-ink-300 dark:text-light/85">
           {scenario.facts.map((f, i) => <li key={i}>{f}</li>)}
         </ul>
       )}
-      <p className="font-medium">{scenario.decision}</p>
-      <div role="radiogroup" aria-label="Choose an approach" className="space-y-1.5">
+      <p className="text-base font-medium text-ink dark:text-light">{scenario.decision}</p>
+      <div role="radiogroup" aria-label="Choose an approach" className="space-y-2">
         {scenario.options.map(o => {
           const on = active === o.id
           const isRight = correctId ? o.id === correctId : undefined
           return (
             <button key={o.id} type="button" role="radio" aria-checked={on} disabled={!onPick || !!active}
               onClick={() => { setPick(o.id); onPick?.(o.id) }}
-              className={cx('w-full rounded-card border px-3 py-2.5 text-left text-sm transition',
-                on && isRight === true && 'border-success bg-success/8',
-                on && isRight === false && 'border-error/70 bg-error/6',
-                on && isRight === undefined && 'border-navy bg-navy/6 dark:border-sky',
-                !on && 'border-surface-line hover:bg-surface-muted dark:border-surface-dark-line dark:hover:bg-surface-dark-muted',
-                !on && active && 'opacity-70')}>
+              className={cx('w-full rounded-card border px-4 py-3 text-left text-[0.9375rem] leading-relaxed text-ink transition-colors dark:text-light/85',
+                on && isRight === true && 'border-success',
+                on && isRight === false && 'border-error',
+                on && isRight === undefined && 'border-navy bg-navy/[.04] dark:border-sky',
+                !on && 'border-surface-line hover:border-surface-line-strong dark:border-surface-dark-line dark:hover:bg-surface-dark-muted/60',
+                !on && active && 'opacity-60')}>
               {o.text}
             </button>
           )
         })}
       </div>
       {active && scenario.feedback?.[active] && (
-        <div className={cx('rounded-card border-l-4 p-3 text-sm', verdict === 'right' ? 'border-success bg-success/8' : verdict === 'wrong' ? 'border-error bg-error/6' : 'border-sky/60 bg-sky/8')}>
-          <div className="font-semibold">{verdict === 'right' ? 'That holds up.' : verdict === 'wrong' ? 'This would cost you.' : 'Instructor will discuss this one.'}</div>
-          <p className="mt-1">{scenario.feedback[active]}</p>
+        <div className={cx('border-l-2 pl-4 text-[0.9375rem] leading-relaxed', verdict === 'right' ? 'border-success' : verdict === 'wrong' ? 'border-error' : 'border-ink-200 dark:border-surface-dark-line-strong')}>
+          <div className="font-medium text-ink dark:text-light">{verdict === 'right' ? 'That holds up.' : verdict === 'wrong' ? 'This would cost you.' : 'Instructor will discuss this one.'}</div>
+          <p className="mt-1 text-ink-700 dark:text-light/85">{scenario.feedback[active]}</p>
         </div>
       )}
       {active && (resolution ?? scenario.resolution) && (
-        <details open={verdict === 'wrong'} className="rounded-card border border-surface-line p-3 dark:border-surface-dark-line">
-          <summary className="cursor-pointer text-sm font-semibold">How the academy would resolve it</summary>
-          <p className="mt-1.5 whitespace-pre-line text-sm">{resolution ?? scenario.resolution}</p>
-          {scenario.example && <pre className="mt-2 overflow-x-auto rounded bg-surface-muted p-2 text-[13px] dark:bg-surface-dark-muted"><code className="font-mono">{scenario.example}</code></pre>}
+        <details open={verdict === 'wrong'}>
+          <summary className="min-h-[36px] cursor-pointer text-[0.9375rem] font-medium text-ink underline-offset-4 hover:underline dark:text-light">How the academy would resolve it</summary>
+          <p className="mt-2 whitespace-pre-line text-[0.9375rem] leading-relaxed text-ink-700 dark:text-light/85">{resolution ?? scenario.resolution}</p>
+          {scenario.example && <pre className="mt-3 overflow-x-auto rounded-card bg-deep p-3.5 text-[0.875rem] text-[#e6eefb]"><code className="font-mono">{scenario.example}</code></pre>}
         </details>
       )}
     </Card>
@@ -183,10 +183,10 @@ export function FlashcardDeck({ cards, onGraded }: { cards: Flashcard[]; onGrade
   const doneCount = Object.keys(grades).length
 
   return (
-    <Card as="section" className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="text-lg font-semibold text-navy dark:text-light">Flashcards</h3>
-        <Chip tone="muted">{doneCount}/{cards.length} seen</Chip>
+    <Card as="section" variant="ring" className="space-y-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-lg font-medium text-ink dark:text-light">Flashcards</h3>
+        <Label>{doneCount} of {cards.length} seen</Label>
       </div>
       <ProgressBar value={cards.length ? (doneCount / cards.length) * 100 : 0} />
       {card ? (
@@ -194,25 +194,25 @@ export function FlashcardDeck({ cards, onGraded }: { cards: Flashcard[]; onGrade
           <button
             type="button" onClick={() => setFlipped(f => !f)}
             aria-label={flipped ? 'Show prompt' : 'Show answer'}
-            className="min-h-[9rem] w-full rounded-card border border-surface-line bg-paper p-4 text-left transition hover:border-gold dark:border-surface-dark-line dark:bg-surface-dark-muted"
+            className="flex min-h-[10rem] w-full flex-col justify-center rounded-card bg-surface-muted p-5 text-left transition-colors hover:bg-surface-line/70 dark:border dark:border-surface-dark-line dark:bg-surface-dark-muted dark:hover:bg-surface-dark"
           >
-            <span className="block text-xs uppercase tracking-wide text-ink/55 dark:text-light/55">{flipped ? 'Answer' : 'Prompt'} · tap to flip</span>
-            <span className={cx('mt-2 block whitespace-pre-line', flipped ? 'text-[15px]' : 'text-lg font-medium')}>{flipped ? card.back : card.front}</span>
+            <span className="block text-[0.8125rem] text-ink-500 dark:text-light/50">{flipped ? 'Answer' : 'Prompt'}</span>
+            <span className={cx('mt-2 block whitespace-pre-line', flipped ? 'text-base leading-relaxed text-ink-700 dark:text-light/85' : 'text-lg font-medium text-ink dark:text-light')}>{flipped ? card.back : card.front}</span>
           </button>
           {flipped ? (
             <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="outline" onClick={() => { mark(card.id, 0); setQueue(q => [...q.slice(1), q[0]]) }}>Again</Button>
               <Button size="sm" variant="outline" onClick={() => { mark(card.id, 1); setQueue(q => q.slice(1)) }}>Good</Button>
-              <Button size="sm" variant="gold" onClick={() => { mark(card.id, 2); setQueue(q => q.slice(1)) }}>Easy</Button>
+              <Button size="sm" onClick={() => { mark(card.id, 2); setQueue(q => q.slice(1)) }}>Easy</Button>
             </div>
           ) : <Button size="sm" onClick={() => setFlipped(true)}>Flip card</Button>}
         </>
       ) : (
-        <div className="rounded-card bg-success/8 p-4 text-sm">
-          Deck finished — {Object.values(grades).filter(g => g > 0).length} of {cards.length} felt solid. Come back tomorrow and the “again” ones will be first.
-        </div>
+        <p className="text-[0.9375rem] leading-relaxed text-ink-600 dark:text-light/70">
+          Deck finished — {Object.values(grades).filter(g => g > 0).length} of {cards.length} felt solid. Come back tomorrow and the ones you marked “again” will be first.
+        </p>
       )}
-      <p className="text-xs text-ink/60 dark:text-light/60">6.6 — grades are sent to the API, which decides what is “due” next (GET /api/learn/due).</p>
+      <p className="text-[0.8125rem] text-ink-500 dark:text-light/50">Grades go to the API, which decides what is due next.</p>
       <span className="sr-only" aria-live="polite">{card ? `Card ${doneCount + 1} of ${cards.length}` : 'Deck complete'}</span>
     </Card>
   )
@@ -234,21 +234,20 @@ export function Checklist({ items, done, onChange, title = 'Before you submit' }
   if (!items?.length) return null
   const onCount = items.filter(k => done[k]).length
   return (
-    <Card as="section" className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="text-base font-semibold text-navy dark:text-light">{title}</h3>
-        <Chip tone={onCount === items.length ? 'success' : 'muted'}>{onCount}/{items.length}</Chip>
+    <Card as="section" variant="ring" className="space-y-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-base font-medium text-ink dark:text-light">{title}</h3>
+        <Label>{onCount} of {items.length} ticked</Label>
       </div>
-      <ul className="space-y-1.5">
+      <ul className="space-y-1">
         {items.map((label, i) => {
           const key = String(i)
           const on = !!done[key]
           return (
             <li key={key}>
-              <label className={cx('flex cursor-pointer items-start gap-2.5 rounded-card border px-3 py-2 text-sm transition',
-                on ? 'border-success/50 bg-success/6' : 'border-surface-line hover:bg-surface-muted dark:border-surface-dark-line')}>
-                <input type="checkbox" checked={on} onChange={() => onChange?.({ ...done, [key]: !on })} className="mt-0.5 h-4 w-4 accent-[#38a169]" />
-                <span className={cx(on && 'line-through decoration-success/60')}>{label}</span>
+              <label className={cx('flex min-h-[44px] cursor-pointer items-start gap-3 border-b border-surface-line py-2.5 text-[0.9375rem] leading-relaxed transition-colors last:border-0 dark:border-surface-dark-line', on ? 'text-ink-400 dark:text-light/45' : 'text-ink dark:text-light')}>
+                <input type="checkbox" checked={on} onChange={() => onChange?.({ ...done, [key]: !on })} className="mt-1 h-4 w-4 shrink-0 accent-[#1a365d]" />
+                <span className={cx(on && 'line-through decoration-1')}>{label}</span>
               </label>
             </li>
           )
@@ -285,9 +284,9 @@ export function CodeBlanks({ items, check, onResult }:
   const [busy, setBusy] = useState(false)
   if (!items?.length) return null
   return (
-    <Card as="section" className="space-y-2">
-      <h3 className="text-lg font-semibold text-navy dark:text-light">Finish the code</h3>
-      <p className="text-sm text-ink/70 dark:text-light/70">Fill each gap, then check it. The snippet is the same one from the lecture, so nothing here is a trick question.</p>
+    <Card as="section" variant="ring" className="space-y-3">
+      <h3 className="text-lg font-medium text-ink dark:text-light">Finish the code</h3>
+      <p className="text-[0.9375rem] leading-relaxed text-ink-500 dark:text-light/60">Fill each gap, then check it. The snippet is the same one from the lecture, so nothing here is a trick question.</p>
       {items.map(item => {
         const pieces = item.template.split(/\{\{\d+\}\}/)
         const state = result[item.id]
@@ -295,13 +294,13 @@ export function CodeBlanks({ items, check, onResult }:
         const values = draft[item.id] ?? []
         return (
           <div key={item.id} className="rounded-card border border-surface-line dark:border-surface-dark-line">
-            <button type="button" className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm font-medium" onClick={() => setOpen(o => (o === item.id ? null : item.id))} aria-expanded={open === item.id}>
+            <button type="button" className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-[0.9375rem] font-medium text-ink dark:text-light" onClick={() => setOpen(o => (o === item.id ? null : item.id))} aria-expanded={open === item.id}>
               <span className="min-w-0 truncate">{item.language ? `${item.language} · ` : ''}{item.blanks.length} gap{item.blanks.length > 1 ? 's' : ''}</span>
-              <Chip tone={state && stateFlags?.every(Boolean) ? 'success' : state ? 'warn' : 'muted'}>{state ? `${state.correctCount}/${state.total} right` : 'open'}</Chip>
+              <Pill tone={state && stateFlags?.every(Boolean) ? 'success' : state ? 'warn' : 'muted'}>{state ? `${state.correctCount} of ${state.total} right` : 'open'}</Pill>
             </button>
             {open === item.id && (
               <div className="space-y-2 border-t border-surface-line p-3 dark:border-surface-dark-line">
-                <pre className="overflow-x-auto rounded bg-deep p-3 font-mono text-[12.5px] leading-relaxed text-[#eaf2fb]" tabIndex={0}>
+                <pre className="overflow-x-auto rounded-card bg-deep p-4 font-mono text-[0.875rem] leading-relaxed text-[#e6eefb]" tabIndex={0}>
                   {pieces.map((piece, i) => (
                     <span key={i}>
                       {piece}
@@ -311,7 +310,7 @@ export function CodeBlanks({ items, check, onResult }:
                           inputMode="text" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                           value={values[i] ?? ''}
                           onChange={e => setDraft(d => { const arr = [...(d[item.id] ?? [])]; arr[i] = e.target.value; return { ...d, [item.id]: arr } })}
-                          className={cx('mx-0.5 inline-block w-32 rounded border-b-2 bg-white/10 px-1 font-mono text-[12.5px] outline-none',
+                          className={cx('mx-0.5 inline-block w-32 rounded-sm border-b-2 bg-white/10 px-1 font-mono text-[0.875rem] outline-none',
                             stateFlags?.[i] === true ? 'border-success' : stateFlags?.[i] === false ? 'border-error' : 'border-gold/70')}
                         />
                       )}
@@ -330,14 +329,14 @@ export function CodeBlanks({ items, check, onResult }:
                     }}>
                     Check gaps
                   </Button>
-                  {state && <span className="text-xs text-ink/70 dark:text-light/70">{state.correctCount} of {state.total} match{stateFlags?.some(x => !x) ? ' — the red gaps need another look.' : '.'}</span>}
+                  {state && <span className="text-[0.8125rem] text-ink-500 dark:text-light/60">{state.correctCount} of {state.total} match{stateFlags?.some(x => !x) ? ' — the red gaps need another look.' : '.'}</span>}
                 </div>
                 {state && (
-                  <ul className="space-y-0.5 text-xs text-ink/70 dark:text-light/75" aria-live="polite">
+                  <ul className="space-y-1 text-[0.8125rem] text-ink-500 dark:text-light/60" aria-live="polite">
                     {stateFlags?.map((ok, i) => (!ok && state.hints?.[i] ? <li key={i}>Gap {i + 1}: starts with “{state.hints[i]}…”</li> : null))}
                   </ul>
                 )}
-                <p className="text-xs text-ink/70 dark:text-light/75">{item.explain}</p>
+                <p className="text-[0.875rem] leading-relaxed text-ink-500 dark:text-light/60">{item.explain}</p>
               </div>
             )}
           </div>
@@ -350,16 +349,16 @@ export function CodeBlanks({ items, check, onResult }:
 export function Troubleshooting({ items }: { items: { mistake: string; fix: string }[] }) {
   if (!items?.length) return null
   return (
-    <Card as="section" className="space-y-2">
-      <h3 className="text-lg font-semibold text-navy dark:text-light">Where people slip</h3>
-      <ul className="space-y-2">
+    <section className="space-y-5">
+      <h3 className="text-lg font-medium text-ink dark:text-light">Where people slip</h3>
+      <ul className="space-y-5">
         {items.map((t, i) => (
-          <li key={i} className="rounded-card border-l-4 border-error/50 bg-error/5 p-3">
-            <div className="text-sm font-semibold">{t.mistake}</div>
-            <div className="mt-1 text-sm text-ink/80 dark:text-light/80">{t.fix}</div>
+          <li key={i} className="border-l-2 border-error pl-4">
+            <div className="text-[0.9375rem] font-medium text-ink dark:text-light">{t.mistake}</div>
+            <div className="mt-1 text-[0.9375rem] leading-relaxed text-ink-600 dark:text-light/70">{t.fix}</div>
           </li>
         ))}
       </ul>
-    </Card>
+    </section>
   )
 }

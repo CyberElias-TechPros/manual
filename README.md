@@ -169,7 +169,9 @@ Content lives with the frontend (static, cacheable). Only *personal state* cross
 > Every row below was checked against the files in this repository rather than trusted. Two of
 > the twelve claims were untrue (B4, B6), four described an intent rather than an artefact
 > (B2, B3, B12, and the fees example in PART C 7.1), and the rest hold. `docs/GAP-ANALYSIS.md` §1
-> has the detail; `docs/ROADMAP.md` is the build ledger for everything in PART C.
+> has the detail; `docs/ROADMAP.md` is the build ledger for everything in PART C; `docs/DESIGN.md`
+> is the design system the screens obey — colour roles, the type ramp, and the rule that a level is
+> staged one idea at a time rather than scrolled.
 
 These are prerequisites that are COMPLETE. The app consumes them as input.
 
@@ -963,7 +965,7 @@ The app is "done" when:
 ### Companion to `ROADMAP.md` · Tick items as you complete them
 **Status key:** `[ ]` not started · `[~]` in progress · `[x]` done
 
-> **This checklist is the plan; `docs/ROADMAP.md` is the ledger.** Every item below was built, deferred or deviated from on purpose, and each of those 110 verdicts (with how it was verified) lives there. `docs/GAP-ANALYSIS.md` lists what this document left undecided and what was invented to close the hole; `docs/DEPLOYMENT.md` is the operator runbook.
+> **This checklist is the plan; `docs/ROADMAP.md` is the ledger.** Every item below was built, deferred or deviated from on purpose, and each of those 110 verdicts (with how it was verified) lives there. `docs/GAP-ANALYSIS.md` lists what this document left undecided and what was invented to close the hole; `docs/DEPLOYMENT.md` is the operator runbook; `docs/DESIGN.md` is the design system (colour roles, type, staging) that every screen in Phase 1 and 4–6 obeys.
 
 > Each item = one unit of work. The `🔗` shows what it feeds. Effort: 🟢 small · 🟡 medium · 🔴 large
 > Where you see a Phase gate (■), stop and confirm it passes before starting the next phase.

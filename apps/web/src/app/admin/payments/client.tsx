@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, Chip, Skeleton, cx, mutate, request, useApi } from '@cea/ui'
+import { Button, Card, Pill, Skeleton, cx, mutate, request, useApi } from '@cea/ui'
 import { PAYMENT, formatNgn } from '@cea/config'
 
 type P = {
@@ -49,7 +49,7 @@ export function PaymentsClient() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Payment approvals</h1>
+          <h1 className="text-xl font-semibold text-ink dark:text-light">Payment approvals</h1>
           <p className="mt-0.5 text-sm text-ink/65 dark:text-light/65">
             Transfer to <strong>{PAYMENT.accountName}</strong> · {PAYMENT.accountNumber} · {PAYMENT.bank}. Compare the bank app, then approve.
           </p>
@@ -57,9 +57,9 @@ export function PaymentsClient() {
         <div className="flex flex-wrap items-center gap-1.5">
           {(['pending', 'approved', 'rejected', 'all'] as const).map(s => (
             <button key={s} type="button" onClick={() => setStatus(s)} aria-pressed={status === s}
-              className={cx('min-h-[36px] rounded-pill px-3 text-sm font-medium', status === s ? 'bg-navy text-white' : 'border border-surface-line dark:border-surface-dark-line')}>{s}</button>
+              className={cx('min-h-[36px] rounded-card px-3 text-sm font-medium', status === s ? 'bg-navy text-white' : 'border border-surface-line dark:border-surface-dark-line')}>{s}</button>
           ))}
-          <a href={`/api/admin/payments.csv?from=${monthStart()}&to=${today()}`} className="inline-flex min-h-[36px] items-center rounded-pill border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line">CSV (approved)</a>
+          <a href={`/api/admin/payments.csv?from=${monthStart()}&to=${today()}`} className="inline-flex min-h-[36px] items-center rounded-card border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line">CSV (approved)</a>
         </div>
       </header>
 
@@ -83,7 +83,7 @@ export function PaymentsClient() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-mono text-sm font-semibold">{p.reference}</span>
-                      <Chip tone={p.status === 'approved' ? 'success' : p.status === 'rejected' ? 'error' : p.intentOnly ? 'muted' : 'warn'}>{p.intentOnly ? 'intent only' : p.status}</Chip>
+                      <Pill tone={p.status === 'approved' ? 'success' : p.status === 'rejected' ? 'error' : p.intentOnly ? 'muted' : 'warn'}>{p.intentOnly ? 'intent only' : p.status}</Pill>
                       <span className="capitalize text-xs text-ink/60 dark:text-light/60">{p.course.replace(/-/g, ' ')}</span>
                     </div>
                     <p className="mt-1 text-sm">
@@ -96,7 +96,7 @@ export function PaymentsClient() {
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-1.5">
-                    {p.proofUrl && <button type="button" onClick={() => setOpen(open === p.id ? null : p.id)} className="min-h-[36px] rounded-pill border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line">{open === p.id ? 'hide receipt' : 'view receipt'}</button>}
+                    {p.proofUrl && <button type="button" onClick={() => setOpen(open === p.id ? null : p.id)} className="min-h-[36px] rounded-card border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line">{open === p.id ? 'hide receipt' : 'view receipt'}</button>}
                     {p.status === 'pending' && !p.intentOnly && <>
                       <Button size="sm" loading={busy === p.id} onClick={() => approve(p)}>Approve &amp; unlock</Button>
                       <Button size="sm" variant="outline" onClick={() => reject(p)}>Reject</Button>
@@ -104,7 +104,7 @@ export function PaymentsClient() {
                   </div>
                 </div>
 
-                {p.note && <p className="mt-2 rounded-card bg-surface-muted px-3 py-2 text-sm dark:bg-surface-dark-muted"><span className="text-xs uppercase tracking-wide text-ink/55 dark:text-light/55">Learner note</span><br />{p.note}</p>}
+                {p.note && <p className="mt-2 rounded-card bg-surface-muted px-3 py-2 text-sm dark:bg-surface-dark-muted"><span className="text-[0.8125rem] text-ink/55 dark:text-light/55">Learner note</span><br />{p.note}</p>}
                 {p.rejectReason && <p className="mt-2 text-sm text-error">Rejection sent: {p.rejectReason}</p>}
 
                 {open === p.id && p.proofUrl && (

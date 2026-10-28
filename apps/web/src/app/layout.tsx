@@ -4,7 +4,6 @@ import {Providers, RegisterServiceWorker} from './providers'
 import { TopBar, BottomNav, OfflineBanner, XpToaster } from '@cea/ui'
 
 const NAV = [
-  { href: '/', label: 'Home' },
   { href: '/courses', label: 'Courses' },
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/leaderboard', label: 'Leaderboard' },
@@ -41,13 +40,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main" className="cea-skip">Skip to content</a>
           <OfflineBanner />
           <TopBar items={NAV} />
-          <main id="main" className="mx-auto w-full max-w-course flex-1 px-3 pb-24 pt-4 sm:px-5 lg:pb-10">{children}</main>
+          <main id="main" className="mx-auto w-full max-w-course flex-1 px-4 pb-24 pt-6 sm:px-6 lg:pb-12">{children}</main>
           <BottomNav items={[
             { href: '/', label: 'Home', icon: <NavIcon d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-8Z" /> },
             { href: '/courses', label: 'Courses', icon: <NavIcon d="M5 5h14v14H5zM9 9h6M9 13h6" /> },
             { href: '/dashboard', label: 'Today', icon: <NavIcon d="M4 19V9m5 10V5m5 14v-7m5 7V8" /> },
             { href: '/profile', label: 'You', icon: <NavIcon d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" /> },
-            { href: '/search', label: 'Find', icon: <NavIcon d="m20 20-4.5-4.5M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" /> },
           ]} />
           <XpToaster />
           <RegisterServiceWorker />

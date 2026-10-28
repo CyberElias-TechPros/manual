@@ -1,11 +1,16 @@
+'use client'
+/** The first paint of a level: the same shape as the real page, so nothing jumps (10.1 CLS). */
 export function LessonSkeleton() {
   return (
-    <div className="mx-auto max-w-reading space-y-3 py-6" aria-busy="true">
-      <div className="h-6 w-2/3 animate-shimmer rounded-pill bg-[linear-gradient(90deg,#eef2f7_25%,#e2e8f0_37%,#eef2f7_63%)] dark:bg-[linear-gradient(90deg,#16264a_25%,#1d3057_37%,#16264a_63%)]" style={{ backgroundSize: '400% 100%' }} />
-      <div className="h-4 w-1/3 animate-shimmer rounded-pill bg-[linear-gradient(90deg,#eef2f7_25%,#e2e8f0_37%,#eef2f7_63%)] dark:bg-[linear-gradient(90deg,#16264a_25%,#1d3057_37%,#16264a_63%)]" style={{ backgroundSize: '400% 100%' }} />
-      {[120, 80, 160, 100].map((h, i) => (
-        <div key={i} className="animate-shimmer rounded-card bg-[linear-gradient(90deg,#eef2f7_25%,#e2e8f0_37%,#eef2f7_63%)] dark:bg-[linear-gradient(90deg,#16264a_25%,#1d3057_37%,#16264a_63%)]" style={{ height: h / 4, backgroundSize: '400% 100%' }} />
-      ))}
+    <div className="mx-auto max-w-reading py-14" aria-busy="true" aria-label="Loading level">
+      <div className="animate-shimmer h-3 w-40 rounded bg-surface-muted dark:bg-surface-dark-muted" style={{ backgroundSize: '400% 100%' }} />
+      <div className="animate-shimmer mt-3 h-8 w-2/3 rounded bg-surface-muted dark:bg-surface-dark-muted" style={{ backgroundSize: '400% 100%' }} />
+      <div className="mt-7 h-px w-full bg-surface-line dark:bg-surface-dark-line" />
+      <div className="mt-8 space-y-4">
+        {[92, 56, 116, 116, 72].map((h, i) => (
+          <div key={i} className="animate-shimmer rounded bg-surface-muted dark:bg-surface-dark-muted" style={{ height: h, backgroundSize: '400% 100%' }} />
+        ))}
+      </div>
     </div>
   )
 }

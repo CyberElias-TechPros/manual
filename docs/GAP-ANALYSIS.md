@@ -286,3 +286,36 @@ binaries as optional dependencies, `sharp` is unused (§4.5), and `workerd` only
 | Animation library | None. Motion is CSS transitions + two `requestAnimationFrame` spots (XP float, award toast); Framer Motion (~45 KB) was refused because the budget in 10.2 is 150 KB of initial JS for the whole learner path | `packages/ui/styles.css`, `@media (prefers-reduced-motion: reduce)` |
 | Currency format | `₦` + thousands separators, no decimals. `@cea/config` keeps an `Intl`-free `formatNgn` for the API/CSV side; the UI uses `Intl.NumberFormat('en-NG')` (already in V8, no bundle cost) | `@cea/config → formatNgn`, `@cea/ui → Naira` |
 | Do ads count as clicks if the learner has Data Saver on? | The slot is not rendered at all, so there is nothing to click and nothing to bill | `useDataSaver` |
+
+## 6. The interface was its own gap (Calm Focus)
+
+The README specifies Phase 1 as tokens, a type ramp, breakpoints, dark mode and "gamification
+visuals" — and the first build did exactly that. The result compiled, passed every gate and still
+failed the thing a beginner actually needs: every screen was a grid of tinted cards, every number
+was a badge, gold appeared on navigation as often as on an earned thing, and a level dumped fifteen
+sections into one scroll. Nothing in the spec had asked for **restraint**, so nothing in the spec
+had been violated. That is the gap: a design system without a colour-role policy, a density budget
+or a staging model will be implemented literally and read as noise.
+
+What was changed, and how it was checked:
+
+| Before | After | Where |
+|---|---|---|
+| gold primary buttons, gold borders, gold nav accents | navy is the only action colour; `Button variant="gold"` is an alias to primary so a second CTA cannot be written by accident | `primitives.tsx` |
+| XP, streak, rank and badge furniture on every page, flame flickering | gold only on what was earned; the flame is static and "at risk" is said in words; counters live on `/dashboard` and `/profile` | `shell.tsx`, `primitives.tsx` |
+| a box per paragraph (38 `rounded-card`, tinted fills, `shadow-glow` on hover) | `Card` is flat and borderless by default; `variant="ring"` is the only treatment an interactive panel gets; lists are `divide-y` hairline rows | `catalog.tsx`, `courses`, `dashboard`, `checkout`, `certificates` |
+| 15px body, 15 headings, bold everywhere, uppercase `tracking-widest` kickers | 17px/1.7 at a 42rem measure, semibold headings, sentence-case `xs` labels; opacity greys replaced by the `ink` ramp so text does not change value with the surface under it | `tailwind-preset.cjs`, 25 files |
+| `animate-pulse` nodes, six looping keyframes | five one-shot keyframes (stage enter, verdict, XP float, badge pop, shake) + `shimmer` on skeletons; a blanket `prefers-reduced-motion` rule | `tailwind-preset.cjs`, `globals.css` |
+| a level = one long scroll of fifteen sections | a stage queue — Read → Practise → Check → Case study → Review → Finish — one at a time, `?stage=` in the URL, rail as real buttons with `aria-current`, and a "read the whole level" toggle for deep links and printing | `learn/[slug]/[n]/lesson.tsx` |
+| quiz showed all questions at once | one question per screen, `1 of 10`, back/next, submit only at the end; the marks still come from the server | `quiz.tsx` |
+| `Finish level` failed with a 409 toast | the Finish stage lists the three things the API requires, in words, and the button explains what is missing | `lesson.tsx` |
+| secondary actions styled as outline buttons | `linkClass` — text plus underline offset — so one solid CTA wins each view | `primitives.tsx` |
+| `/styleguide` documented a palette with no roles | the page states the colour roles, measures the contrast of the pairs actually shipped, and links the rules in `docs/DESIGN.md`; `/styleguide/lab` fixtures now use the real block/Exercise/Scenario shapes (they had drifted: the lesson-block demo rendered nothing) | `styleguide/*` |
+| answer cards (`bg-success/6`, `bg-gold/8`) | a `border-l-2 pl-4` rule, `Label` captions, hairline rows — activity blocks are the same shape as prose | `interactives.tsx` |
+
+Deliberately **not** changed: no API route, no content schema, no award rule, no payment or
+certificate flow, no ad placements, no answer-key boundaries. The verification is therefore a compile
+plus the existing gates — `pnpm typecheck` 0, `pnpm test` (17 + 6 tests, leak audit 16/16), the corpus
+lint at 0 critical, `tools/route-walk.mjs` 36/36 with new markers for the stage rail and the course
+promise block, `tools/smoke-api.mjs` 51/51 against both runtimes, and `next build` (shared First Load
+JS must stay ≤150 KB).

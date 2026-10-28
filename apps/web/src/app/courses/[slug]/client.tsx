@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { AdSlot, Button, Card, Chip, SessionMap, Skeleton, announceAward, cx, mutate, request, useApi, useSession } from '@cea/ui'
+import { AdSlot, Button, Label, Naira, Pill, SessionMap, Skeleton, cx, announceAward, mutate, request, useApi, useSession } from '@cea/ui'
 import { PAYMENT } from '@cea/config'
 
 type Access = { enrolled: boolean; paymentStatus: string | null; expiresAt: string | null; state: string }
@@ -9,10 +9,16 @@ type Row = { number: number; title: string; module?: string; minutes?: number; i
 
 export function CourseSyllabus({ slug }: { slug: string }) {
   const { data, loading, error } = useApi<{ sessions: Row[]; access: Access }>(`/api/courses/${slug}`)
-  if (loading) return <div className="mt-3 space-y-2">{[0, 1, 2, 3, 4].map(i => <Skeleton key={i} className="h-16 w-full" />)}</div>
-  if (error || !data) return <Card className="mt-3 text-sm">The map could not load ({error?.code}). <button className="font-medium underline" onClick={() => location.reload()}>Retry</button></Card>
+  if (loading) return <div className="mt-6 space-y-3">{[0, 1, 2, 3, 4].map(i => <Skeleton key={i} className="h-12 w-full" />)}</div>
+  if (error || !data) {
+    return (
+      <p className="mt-6 text-[0.9375rem] text-ink-500 dark:text-light/55">
+        The map could not load ({error?.code}). <button className="font-medium text-navy underline underline-offset-2 dark:text-sky" onClick={() => location.reload()}>Retry</button>
+      </p>
+    )
+  }
   return (
-    <div className="mt-3">
+    <div className="mt-2 max-w-reading">
       <SessionMap slug={slug} sessions={data.sessions.map(s => ({
         number: s.number, title: s.title, module: s.module, minutes: s.minutes, isFree: s.isFree, isCapstone: s.isCapstone,
         quizCount: s.quizCount, words: s.words, state: s.state,
@@ -23,13 +29,13 @@ export function CourseSyllabus({ slug }: { slug: string }) {
 }
 
 /**
- * 7.1-7.6: the whole enrolment decision in one panel. What it shows is driven only
- * by what the API says about this learner, so the UI can never promise access that
- * the server will refuse.
+ * 7.1-7.6: the whole enrolment decision in one panel. What it shows is driven only by what the API
+ * says about this learner, so the UI can never promise access that the server will refuse. One
+ * price, one action, and the honest sentence about what happens after you press it.
  */
-export function CourseAccessPanel({ slug }: { slug: string }) {
+export function CourseAccessPanel({ slug, feeNgn, freeTitle }: { slug: string; feeNgn?: number | null; freeTitle?: string }) {
   const { user, refresh } = useSession()
-  const [state, setState] = useState<'loading' | 'idle' | 'busy'>('idle')
+  const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [code, setCode] = useState('')
@@ -38,44 +44,78 @@ export function CourseAccessPanel({ slug }: { slug: string }) {
 
   useEffect(() => { setError(null) }, [slug])
 
-  if (!user) {
-    return (
-      <div className="mt-3 space-y-2">
-        <Link href="/auth/register" className="flex min-h-[44px] items-center justify-center rounded-pill bg-gold px-4 text-[15px] font-semibold text-deep hover:brightness-105">
-          Create a free account
-        </Link>
-        <Link href={`/learn/${slug}/1`} className="flex min-h-[44px] items-center justify-center rounded-pill border border-white/25 px-4 text-sm text-light hover:bg-white/10">
-          Read level 1 first
-        </Link>
-        <p className="text-center text-xs text-light/60">An account keeps your XP, streak and the level you stopped at.</p>
+  return (
+    <div className="rounded-card border border-surface-line bg-surface p-5 dark:border-surface-dark-line dark:bg-surface-dark">
+      <div className="flex items-baseline justify-between gap-3">
+        <Naira amount={feeNgn ?? null} className="text-2xl font-semibold text-ink dark:text-light" />
+        <Label>one-off</Label>
       </div>
-    )
-  }
+      <p className="mt-1 text-[0.8125rem] text-ink-500 dark:text-light/55">Bank transfer · approval within {PAYMENT.slaHours}h</p>
 
-  if (info?.enrolled) {
-    return (
-      <div className="mt-3 space-y-2">
-        <Link href={`/learn/${slug}/1`} className="flex min-h-[44px] items-center justify-center rounded-pill bg-gold px-4 text-[15px] font-semibold text-deep hover:brightness-105">
-          Go to my levels
-        </Link>
-        <p className="text-center text-xs text-light/70"><Chip tone="success">Enrolled</Chip></p>
-      </div>
-    )
-  }
+      {!user ? (
+        <div className="mt-5 space-y-3">
+          <Link href="/auth/register" className="flex min-h-[48px] items-center justify-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white transition-colors hover:bg-[#152c4d]">
+            Create a free account
+          </Link>
+          <Link href={`/learn/${slug}/1`} className="flex min-h-[44px] items-center justify-center text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-sky">
+            {freeTitle ? `Read level 1 first` : 'Read the free level first'}
+          </Link>
+          <p className="text-[0.8125rem] leading-relaxed text-ink-500 dark:text-light/55">
+            An account keeps your XP, your streak and the level you stopped at. Nothing is charged for signing up.
+          </p>
+        </div>
+      ) : info?.enrolled ? (
+        <div className="mt-5 space-y-3">
+          <Link href={`/learn/${slug}/1`} className="flex min-h-[48px] items-center justify-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white transition-colors hover:bg-[#152c4d]">
+            Go to my levels
+          </Link>
+          <p className="flex items-center gap-2 text-[0.875rem] text-ink-600 dark:text-light/70">
+            <Pill tone="success">enrolled</Pill> access does not expire
+          </p>
+        </div>
+      ) : (
+        <div className="mt-5 space-y-4">
+          <Button className="w-full" onClick={startPayment} loading={busy}>Unlock the whole course</Button>
+          <p className="text-[0.8125rem] leading-relaxed text-ink-500 dark:text-light/55">
+            You transfer {feeNgn ? `₦${feeNgn.toLocaleString('en-NG')}` : 'the course fee'} to {PAYMENT.bank}, send the receipt, and
+            every level opens when an administrator approves it. Level 1 stays free whatever you decide.
+          </p>
+          {info?.paymentStatus === 'pending' && (
+            <p className="text-[0.875rem] text-ink-600 dark:text-light/70">
+              Your receipt is already with the academy. Nothing more to pay — the levels open as soon as it is approved.
+            </p>
+          )}
+          <form className="flex items-center gap-3" onSubmit={e => { e.preventDefault(); void redeem() }}>
+            <label className="sr-only" htmlFor="access-code">Access code</label>
+            <input id="access-code" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="Have an access code?"
+              className="min-h-[44px] w-full rounded-card border border-surface-line bg-surface px-3 font-mono text-[0.875rem] text-ink outline-none transition-colors placeholder:font-sans placeholder:text-ink-400 focus:border-navy dark:border-surface-dark-line dark:bg-surface-dark dark:text-light dark:placeholder:text-light/40 dark:focus:border-sky" />
+            <button type="submit" disabled={!code.trim() || busy} className={cx('min-h-[44px] shrink-0 px-1 text-[0.875rem] font-medium text-navy underline-offset-4 hover:underline disabled:opacity-40 dark:text-sky', !code.trim() && 'opacity-40')}>
+              Redeem
+            </button>
+          </form>
+          {error && <p role="alert" className="text-[0.875rem] text-error">{error}</p>}
+          {notice && <p role="status" className="text-[0.875rem] text-success">{notice}</p>}
+          <Link href={`/learn/${slug}/1`} className="inline-flex min-h-[36px] items-center text-[0.875rem] font-medium text-navy underline-offset-4 hover:underline dark:text-sky">
+            Read level 1 free first
+          </Link>
+        </div>
+      )}
+    </div>
+  )
 
   async function startPayment() {
-    setState('busy'); setError(null)
+    setBusy(true); setError(null)
     try {
       const r = await request<{ reference: string; amount: number }>('/api/payments/intent', { method: 'POST', body: { course: slug } })
       location.href = `/checkout/${slug}?ref=${encodeURIComponent(r.reference)}&amount=${r.amount}`
     } catch (e: any) {
       setError(e?.message || 'Could not start the payment.')
-      setState('idle')
+      setBusy(false)
     }
   }
 
   async function redeem() {
-    setState('busy'); setError(null)
+    setBusy(true); setError(null)
     try {
       const r = await mutate<{ ok: boolean; course?: string; award?: any }>('/api/codes/redeem', { code })
       announceAward(r?.award, 'access code')
@@ -84,32 +124,6 @@ export function CourseAccessPanel({ slug }: { slug: string }) {
       await refresh(); access.reload()
     } catch (e: any) {
       setError(e?.message || 'That code did not work.')
-    } finally { setState('idle') }
+    } finally { setBusy(false) }
   }
-
-  return (
-    <div className="mt-3 space-y-2.5">
-      <Button variant="gold" className="w-full" onClick={startPayment} loading={state === 'busy'}>
-        Pay by transfer, unlock everything
-      </Button>
-      <Link href={`/learn/${slug}/1`} className="flex min-h-[44px] items-center justify-center rounded-pill border border-white/25 px-4 text-sm text-light hover:bg-white/10">
-        Read level 1 free
-      </Link>
-      {info?.paymentStatus === 'pending' && (
-        <p className="rounded-card bg-white/10 p-2 text-center text-xs text-light/85">
-          Your receipt is with the academy. Levels open as soon as it is approved — no need to pay again.
-        </p>
-      )}
-      <form className="flex gap-1.5" onSubmit={e => { e.preventDefault(); void redeem() }}>
-        <label className="sr-only" htmlFor="access-code">Access code</label>
-        <input id="access-code" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="Have a code?"
-          className="min-h-[40px] w-full rounded-pill bg-white/90 px-3 font-mono text-sm text-deep outline-none placeholder:text-ink/45" />
-        <button type="submit" disabled={!code.trim() || state === 'busy' || state === 'loading'} className={cx('min-h-[40px] shrink-0 rounded-pill bg-white/15 px-3 text-sm font-medium text-light hover:bg-white/25', (!code.trim()) && 'opacity-50')}>
-          Redeem
-        </button>
-      </form>
-      {error && <p role="alert" className="rounded-card bg-error/20 p-2 text-xs text-[#ffd9d9]">{error}</p>}
-      {notice && <p role="status" className="rounded-card bg-success/20 p-2 text-xs text-[#e6fff0]">{notice}</p>}
-    </div>
-  )
 }

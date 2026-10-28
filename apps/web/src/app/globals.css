@@ -7,9 +7,19 @@
 /* 1.2 — the reading measure is the most important typography number on a phone:
    ~62 characters per line keeps the eye's return sweep cheap. */
 @layer base {
-  body { @apply bg-light text-ink font-sans antialiased dark:bg-deep dark:text-light; }
+  body {
+    /* paper, not blue-grey: the reading surface must disappear */
+    @apply bg-canvas text-ink font-sans antialiased dark:bg-canvas-dark dark:text-light;
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
   h1, h2, h3 { @apply text-balance; }
   p { @apply text-pretty; }
+  ::selection { background: rgba(26,54,93,.14); }
+  /* a11y: never a marquee; nothing here is worth a vestibular trigger */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  }
 }
 
 /* 8.3 — the printable certificate: the sheet is the only thing on the page. */
@@ -22,6 +32,18 @@
   .cea-print-sheet { box-shadow: none !important; border-width: 6px !important; break-inside: avoid; page-break-inside: avoid; }
   @page { size: A4 landscape; margin: 12mm; }
 }
+
+/*
+ * Long-form documents (privacy, terms, the design system) get the same reading rhythm as a
+ * lesson: one measure, 1.7 leading, and space between siblings so <p> never touches <p>.
+ */
+.cea-prose { @apply text-base leading-prose text-ink-700 dark:text-light/85; }
+.cea-prose > * + * { margin-top: 1.75rem; }
+.cea-prose p, .cea-prose ul, .cea-prose ol, .cea-prose dl { max-width: 42rem; }
+.cea-prose li::marker { @apply text-ink-300; }
+.cea-prose strong { @apply font-semibold text-ink dark:text-light; }
+.cea-prose code { @apply rounded bg-surface-muted px-1 py-0.5 font-mono text-[0.88em] text-ink-800 dark:bg-surface-dark-muted dark:text-light/90; }
+.cea-prose a { @apply text-blue underline decoration-[1px] underline-offset-2 hover:text-navy dark:text-sky; }
 
 /* 9.5 data-saver: the learner can turn decoration off without turning dark mode on. */
 html[data-saver='on'] * { background-image: none !important; box-shadow: none !important; }

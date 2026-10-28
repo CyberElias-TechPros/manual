@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, Chip, ProgressBar, cx, request, useApi } from '@cea/ui'
+import { Button, Card, Pill, ProgressBar, cx, request, useApi } from '@cea/ui'
 import { formatNgn } from '@cea/config'
 
 type U = {
@@ -35,7 +35,7 @@ export function UsersClient() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Learners</h1>
+          <h1 className="text-xl font-semibold text-ink dark:text-light">Learners</h1>
           <p className="mt-0.5 text-sm text-ink/65 dark:text-light/65">Search by name, email or phone. Guests are included — they are the top of the funnel.</p>
         </div>
         <Link href="/admin" className="text-sm underline">← Overview</Link>
@@ -60,10 +60,10 @@ export function UsersClient() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-[15px] font-semibold">{u.name}</span>
-                      {u.role !== 'learner' && <Chip tone="gold">{u.role}</Chip>}
-                      {u.isGuest && <Chip tone="muted">guest</Chip>}
-                      {u.banned && <Chip tone="error">suspended</Chip>}
-                      <Chip tone="navy">{u.rank}</Chip>
+                      {u.role !== 'learner' && <Pill tone="gold">{u.role}</Pill>}
+                      {u.isGuest && <Pill tone="muted">guest</Pill>}
+                      {u.banned && <Pill tone="error">suspended</Pill>}
+                      <Pill tone="navy">{u.rank}</Pill>
                     </div>
                     <p className="mt-0.5 text-xs text-ink/60 dark:text-light/60">{u.email}{u.phone ? ` · ${u.phone}` : ''} · joined {new Date(u.joinedAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })} · last active {u.lastActive ?? 'never'}</p>
                     <p className="mt-1 text-sm tabular-nums">{u.xp.toLocaleString()} XP · streak {u.streak} (best {u.best}) · {u.enrolled.length} enrolled · {Object.values(u.completed ?? {}).reduce((a: number, b: any) => a + Number(b), 0)} levels done</p>
@@ -76,7 +76,7 @@ export function UsersClient() {
                 {u.enrolled.length > 0 && (
                   <ul className="mt-2 flex flex-wrap gap-1.5">
                     {u.enrolled.map(e => (
-                      <li key={e.course}><span className="rounded-pill bg-surface-muted px-2 py-0.5 text-xs capitalize dark:bg-surface-dark-muted">{e.course.replace(/-/g, ' ')} · {e.source}{e.status !== 'active' ? ` · ${e.status}` : ''}</span></li>
+                      <li key={e.course}><span className="rounded-card bg-surface-muted px-2 py-0.5 text-xs capitalize dark:bg-surface-dark-muted">{e.course.replace(/-/g, ' ')} · {e.source}{e.status !== 'active' ? ` · ${e.status}` : ''}</span></li>
                     ))}
                   </ul>
                 )}

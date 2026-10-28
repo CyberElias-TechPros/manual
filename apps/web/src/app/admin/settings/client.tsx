@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Button, Card, Chip, cx, request, useApi } from '@cea/ui'
+import { Button, Card, Pill, cx, request, useApi } from '@cea/ui'
 import { PAYMENT, formatNgn } from '@cea/config'
 
 /**
@@ -58,10 +58,10 @@ export function SettingsAdminClient() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Fees, ads &amp; codes</h1>
+          <h1 className="text-xl font-semibold text-ink dark:text-light">Fees, ads &amp; codes</h1>
           <p className="mt-0.5 text-sm text-ink/65 dark:text-light/65">Everything here is runtime state in D1 — the code keeps the defaults, the DB keeps the decisions.</p>
         </div>
-        <a href="/api/admin/payments.csv" className="inline-flex min-h-[36px] items-center rounded-pill border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line">Month CSV</a>
+        <a href="/api/admin/payments.csv" className="inline-flex min-h-[36px] items-center rounded-card border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line">Month CSV</a>
       </header>
 
       {note && <p role="status" className={cx('rounded-card px-3 py-2 text-sm', note.tone === 'ok' ? 'bg-success/10 text-success' : 'bg-error/10 text-error')}>{note.text}</p>}
@@ -78,7 +78,7 @@ export function SettingsAdminClient() {
               <label key={c.slug} className="text-sm">
                 <span className="block truncate text-[13px] font-medium">{c.title}</span>
                 <span className="mt-0.5 flex items-center gap-2 text-[11px] text-ink/55 dark:text-light/55">
-                  <Chip tone={override != null ? 'gold' : 'muted'}>{override != null ? 'override' : 'default'}</Chip>
+                  <Pill tone={override != null ? 'gold' : 'muted'}>{override != null ? 'override' : 'default'}</Pill>
                   default {formatNgn(d.defaults.fees[c.slug] ?? c.feeNgn ?? 0)}
                 </span>
                 <input inputMode="numeric" value={draft[c.slug] ?? ''} onChange={e => setDraft(v => ({ ...v, [c.slug]: e.target.value }))}
@@ -103,7 +103,7 @@ export function SettingsAdminClient() {
               onClick={() => patch({ ads: { enabled: !(d.settings?.ads?.enabled ?? true), maxPerView: d.defaults.ads.policy.maxPerView } }, 'ads')}>
               {d.settings?.ads?.enabled === false ? 'Turn ads on' : 'Turn ads off (launch week)'}
             </Button>
-            <Chip tone={d.settings?.ads?.enabled === false ? 'muted' : 'success'}>{d.settings?.ads?.enabled === false ? 'off' : 'on'}</Chip>
+            <Pill tone={d.settings?.ads?.enabled === false ? 'muted' : 'success'}>{d.settings?.ads?.enabled === false ? 'off' : 'on'}</Pill>
             <span className="text-xs text-ink/60 dark:text-light/60">max {d.defaults.ads.policy.maxPerView} per page view</span>
           </div>
         </Card>
@@ -146,7 +146,7 @@ export function SettingsAdminClient() {
         {d.accessCodes.length > 0 && (
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-sm">
-              <thead><tr className="text-left text-xs uppercase tracking-wide text-ink/55 dark:text-light/55"><th className="py-1">Code</th><th>Course</th><th>Kind</th><th>Uses</th><th>Expires</th><th>Note</th></tr></thead>
+              <thead><tr className="text-left text-[0.8125rem] text-ink/55 dark:text-light/55"><th className="py-1">Code</th><th>Course</th><th>Kind</th><th>Uses</th><th>Expires</th><th>Note</th></tr></thead>
               <tbody>
                 {d.accessCodes.map(c => (
                   <tr key={c.code} className="border-t border-surface-line dark:border-surface-dark-line">

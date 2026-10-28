@@ -6,7 +6,7 @@ export default function OfflinePage() {
   return (
     <main className="mx-auto flex min-h-[80vh] max-w-reading flex-col justify-center gap-4 px-3 py-10">
       <span aria-hidden className="text-4xl">📡</span>
-      <h1 className="text-2xl font-bold">No signal — the app is still open</h1>
+      <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">No signal — the app is still open</h1>
       <p className="text-[15px] text-ink/75 dark:text-light/75">
         Everything you have read on this device is still available: open the menu and go to a level you have visited. Quizzes you take now are
         saved on the phone and sent the moment you reconnect, so nothing you answer is lost.

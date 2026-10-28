@@ -36,8 +36,8 @@ export function CertificateSheet({ code }: { code: string }) {
             : 'The verifier did not answer. This is us, not you — try again in a moment.'}
         </p>
         <div className="mt-1 flex flex-wrap justify-center gap-2">
-          <Link href="/certificates/verify" className="inline-flex min-h-[44px] items-center rounded-pill bg-navy px-4 text-sm font-medium text-white">Use the verifier</Link>
-          {state === 'error' && <button type="button" onClick={() => location.reload()} className="inline-flex min-h-[44px] items-center rounded-pill border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">Retry</button>}
+          <Link href="/certificates/verify" className="inline-flex min-h-[44px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Use the verifier</Link>
+          {state === 'error' && <button type="button" onClick={() => location.reload()} className="inline-flex min-h-[44px] items-center rounded-card border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">Retry</button>}
         </div>
       </main>
     )
@@ -50,8 +50,8 @@ export function CertificateSheet({ code }: { code: string }) {
           <span className="font-medium text-success">Verified</span> · issued {new Date(cert.issuedAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
         <div className="flex gap-2">
-          <button type="button" onClick={() => window.print()} className="inline-flex min-h-[40px] items-center rounded-pill bg-navy px-4 text-sm font-medium text-white">Print or save as PDF</button>
-          <Link href="/certificates" className="inline-flex min-h-[40px] items-center rounded-pill border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">My certificates</Link>
+          <button type="button" onClick={() => window.print()} className="inline-flex min-h-[40px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Print or save as PDF</button>
+          <Link href="/certificates" className="inline-flex min-h-[40px] items-center rounded-card border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">My certificates</Link>
         </div>
       </div>
 

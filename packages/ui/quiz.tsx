@@ -1,13 +1,17 @@
 'use client'
 /** Every module in this kit is client-rendered: a UI kit exists to hold handlers, and a server component cannot receive one. Next still server-renders the markup. */
-/** * 6.1 + 5.8 — the knowledge check. Unlimited retries, immediate per-question
- * feedback, model answer revealed after the attempt, and the score computed by
- * the API (never here). Ads are structurally impossible inside this component:
- * there is no slot in it (8.3 "never mid-quiz").
+/**
+ * 6.1 + 5.8 — the knowledge check, staged. One question on screen at a time, then a single
+ * submission that the API grades (never here — the learner bundle holds no answer key, 4.4), then a
+ * review list where the teaching actually happens: verdict, model answer, why.
+ *
+ * Retries are unlimited and answers are kept between attempts, so a learner can fix only what was
+ * wrong instead of retyping everything. Ads are structurally impossible in here: there is no slot
+ * in this component (8.3 "never mid-quiz").
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Question } from '@cea/content/schema'
-import { Button, Card, Chip, ProgressBar, cx } from './primitives'
+import { Button, Card, Label, Pill, ProgressBar, cx } from './primitives'
 
 export interface GradedQuestion { id: string; correct: boolean | null; credit: number; modelAnswer: string; explanation: string; note: string; expected?: string[] }
 export interface QuizResult { correct: number; total: number; scorePct: number; passed: boolean; perfect: boolean; perQuestion: GradedQuestion[] }
@@ -26,20 +30,22 @@ export function QuizRunner({
   onRetry?: () => void
 }) {
   const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [step, setStep] = useState(0)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const started = useRef(Date.now())
-  const [elapsed, setElapsed] = useState(0)
   const graded = !!result
   const byId = useMemo(() => Object.fromEntries((result?.perQuestion ?? []).map(r => [r.id, r])), [result])
 
-  useEffect(() => {
-    const t = setInterval(() => setElapsed(Math.round((Date.now() - started.current) / 1000)), 1000)
-    return () => clearInterval(t)
-  }, [])
+  // one question at a time means the keyboard has to follow the page, not the other way round
+  const promptRef = useRef<HTMLParagraphElement | null>(null)
+  useEffect(() => { if (!graded) promptRef.current?.focus() }, [step, graded])
 
   const answered = Object.values(answers).filter(v => String(v || '').trim() !== '').length
   const set = (id: string, v: string) => setAnswers(a => ({ ...a, [id]: v }))
+  const total = questions.length
+  const last = step === total - 1
+  const q = questions[Math.min(step, total - 1)]
 
   async function submit() {
     setBusy(true); setError(null)
@@ -50,128 +56,148 @@ export function QuizRunner({
     } finally { setBusy(false) }
   }
 
-  return (
-    <Card as="section" className="relative scroll-mt-20" >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-lg font-semibold text-navy dark:text-light">{title}</h3>
-        <div className="flex items-center gap-2">
-          <Chip tone="muted">{elapsed}s</Chip>
-          <Chip tone={graded ? (result!.passed ? 'success' : 'warn') : 'muted'}>
-            {graded ? `${result!.scorePct}% · pass at ${passPercent}%` : `${answered}/${questions.length} answered`}
-          </Chip>
+  if (graded) {
+    return (
+      <Card as="section" variant="ring" className="scroll-mt-24" pad>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h3 className="text-xl font-semibold text-ink dark:text-light">{title}</h3>
+          <Pill tone={result!.passed ? 'success' : 'warn'}>
+            {result!.correct} of {result!.total} correct · pass at {passPercent}%
+          </Pill>
         </div>
+        <div className="mt-4 max-w-measure">
+          <ProgressBar value={result!.scorePct} tone={result!.passed ? 'success' : 'gold'} />
+          <p className="mt-2 text-base text-ink-600 dark:text-light/75">
+            {result!.passed
+              ? 'Passed — XP banked. A better score is still possible; the best one counts.'
+              : `You need ${passPercent}% to pass. Read the notes below, then try again — retries are unlimited and your answers are kept.`}
+          </p>
+        </div>
+
+        <ol className="mt-6 space-y-5 border-t border-surface-line pt-5 dark:border-surface-dark-line">
+          {questions.map((qq, i) => (
+            <li key={qq.id}>
+              <QuestionView index={i + 1} question={qq} value={answers[qq.id] ?? ''} graded={byId[qq.id]} onChange={() => {}} disabled readOnly />
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-surface-line pt-4 dark:border-surface-dark-line">
+          <Button variant="outline" onClick={() => { started.current = Date.now(); setStep(0); onRetry?.() }}>Try again</Button>
+          <Label>Or step back through the sections above and read the parts you missed.</Label>
+        </div>
+      </Card>
+    )
+  }
+
+  return (
+    <Card as="section" variant="ring" className="scroll-mt-24">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h3 className="text-base font-medium text-ink dark:text-light">{title}</h3>
+        <Label>{total > 1 ? `Question ${step + 1} of ${total}` : '1 question'}</Label>
       </div>
-      <p className="mt-1 text-sm text-ink/65 dark:text-light/65">
-        Answer in your own words where the question asks for it — the academy grades the meaning, not the spelling.
-        {questions.length > 2 ? ' You must spend at least a few seconds: instant submissions are refused.' : ''}
-      </p>
-      {graded && <ProgressBar className="mt-3" value={result!.scorePct} label={`Score ${result!.correct}/${result!.total}`} tone={result!.passed ? 'success' : 'gold'} />}
+      {total > 1 && <ProgressBar className="mt-3" value={step + 1} max={total} />}
 
-      <ol className="mt-4 space-y-4">
-        {questions.map((q, i) => (
-          <li key={q.id}>
-            <QuestionView
-              index={i + 1} question={q} value={answers[q.id] ?? ''} graded={byId[q.id]}
-              onChange={v => set(q.id, v)} disabled={graded}
-            />
-          </li>
-        ))}
-      </ol>
+      <div className="mt-5">
+        <QuestionView
+          promptRef={promptRef} index={step + 1} question={q} value={answers[q.id] ?? ''}
+          onChange={v => set(q.id, v)}
+        />
+      </div>
 
-      {error && <p role="alert" className="mt-3 rounded-card bg-error/10 p-2.5 text-sm text-error">{error}</p>}
+      {error && <p role="alert" className="mt-4 text-sm text-error">{error}</p>}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        {!graded
-          ? <Button onClick={submit} loading={busy} disabled={submitDisabled || answered === 0}>Submit for grading</Button>
-          : (
-            <>
-              <Button variant="outline" onClick={() => { setAnswers({}); started.current = Date.now(); onRetry?.() }}>Try again</Button>
-              <span className="text-sm text-ink/70 dark:text-light/70">
-                {result!.passed ? 'Passed — XP banked. A better score is possible; the best one counts.' : `Need ${passPercent}% to pass. Read the feedback, then try again — retries are unlimited.`}
-              </span>
-            </>
-          )}
-        {!graded && answered < questions.length && (
-          <span className="text-xs text-warn">{questions.length - answered} still blank — a blank counts as wrong.</span>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-surface-line pt-4 dark:border-surface-dark-line">
+        <div className="flex items-center gap-2">
+          {step > 0 && <Button variant="ghost" size="sm" onClick={() => setStep(s => Math.max(0, s - 1))}>Back</Button>}
+          <Label>{answered} of {total} answered</Label>
+        </div>
+        {last ? (
+          <Button onClick={submit} loading={busy} disabled={submitDisabled || answered === 0}>Check my answers</Button>
+        ) : (
+          <Button onClick={() => setStep(s => Math.min(total - 1, s + 1))} disabled={!String(answers[q.id] ?? '').trim()}>Next</Button>
         )}
       </div>
+      {!last && !String(answers[q.id] ?? '').trim() && (
+        <p className="mt-2 text-right text-[0.8125rem] text-ink-500 dark:text-light/55">Answer this one to move on — a blank counts as wrong.</p>
+      )}
+      <p className="mt-3 text-[0.8125rem] text-ink-500 dark:text-light/55">
+        Answer in your own words where the question asks for it. The academy grades meaning, not spelling.
+      </p>
     </Card>
   )
 }
 
-function QuestionView({ index, question: q, value, onChange, graded, disabled }:
-  { index: number; question: Question; value: string; onChange: (v: string) => void; graded?: GradedQuestion; disabled?: boolean }) {
+function QuestionView({ index, question: q, value, onChange, graded, disabled, readOnly, promptRef }:
+  { index: number; question: Question; value: string; onChange: (v: string) => void; graded?: GradedQuestion; disabled?: boolean; readOnly?: boolean; promptRef?: any }) {
   const wrong = graded && graded.correct === false
   const partial = graded && typeof graded.credit === 'number' && graded.credit > 0 && graded.credit < 1
   return (
-    <fieldset className={cx('rounded-card border p-3 transition', wrong && 'animate-shake-x border-error/60 bg-error/5', graded && !wrong && 'border-success/45', !graded && 'border-surface-line dark:border-surface-dark-line')}>
+    <fieldset className={cx('transition', wrong && 'animate-shake-x')}>
       <legend className="sr-only">Question {index}</legend>
-      <div className="flex items-start gap-2">
-        <span className="mt-0.5 font-mono text-xs text-ink/50 dark:text-light/50">Q{index}</span>
-        <div className="min-w-0 flex-1">
-          <p className="font-medium">{q.prompt}</p>
-          {q.parts && q.parts.length > 1 && <p className="mt-1 text-xs text-ink/60 dark:text-light/60">Parts: {q.parts.join(' · ')}</p>}
-        </div>
+      <div className="flex items-start justify-between gap-3">
+        <p ref={promptRef} tabIndex={-1} className="max-w-reading text-lg leading-relaxed font-medium text-ink outline-none dark:text-light">{q.prompt}</p>
         {graded && (
-          <Chip tone={graded.correct ? 'success' : partial ? 'warn' : 'error'}>
+          <Pill tone={graded.correct ? 'success' : partial ? 'warn' : 'error'} className="mt-1 shrink-0">
             {graded.correct ? 'correct' : partial ? `${Math.round(graded.credit * 100)}% credit` : 'not yet'}
-          </Chip>
+          </Pill>
         )}
       </div>
+      {q.parts && q.parts.length > 1 && <p className="mt-1.5 text-[0.8125rem] text-ink-500 dark:text-light/55">This question has {q.parts.length} parts: {q.parts.join(' · ')}</p>}
 
-      <div className="mt-3">
+      <div className="mt-4">
         {(q.type === 'mcq' && q.choices?.length) ? (
-          <div role="radiogroup" aria-label={`Question ${index} options`} className="space-y-1.5">
+          <div role="radiogroup" aria-label={`Question ${index} options`} className="max-w-measure space-y-2">
             {q.choices.map(ch => {
               const on = value === ch.id
               const right = graded?.expected?.includes(ch.id)
               return (
                 <label key={ch.id} className={cx(
-                  'flex cursor-pointer items-start gap-2.5 rounded-card border px-3 py-2 text-sm transition',
-                  on ? 'border-navy bg-navy/6 dark:border-sky dark:bg-sky/10' : 'border-surface-line hover:bg-surface-muted dark:border-surface-dark-line dark:hover:bg-surface-dark-muted',
-                  graded && right && 'border-success bg-success/8', graded && on && !right && 'border-error/70 bg-error/6',
+                  'flex cursor-pointer items-start gap-3 rounded-card border px-4 py-3 text-[0.9375rem] transition-colors duration-150',
+                  readOnly && 'cursor-default',
+                  on ? 'border-navy bg-navy/[.04] dark:border-sky dark:bg-sky/10' : 'border-surface-line hover:border-surface-line-strong dark:border-surface-dark-line dark:hover:bg-surface-dark-muted/60',
+                  graded && right && 'border-success', graded && on && !right && 'border-error',
                 )}>
-                  <input type="radio" name={q.id} value={ch.id} checked={on} disabled={disabled}
-                    onChange={() => onChange(ch.id)} className="mt-0.5 accent-[#1a365d]" />
-                  <span className="min-w-0"><span className="mr-1 font-mono text-xs uppercase opacity-60">{ch.id}</span>{ch.text}</span>
+                  <input type="radio" name={q.id} value={ch.id} checked={on} disabled={disabled} className="mt-1 h-4 w-4 shrink-0 accent-[#1a365d]" />
+                  <span className="min-w-0">{ch.text}</span>
                 </label>
               )
             })}
           </div>
         ) : q.type === 'true_false' ? (
-          <div className="flex gap-2" role="radiogroup" aria-label="True or false">
+          <div className="flex max-w-measure gap-3" role="radiogroup" aria-label="True or false">
             {['true', 'false'].map(v => (
               <button key={v} type="button" disabled={disabled} onClick={() => onChange(v)} aria-pressed={value === v}
-                className={cx('min-h-[44px] flex-1 rounded-card border px-3 py-2 text-sm font-medium capitalize transition',
-                  value === v ? 'border-navy bg-navy text-white' : 'border-surface-line hover:bg-surface-muted dark:border-surface-dark-line')}>
+                className={cx('min-h-[48px] flex-1 rounded-card border px-3 py-2 text-[0.9375rem] font-medium capitalize transition-colors',
+                  value === v ? 'border-navy bg-navy text-white' : 'border-surface-line hover:bg-surface-muted dark:border-surface-dark-line dark:hover:bg-surface-dark-muted')}>
                 {v}
               </button>
             ))}
           </div>
         ) : q.type === 'code' ? (
           <textarea
-            value={value} disabled={disabled} spellCheck={false} rows={6}
+            value={value} disabled={disabled} readOnly={readOnly} spellCheck={false} rows={6}
             onChange={e => onChange(e.target.value)}
             aria-label={`Answer to question ${index}`}
             placeholder={q.codeStarter || 'Write the code here'}
-            className="w-full rounded-card border border-surface-line bg-surface-muted p-3 font-mono text-[13px] leading-relaxed text-ink disabled:opacity-70 dark:border-surface-dark-line dark:bg-surface-dark dark:text-light"
+            className="w-full rounded-card border border-surface-line bg-surface-muted p-3.5 font-mono text-[0.875rem] leading-relaxed text-ink disabled:opacity-80 dark:border-surface-dark-line dark:bg-surface-dark dark:text-light"
           />
         ) : (
           <textarea
-            value={value} disabled={disabled} rows={q.type === 'short_answer' ? 3 : 2}
+            value={value} disabled={disabled} readOnly={readOnly} rows={q.type === 'short_answer' ? 4 : 3}
             onChange={e => onChange(e.target.value)}
             aria-label={`Answer to question ${index}`}
             placeholder={q.type === 'fill_blank' ? 'Type the missing value' : 'Your answer'}
-            className="w-full rounded-card border border-surface-line bg-surface p-3 text-[15px] disabled:opacity-70 dark:border-surface-dark-line dark:bg-surface-dark"
+            className="w-full rounded-card border border-surface-line bg-surface p-3.5 text-base leading-relaxed disabled:opacity-80 dark:border-surface-dark-line dark:bg-surface-dark"
           />
         )}
       </div>
 
       {graded && (
-        <div className="mt-3 space-y-1.5 border-t border-surface-line pt-2.5 text-sm dark:border-surface-dark-line">
-          <p><span className="font-semibold text-success">Model answer:</span> {graded.modelAnswer || (graded.expected?.length ? graded.expected.join(', ') : '—')}</p>
-          {graded.explanation && <p className="text-ink/75 dark:text-light/75">{graded.explanation}</p>}
-          {graded.note && <p className="text-xs text-warn">{graded.note}</p>}
+        <div className={cx('mt-4 max-w-reading space-y-2 border-l-2 pl-4 text-[0.9375rem]', graded.correct ? 'border-success' : 'border-gold')}>
+          <p className="text-ink-800 dark:text-light/90"><span className="font-semibold">Model answer:</span> {graded.modelAnswer || (graded.expected?.length ? graded.expected.join(', ') : '—')}</p>
+          {graded.explanation && <p className="text-ink-600 dark:text-light/70">{graded.explanation}</p>}
+          {graded.note && <p className="text-[0.8125rem] text-warn">{graded.note}</p>}
         </div>
       )}
     </fieldset>

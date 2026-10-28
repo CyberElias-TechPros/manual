@@ -1,8 +1,14 @@
 'use client'
+/**
+ * The learner's front door. One thing to do next, then the numbers, then anything that needs a
+ * decision (a receipt waiting, cards due). Everything below the fold is a list, not a card: a
+ * dashboard that shouts about streaks is how an LMS starts feeling like a game and stops feeling
+ * like a class (docs/DESIGN.md).
+ */
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  AdSlot, Button, Card, Chip, NgAdSlot, ProgressBar, RankChip, Skeleton, StatBlock,
+  AdSlot, Button, Label, NgAdSlot, Pill, ProgressBar, Skeleton, StatBlock, linkClass,
   StreakFlame, request, useApi, useSession,
 } from '@cea/ui'
 import { XP } from '@cea/config'
@@ -25,7 +31,6 @@ export function DashboardClient() {
   const summary = useApi<Summary>(user ? '/api/summary' : null)
   // /api/learn/due is the spaced-repetition queue (8.x), not "overdue lessons".
   const due = useApi<{ due: { card_id: string; due_at: string | null }[] }>(user ? '/api/learn/due' : null)
-  const [claiming, setClaiming] = useState<string | null>(null)
   const s = summary.data
 
   if (loading || (!user && !summary.loading && false)) return <DashboardSkeleton />
@@ -33,11 +38,13 @@ export function DashboardClient() {
 
   if (summary.error) {
     return (
-      <Card className="mx-auto max-w-reading text-center">
-        <h1 className="text-lg font-semibold">Dashboard offline</h1>
-        <p className="mt-1 text-sm text-ink/70 dark:text-light/70">{summary.error.message}{summary.offline ? ' — showing the last version is not possible for this page.' : ''}</p>
-        <Button size="sm" className="mt-3" onClick={summary.reload}>Try again</Button>
-      </Card>
+      <div className="mx-auto max-w-reading py-10 text-center">
+        <h1 className="text-xl font-semibold text-ink dark:text-light">Dashboard offline</h1>
+        <p className="mt-2 text-[0.9375rem] text-ink-500 dark:text-light/60">
+          {summary.error.message}{summary.offline ? ' — this page cannot be shown from the cache.' : ''}
+        </p>
+        <Button size="sm" className="mt-5" onClick={summary.reload}>Try again</Button>
+      </div>
     )
   }
 
@@ -45,128 +52,150 @@ export function DashboardClient() {
   const xpToday = s?.xpToday ?? 0
   const capLeft = Math.max(0, XP.dailyCap - xpToday)
   const all = s?.continueLearning ?? []
-  const resume = all.filter(x => !x.completedAt).slice(0, 3)
-  const keepGoing = all.filter(x => !!x.completedAt).slice(0, 3)
+  const resume = all.filter(x => !x.completedAt)
+  const keepGoing = all.filter(x => !!x.completedAt)
+  const nextUp = resume[0] ?? keepGoing[0]
+  const levelsDone = Object.values(s?.user?.completedByCourse ?? {}).reduce((a: number, b: any) => a + Number(b), 0)
+  const dueCourses = [...new Set((due.data?.due ?? []).map(d => d.card_id.replace(/-s\d+-\d+$/, '')))].slice(0, 6)
 
   return (
-    <div className="space-y-5">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Welcome back, {user.name?.split(' ')[0]}</h1>
-          <p className="mt-0.5 text-sm text-ink/70 dark:text-light/70">
-            {resume.length ? `${resume.length} level${resume.length > 1 ? 's' : ''} waiting, ` : ''}{capLeft > 0 ? `${capLeft} XP still available today.` : 'Daily cap reached — come back tomorrow (that is the point).'}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <RankChip rank={user.rank?.current ?? { key: 'rookie', name: 'Rookie' }} xp={user.xp} next={user.rank?.next} />
-          <StreakFlame count={streak.count} atRisk={streak.atRisk} freezes={streak.freezes} />
-        </div>
+    <div className="pb-6">
+      <header className="max-w-reading">
+        <h1 className="text-2xl font-semibold tracking-snugish text-ink sm:text-3xl dark:text-light">
+          Welcome back, {user.name?.split(' ')[0] || 'there'}
+        </h1>
+        <p className="mt-2 text-base leading-relaxed text-ink-600 dark:text-light/70">
+          {nextUp
+            ? <>Level {nextUp.sessionNumber} of {nextUp.course.replace(/-/g, ' ')} is waiting. {capLeft > 0 ? `You have ${capLeft} XP still available today.` : 'Today’s XP cap is reached — come back tomorrow, that is the point.'}</>
+            : 'Nothing in progress. The first level of every course is free, and it takes about 20 minutes to start.'}
+        </p>
       </header>
 
-      <section aria-label="Today" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatBlock label="XP today" value={xpToday} hint={`cap ${XP.dailyCap}/day`} tone={capLeft === 0 ? 'gold' : undefined} />
-        <StatBlock label="This week" value={s?.weeklyXp ?? 0} hint="leaderboard counts this" />
-        <StatBlock label="Streak" value={`${streak.count} day${streak.count === 1 ? '' : 's'}`} hint={streak.atRisk ? 'finish one level tonight' : `best ${streak.best ?? 0}`} tone={streak.atRisk ? 'error' : 'success'} />
-        <StatBlock label="Levels done" value={Object.values(s?.user?.completedByCourse ?? {}).reduce((a: number, b: any) => a + Number(b), 0)} hint={`${s?.enrolments?.length ?? 0} course${(s?.enrolments?.length ?? 0) === 1 ? '' : 's'} enrolled`} />
-      </section>
-
-      {s?.quest && (
-        <Card className="flex flex-wrap items-center gap-4">
-          <div className="min-w-[12rem] flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-semibold">Daily quest</h2>
-              {s.quest.done ? <Chip tone="success">done</Chip> : <Chip tone="gold">+{s.quest.xp} XP</Chip>}
+      {nextUp ? (
+        <section aria-labelledby="continue" className="mt-8 max-w-reading">
+          <h2 id="continue" className="sr-only">Continue where you stopped</h2>
+          <div className="rounded-card border border-surface-line bg-surface p-5 sm:p-6 dark:border-surface-dark-line dark:bg-surface-dark">
+            <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+              <div className="min-w-0">
+                <Label>{nextUp.course.replace(/-/g, ' ')} · {nextUp.completedAt ? 'revise again' : `level ${nextUp.sessionNumber}`}</Label>
+                <h3 className="mt-1 text-lg font-medium leading-snug text-ink dark:text-light">{nextUp.sessionTitle || nextUp.title}</h3>
+                {nextUp.quizBest != null && <p className="mt-1.5 text-[0.875rem] text-ink-500 dark:text-light/55">Knowledge check: best {nextUp.quizBest}%</p>}
+              </div>
+              <Link href={`/learn/${nextUp.course}/${nextUp.sessionNumber}`} className="inline-flex min-h-[48px] shrink-0 items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white transition-colors hover:bg-[#152c4d]">
+                {nextUp.completedAt ? 'Open level' : 'Continue'}
+              </Link>
             </div>
-            <p className="mt-0.5 text-sm text-ink/75 dark:text-light/75">{s.quest.label}</p>
-            <ProgressBar className="mt-2" value={s.quest.progress} max={s.quest.target} label={`${Math.min(s.quest.progress, s.quest.target)} of ${s.quest.target}`} tone={s.quest.done ? 'success' : 'gold'} />
+            {resume.length > 1 && (
+              <p className="mt-4 border-t border-surface-line pt-3 text-[0.875rem] text-ink-500 dark:border-surface-dark-line dark:text-light/55">
+                {resume.length - 1} other {resume.length - 1 === 1 ? 'level' : 'levels'} open: {resume.slice(1, 4).map(r => `${r.course.replace(/-/g, ' ')} ${r.sessionNumber}`).join(', ')}
+              </p>
+            )}
           </div>
-          {resume[0] && <Button size="sm" variant="outline" onClick={() => { location.href = `/learn/${resume[0].course}/${resume[0].sessionNumber}` }}>Do it now</Button>}
-        </Card>
+        </section>
+      ) : (
+        <section className="mt-8 max-w-reading">
+          <div className="rounded-card border border-surface-line bg-surface p-5 sm:p-6 dark:border-surface-dark-line dark:bg-surface-dark">
+            <h2 className="text-lg font-medium text-ink dark:text-light">Pick a course and open its free level</h2>
+            <p className="mt-1.5 text-[0.9375rem] text-ink-500 dark:text-light/60">No payment, no card. Level 1 of all 16 courses is open to everyone.</p>
+            <div className="mt-4 flex flex-wrap items-center gap-5">
+              <Link href="/courses" className="inline-flex min-h-[44px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white hover:bg-[#152c4d]">Browse courses</Link>
+              <Link className={linkClass} href="/learn/typing-computer-basics/1">Start with typing and computer basics</Link>
+            </div>
+          </div>
+        </section>
       )}
 
-      {s?.pendingPayments?.length ? (
-        <Card className="border-warn/45 bg-warn/8">
-          <h2 className="text-base font-semibold">Waiting for the academy to approve {s.pendingPayments.length} receipt{s.pendingPayments.length > 1 ? 's' : ''}</h2>
-          <ul className="mt-2 space-y-1.5 text-sm">
-            {s.pendingPayments.map(p => (
-              <li key={p.reference} className="flex flex-wrap items-center justify-between gap-2">
-                <span><Link className="font-medium underline" href={`/checkout/${p.course}`}>{p.course.replace(/-/g, ' ')}</Link> <span className="font-mono text-xs opacity-70">{p.reference}</span></span>
-                <span className="text-xs text-ink/60 dark:text-light/60">sent {new Date(p.created_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-2 text-xs text-ink/65 dark:text-light/65">Approval usually lands within a day. You do not need to pay again — the level unlocks by itself.</p>
-        </Card>
-      ) : null}
+      <section aria-label="Your numbers" className="mt-10 max-w-reading">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-6 border-y border-surface-line py-6 sm:grid-cols-4 dark:border-surface-dark-line">
+          <StatBlock label="XP today" value={xpToday} hint={`of ${XP.dailyCap}`} />
+          <StatBlock label="This week" value={s?.weeklyXp ?? 0} hint="what the leaderboard counts" />
+          <div>
+            <div className="text-[0.8125rem] text-ink-500 dark:text-light/55">Streak</div>
+            <div className="mt-0.5 flex items-center gap-2">
+              <StreakFlame count={streak.count} atRisk={streak.atRisk} freezes={streak.freezes} />
+            </div>
+            <div className="mt-0.5 text-[0.8125rem] text-ink-500 dark:text-light/50">best {streak.best ?? 0} days</div>
+          </div>
+          <StatBlock label="Levels done" value={levelsDone} hint={`${s?.enrolments?.length ?? 0} course${(s?.enrolments?.length ?? 0) === 1 ? '' : 's'} enrolled`} />
+        </div>
 
-      <section aria-labelledby="continue">
-        <h2 id="continue" className="mb-2 text-lg font-semibold">Pick up where you stopped</h2>
-        {resume.length === 0 && keepGoing.length === 0 ? (
-          <Card className="text-center">
-            <p className="text-sm">Nothing in progress. Open the free level of any course and it will appear here — even after a week.</p>
-            <Button size="sm" className="mt-3" onClick={() => { location.href = '/courses' }}>Browse courses</Button>
-          </Card>
-        ) : (
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {[...resume, ...keepGoing].map(c => (
-              <li key={`${c.course}-${c.sessionNumber}`}>
-                <Link href={`/learn/${c.course}/${c.sessionNumber}`} className="block h-full">
-                  <Card pad={false} className="h-full overflow-hidden transition hover:shadow-glow">
-                    <span aria-hidden className="block h-1.5 w-full" style={{ background: c.accent || '#1a365d' }} />
-                    <div className="p-4">
-                      <div className="flex items-center justify-between gap-2 text-xs text-ink/55 dark:text-light/55">
-                        <span className="capitalize">{c.course.replace(/-/g, ' ')}</span>
-                        <span>level {c.sessionNumber}</span>
-                      </div>
-                      <h3 className="mt-1 text-[15px] font-semibold leading-snug">{c.sessionTitle || c.title}</h3>
-                      <div className="mt-2 flex items-center gap-2 text-xs text-ink/60 dark:text-light/60">
-                        {c.completedAt ? <Chip tone="success">completed</Chip> : c.lastSeen ? <Chip tone="muted">resume</Chip> : null}
-                        {c.quizBest != null && <span>quiz {c.quizBest}%</span>}
-                      </div>
-                    </div>
-                  </Card>
-                </Link>
-              </li>
-            ))}
-          </ul>
+        {s?.quest && (
+          <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+            <p className="min-w-0 flex-1 text-[0.9375rem] text-ink-600 dark:text-light/70">
+              <span className="font-medium text-ink dark:text-light">Today’s goal</span> · {s.quest.label}
+              {s.quest.done ? <Pill tone="success" className="ml-2">done</Pill> : <span className="ml-2 tabular-nums text-ink-500 dark:text-light/55">+{s.quest.xp} XP</span>}
+            </p>
+            <ProgressBar className="w-full max-w-[12rem]" value={Math.min(s.quest.progress, s.quest.target)} max={s.quest.target} tone={s.quest.done ? 'success' : 'navy'} />
+          </div>
         )}
       </section>
 
-      {(due.data?.due?.length ?? 0) > 0 && (
-        <section aria-labelledby="due">
-          <h2 id="due" className="mb-2 text-lg font-semibold">Cards waiting for a review</h2>
-          <Card>
-            <p className="text-sm">
-              {due.data!.due.length} flashcard{due.data!.due.length > 1 ? 's are' : ' is'} due. Two minutes on these moves more to long-term
-              memory than a new level does today — and the deck is inside the lesson it came from.
-            </p>
-            <ul className="mt-2 flex flex-wrap gap-2">
-              {[...new Set(due.data!.due.map(d => d.card_id.replace(/-s\d+-\d+$/, '')))].slice(0, 6).map(slug => (
-                <li key={slug}>
-                  <Link href={`/learn/${slug}/1`} className="inline-flex min-h-[36px] items-center rounded-pill bg-surface-muted px-3 text-xs font-medium capitalize hover:bg-gold/25 dark:bg-surface-dark-muted">{slug.replace(/-/g, ' ')}</Link>
-                </li>
-              ))}
-            </ul>
-          </Card>
+      {s?.pendingPayments?.length ? (
+        <section aria-labelledby="pending" className="mt-10 max-w-reading">
+          <h2 id="pending" className="text-lg font-semibold text-ink dark:text-light">Waiting for approval</h2>
+          <p className="mt-1 text-[0.9375rem] text-ink-500 dark:text-light/55">
+            Approval usually lands within a day, and the levels open by themselves — you do not need to pay again.
+          </p>
+          <ul className="mt-3 divide-y divide-surface-line dark:divide-surface-dark-line">
+            {s.pendingPayments.map(p => (
+              <li key={p.reference} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3">
+                <Link className={linkClass} href={`/checkout/${p.course}`}>{p.course.replace(/-/g, ' ')}</Link>
+                <span className="text-[0.8125rem] tabular-nums text-ink-500 dark:text-light/55">
+                  <span className="font-mono">{p.reference}</span> · sent {new Date(p.created_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {(dueCourses.length > 0) && (
+        <section aria-labelledby="due" className="mt-10 max-w-reading">
+          <h2 id="due" className="text-lg font-semibold text-ink dark:text-light">Cards waiting for a review</h2>
+          <p className="mt-1 max-w-reading text-[0.9375rem] leading-relaxed text-ink-500 dark:text-light/55">
+            {due.data!.due.length} flashcard{due.data!.due.length > 1 ? 's are' : ' is'} due. Two minutes on these moves more into long-term memory than
+            a new level does today, and each deck is inside the level it came from.
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+            {dueCourses.map(slug => (
+              <li key={slug}><Link className={linkClass} href={`/learn/${slug}/1`}>{slug.replace(/-/g, ' ')}</Link></li>
+            ))}
+          </ul>
         </section>
       )}
 
       {(s?.certificates?.length ?? 0) > 0 && (
-        <Card>
-          <h2 className="text-base font-semibold">Your certificates</h2>
-          <ul className="mt-2 space-y-1.5 text-sm">
+        <section aria-labelledby="certs" className="mt-10 max-w-reading">
+          <h2 id="certs" className="text-lg font-semibold text-ink dark:text-light">Your certificates</h2>
+          <ul className="mt-2 divide-y divide-surface-line dark:divide-surface-dark-line">
             {s!.certificates!.map((cert: any) => (
-              <li key={cert.id} className="flex items-center justify-between gap-2">
-                <Link href={`/certificates/${cert.code}`} className="font-medium capitalize underline">{cert.course.replace(/-/g, ' ')}</Link>
-                <span className="font-mono text-xs">{cert.code}</span>
+              <li key={cert.id} className="flex items-baseline justify-between gap-4 py-3">
+                <Link className={linkClass} href={`/certificates/${cert.code}`}>{cert.course.replace(/-/g, ' ')}</Link>
+                <span className="font-mono text-[0.8125rem] text-ink-500 dark:text-light/55">{cert.code}</span>
               </li>
             ))}
           </ul>
-        </Card>
+        </section>
       )}
 
-      <AdSlot placement="dashboard-side" />
-      <NgAdSlot placement="dashboard-side" />
+      {keepGoing.length > 0 && resume.length > 0 && (
+        <section aria-labelledby="finished" className="mt-10 max-w-reading">
+          <h2 id="finished" className="text-lg font-semibold text-ink dark:text-light">Recently finished</h2>
+          <ul className="mt-2 divide-y divide-surface-line dark:divide-surface-dark-line">
+            {keepGoing.map(c => (
+              <li key={`${c.course}-${c.sessionNumber}`} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3">
+                <Link className={linkClass} href={`/learn/${c.course}/${c.sessionNumber}`}>{c.sessionTitle || c.title}</Link>
+                <span className="text-[0.8125rem] capitalize text-ink-500 dark:text-light/55">{c.course.replace(/-/g, ' ')} · level {c.sessionNumber}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <div className="mt-10 max-w-reading">
+        <AdSlot placement="dashboard-side" />
+        <NgAdSlot placement="dashboard-side" />
+      </div>
     </div>
   )
 }
@@ -185,31 +214,30 @@ function GuestDashboard() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-reading space-y-4">
-      <Card className="text-center">
-        <h1 className="text-xl font-bold">Your dashboard starts with an account</h1>
-        <p className="mt-1.5 text-sm text-ink/70 dark:text-light/70">
-          XP, streaks, badges and the “continue where you stopped” list need somewhere to live. A free account takes 20 seconds and
-          keeps working offline; nothing is charged until you choose a paid course.
-        </p>
-        <div className="mt-3 flex flex-wrap justify-center gap-2">
-          <Link href="/auth/register" className="inline-flex min-h-[44px] items-center rounded-pill bg-navy px-4 text-sm font-medium text-white hover:bg-blue">Create free account</Link>
-          <Link href="/auth/login" className="inline-flex min-h-[44px] items-center rounded-pill border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">Sign in</Link>
-        </div>
-      </Card>
-      <Card>
-        <h2 className="text-base font-semibold">Trying it without an account?</h2>
-        <p className="mt-1 text-sm text-ink/70 dark:text-light/70">Level 1 of every course is open to everyone. Start with the one you are most curious about:</p>
-        <ul className="mt-2 grid gap-2 sm:grid-cols-2">
-          {[['web-development', 'Web Development'], ['cybersecurity', 'Cybersecurity'], ['graphic-design', 'Graphic Design'], ['digital-marketing', 'Digital Marketing']].map(([slug, name]) => (
-            <li key={slug}><Link href={`/learn/${slug}/1`} className="flex min-h-[44px] items-center justify-between rounded-card bg-surface-muted px-3 text-sm font-medium hover:bg-gold/20 dark:bg-surface-dark-muted">{name}<span aria-hidden>→</span></Link></li>
+    <div className="mx-auto max-w-reading py-4">
+      <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Your dashboard starts with an account</h1>
+      <p className="mt-3 text-base leading-relaxed text-ink-600 dark:text-light/70">
+        XP, streaks, badges and “continue where you stopped” need somewhere to live. A free account takes 20 seconds, works
+        offline, and nothing is charged until you choose a paid course.
+      </p>
+      <div className="mt-6 flex flex-wrap items-center gap-5">
+        <Link href="/auth/register" className="inline-flex min-h-[48px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white hover:bg-[#152c4d]">Create a free account</Link>
+        <Link className={linkClass} href="/auth/login">Sign in</Link>
+      </div>
+
+      <section className="mt-12 border-t border-surface-line pt-6 dark:border-surface-dark-line">
+        <h2 className="text-lg font-semibold text-ink dark:text-light">Trying it without an account?</h2>
+        <p className="mt-1.5 text-[0.9375rem] text-ink-500 dark:text-light/55">Level 1 of every course is open to everyone. Start with the one you are most curious about:</p>
+        <ul className="mt-2 divide-y divide-surface-line dark:divide-surface-dark-line">
+          {[['typing-computer-basics', 'Typing & Computer Basics'], ['microsoft-office', 'Microsoft Office'], ['graphic-design', 'Graphic Design'], ['web-development', 'Web Development']].map(([slug, name]) => (
+            <li key={slug}>
+              <Link href={`/learn/${slug}/1`} className="flex min-h-[52px] items-center justify-between gap-4 text-[0.9375rem] text-ink transition-colors hover:text-navy dark:text-light/85">
+                {name}<span aria-hidden className="text-ink-300 dark:text-light/30">→</span>
+              </Link>
+            </li>
           ))}
         </ul>
-        <p className="mt-3 text-xs text-ink/60 dark:text-light/60">
-          A guest pass can hold your place for a while, but it lives in this browser only. If this device dies, so does the progress —
-          that is why the free account exists.
-        </p>
-        <div className="mt-2 flex items-center gap-2">
+        <div className="mt-6 flex flex-wrap items-center gap-4">
           <Button
             size="sm" variant="outline" loading={busy}
             onClick={async () => {
@@ -222,20 +250,25 @@ function GuestDashboard() {
               } catch (e: any) { setErr(e?.message || 'Could not start the guest pass.') } finally { setBusy(false) }
             }}
           >Start a guest pass</Button>
-          {guestId && <span className="font-mono text-xs text-ink/60 dark:text-light/60">guest {guestId.slice(0, 8)}</span>}
-          {err && <span role="alert" className="text-xs text-error">{err}</span>}
+          <span className="max-w-measure text-[0.8125rem] leading-relaxed text-ink-500 dark:text-light/50">
+            A guest pass holds your place in this browser only — if the device dies, so does the progress. That is why the free account exists.
+          </span>
+          {guestId && <span className="font-mono text-[0.8125rem] text-ink-500 dark:text-light/55">guest {guestId.slice(0, 8)}</span>}
+          {err && <span role="alert" className="text-[0.8125rem] text-error">{err}</span>}
         </div>
-      </Card>
+      </section>
     </div>
   )
 }
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-4" aria-busy="true">
-      <Skeleton className="h-8 w-56" />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full rounded-card" />)}</div>
-      <Skeleton className="h-32 w-full rounded-card" />
+    <div className="max-w-reading space-y-6 py-4" aria-busy="true">
+      <Skeleton className="h-8 w-64" />
+      <Skeleton className="h-28 w-full rounded-card" />
+      <div className="grid grid-cols-2 gap-6 border-y border-surface-line py-6 sm:grid-cols-4 dark:border-surface-dark-line">
+        {[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full" />)}
+      </div>
     </div>
   )
 }

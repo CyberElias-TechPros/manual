@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, Chip, ProgressBar, cx, flushQueue, mutate, queuedMutations, request, useDataSaver, useSession, useTheme } from '@cea/ui'
+import { Button, Card, Pill, ProgressBar, cx, flushQueue, mutate, queuedMutations, request, useDataSaver, useSession, useTheme } from '@cea/ui'
 import { PAYMENT } from '@cea/config'
 
 /**
@@ -52,7 +52,7 @@ export function SettingsClient() {
   return (
     <div className="mx-auto max-w-reading space-y-4">
       <header>
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Settings</h1>
         <p className="mt-0.5 text-sm text-ink/70 dark:text-light/70">Theme, data, privacy and password. The first two work even with no signal.</p>
       </header>
 
@@ -64,7 +64,7 @@ export function SettingsClient() {
               {(['light', 'dark', 'system'] as const).map(t => (
                 <button key={t} type="button" onClick={() => { setTheme(t); if (user && !user.isGuest) void save('theme', { theme: t }) }}
                   aria-pressed={theme === t}
-                  className={cx('min-h-[38px] rounded-pill px-3 text-sm font-medium capitalize', theme === t ? 'bg-navy text-white' : 'border border-surface-line hover:bg-surface-muted dark:border-surface-dark-line dark:hover:bg-surface-dark-muted')}>
+                  className={cx('min-h-[38px] rounded-card px-3 text-sm font-medium capitalize', theme === t ? 'bg-navy text-white' : 'border border-surface-line hover:bg-surface-muted dark:border-surface-dark-line dark:hover:bg-surface-dark-muted')}>
                   {t}
                 </button>
               ))}
@@ -101,7 +101,7 @@ export function SettingsClient() {
                 <Toggle on={!!user.prefs?.leaderboardOptIn} onChange={v => save('lb', { leaderboardOptIn: v })} label="Leaderboard" busy={state.lb === 'busy'} />
               </Row>
               <Row label="Sync data saver across devices" hint="Stores the switch on your account so a new phone starts in the mode you like.">
-                <Chip tone="muted">on by default</Chip>
+                <Pill tone="muted">on by default</Pill>
               </Row>
             </div>
           </Card>
@@ -163,7 +163,7 @@ export function SettingsClient() {
       ) : (
         <Card className="text-center">
           <p className="text-sm">Settings that need an account (profile, password, privacy) appear once you sign in. Theme and data saver already work.</p>
-          <Link href="/auth/login?next=/settings" className="mt-3 inline-flex min-h-[44px] items-center rounded-pill bg-navy px-4 text-sm font-medium text-white">Sign in</Link>
+          <Link href="/auth/login?next=/settings" className="mt-3 inline-flex min-h-[44px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Sign in</Link>
         </Card>
       )}
 
@@ -221,7 +221,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 function Toggle({ on, onChange, label, busy }: { on: boolean; onChange: (v: boolean) => void; label: string; busy?: boolean }) {
   return (
     <button type="button" role="switch" aria-checked={on} aria-label={label} disabled={busy} onClick={() => onChange(!on)}
-      className={cx('relative h-7 w-12 shrink-0 rounded-pill transition', on ? 'bg-success' : 'bg-surface-muted dark:bg-surface-dark-muted')}>
+      className={cx('relative h-7 w-12 shrink-0 rounded-pill border transition-colors', on ? 'border-navy bg-navy' : 'border-surface-line bg-surface dark:border-surface-dark-line dark:bg-surface-dark')}>
       <span className={cx('absolute top-1 h-5 w-5 rounded-full bg-white shadow-card transition-all', on ? 'left-6' : 'left-1')} />
     </button>
   )

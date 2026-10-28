@@ -9,7 +9,7 @@
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ADS } from '@cea/config'
-import { Chip, cx } from './primitives'
+import { Pill, cx } from './primitives'
 
 // ---------------------------------------------------------------------------
 // fetch layer
@@ -275,8 +275,8 @@ export function AdSlot({ placement, label = 'Advertisement' }: { placement: AdPl
   if (!allowed) return null
   // 10.1 CLS: the slot reserves its height even when the network returns nothing.
   return (
-    <aside ref={ref} className="my-6 rounded-card border border-dashed border-surface-line p-2 text-center dark:border-surface-dark-line" aria-label={label}>
-      <div className="text-[10px] uppercase tracking-widest text-ink/45 dark:text-light/45">{label}</div>
+    <aside ref={ref} className="my-8 border-y border-surface-line bg-surface-muted/60 py-3 text-center dark:border-surface-dark-line dark:bg-surface-dark-muted/60" aria-label={label}>
+      <div className="text-[0.625rem] uppercase tracking-[0.14em] text-ink-400 dark:text-light/40">{label}</div>
       <ins className="adsbygoogle block" style={{ minHeight: 90 }} data-ad-client={`ca-pub-${(ADS as any).adsense.clientId.replace(/^ca-pub-/, '')}`}
         data-ad-slot={(ADS as any).adsense.slotCatalogue} data-ad-format="auto" data-full-width-responsive="true" />
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" data-ad-channel="cea-learn" />
@@ -291,8 +291,8 @@ export function NgAdSlot({ placement = 'dashboard-side' as AdPlacement }: { plac
   const ref = useRef<HTMLDivElement>(null)
   if (!allowed) return null
   return (
-    <aside ref={ref} className="my-4 rounded-card border border-dashed border-surface-line p-2 text-center dark:border-surface-dark-line" aria-label="Sponsored">
-      <div className="text-[10px] uppercase tracking-widest text-ink/45 dark:text-light/45">Sponsored · ngAdverts</div>
+    <aside ref={ref} className="my-8 border-y border-surface-line bg-surface-muted/60 py-3 text-center dark:border-surface-dark-line dark:bg-surface-dark-muted/60" aria-label="Sponsored">
+      <div className="text-[0.625rem] uppercase tracking-[0.14em] text-ink-400 dark:text-light/40">Sponsored · ngAdverts</div>
       <div style={{ minHeight: 90 }} data-cfasync="false">
         <script async src={`${(ADS as any).ngAdverts.script}?slot=${(ADS as any).ngAdverts.slots[0]}`} data-cfasync="false" />
       </div>
@@ -305,9 +305,9 @@ export function NgAdSlot({ placement = 'dashboard-side' as AdPlacement }: { plac
 // ---------------------------------------------------------------------------
 
 export function Brand({ compact }: { compact?: boolean }) {
-  const size = compact ? 26 : 30
+  const size = compact ? 24 : 26
   return (
-    <span className="inline-flex items-center gap-2">
+    <span className="inline-flex items-center gap-2.5">
       {/*
        * The mark is inline SVG, not `/brand/cealogo.png` (a 737 KB raster). Every learner
        * page carries this bar, and 10.2's budget is per navigation: a PNG of the full-size
@@ -315,13 +315,13 @@ export function Brand({ compact }: { compact?: boolean }) {
        * raster still belongs in `layout.tsx` metadata (one fetch, by a crawler, on share).
        */}
       <svg width={size} height={size} viewBox="0 0 32 32" role="img" aria-label="Cyber Elias Academy" className="shrink-0">
-        <rect x="0.5" y="0.5" width="31" height="31" rx="8" fill="#1a365d" stroke="#d69e2e" strokeOpacity="0.45" />
-        <path d="M22.6 10.6a7.6 7.6 0 1 0 0 10.8" fill="none" stroke="#d69e2e" strokeWidth="2.6" strokeLinecap="round" />
+        <rect x="0.5" y="0.5" width="31" height="31" rx="8" fill="#1a365d" />
+        <path d="M22.6 10.6a7.6 7.6 0 1 0 0 10.8" fill="none" stroke="#f7fafc" strokeWidth="2.6" strokeLinecap="round" />
         <circle cx="16" cy="16" r="2.1" fill="#f7fafc" />
       </svg>
       <span className="leading-none">
-        <span className="block text-[15px] font-bold tracking-tight">CEA <span className="text-gold">LEARN</span></span>
-        {!compact && <span className="block text-[10px] uppercase tracking-[0.18em] text-ink/55 dark:text-light/55">Cyber Elias Academy</span>}
+        <span className="block text-[0.9375rem] font-semibold tracking-snugish text-ink dark:text-light">Cyber Elias Academy</span>
+        {!compact && <span className="mt-0.5 block text-[0.6875rem] text-ink-500 dark:text-light/50">Learn a skill, level by level</span>}
       </span>
     </span>
   )
@@ -331,18 +331,18 @@ export function TopBar({ items }: { items: { href: string; label: string; icon?:
   const { user, refresh, signOut } = useSession()
   const [open, setOpen] = useState(false)
   return (
-    <header className="sticky top-0 z-30 border-b border-surface-line bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/80 dark:border-surface-dark-line dark:bg-surface-dark/90">
-      <div className="mx-auto flex max-w-course items-center gap-3 px-3 py-2.5 sm:px-5">
-        <a href="/" className="shrink-0 rounded-pill focus-visible:outline-2 focus-visible:outline-offset-4"><Brand /></a>
-        <nav aria-label="Main" className="ml-2 hidden items-center gap-1 lg:flex">
+    <header className="sticky top-0 z-30 border-b border-surface-line bg-surface dark:border-surface-dark-line dark:bg-surface-dark">
+      <div className="mx-auto flex h-14 max-w-course items-center gap-4 px-4 sm:px-6">
+        <a href="/" className="shrink-0 rounded-card focus-visible:outline-2 focus-visible:outline-offset-4"><Brand /></a>
+        <nav aria-label="Main" className="ml-3 hidden items-center gap-6 lg:flex">
           {items.map(it => <NavLink key={it.href} {...it} />)}
         </nav>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-3">
           {user ? (
             <>
-              <Chip tone="gold" className="hidden sm:inline-flex">{user.rank?.current?.name ?? 'Rookie'}</Chip>
               <StreakChip />
-              <button type="button" className="rounded-pill p-1 focus-visible:outline-2 lg:hidden" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-label="Menu">
+              <a href="/search" aria-label="Search the academy" className="text-ink-500 transition-colors hover:text-ink lg:hidden dark:text-light/55 dark:hover:text-light"><SearchIcon /></a>
+              <button type="button" className="rounded-card p-1.5 text-ink-600 focus-visible:outline-2 lg:hidden dark:text-light/70" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-label="Menu">
                 <Hamburger open={open} />
               </button>
               <div className="relative hidden lg:block">
@@ -351,19 +351,19 @@ export function TopBar({ items }: { items: { href: string; label: string; icon?:
             </>
           ) : (
             <>
-              <a className="rounded-pill px-3 py-1.5 text-sm font-medium text-navy underline-offset-4 hover:underline dark:text-light" href="/auth/login">Sign in</a>
-              <a className="rounded-pill bg-navy px-3 py-1.5 text-sm font-medium text-white hover:bg-blue" href="/auth/register">Start free</a>
+              <a className="text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-light" href="/auth/login">Sign in</a>
+              <a className="rounded-card bg-navy px-4 py-2 text-[0.9375rem] font-medium text-white transition-colors hover:bg-[#152c4d]" href="/auth/register">Create a free account</a>
             </>
           )}
         </div>
       </div>
       {open && (
-        <nav aria-label="Main, mobile" className="border-t border-surface-line px-3 pb-3 lg:hidden dark:border-surface-dark-line">
-          <ul className="grid grid-cols-2 gap-1.5 pt-2">
+        <nav aria-label="Main, mobile" className="border-t border-surface-line px-4 pb-3 lg:hidden dark:border-surface-dark-line">
+          <ul className="divide-y divide-surface-line pt-1 dark:divide-surface-dark-line">
             {items.map(it => (
-              <li key={it.href}><a href={it.href} onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2 rounded-card bg-surface-muted px-3 text-sm font-medium dark:bg-surface-dark-muted">{it.icon}{it.label}</a></li>
+              <li key={it.href}><a href={it.href} onClick={() => setOpen(false)} className="flex min-h-[48px] items-center gap-2.5 text-[0.9375rem] font-medium text-ink dark:text-light">{it.icon}{it.label}</a></li>
             ))}
-            <li className="col-span-2"><a href="/profile" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center rounded-card bg-surface-muted px-3 text-sm dark:bg-surface-dark-muted">{user?.email}</a></li>
+            {user && <li><a href="/profile" onClick={() => setOpen(false)} className="flex min-h-[48px] items-center text-[0.9375rem] text-ink-500 dark:text-light/60">{user.email}</a></li>}
           </ul>
         </nav>
       )}
@@ -375,9 +375,9 @@ function NavLink({ href, label, icon }: { href: string; label: string; icon?: Re
   const active = typeof window !== 'undefined' && window.location.pathname.startsWith(href) && href !== '/'
   return (
     <a href={href} aria-current={active ? 'page' : undefined}
-      className={cx('inline-flex min-h-[38px] items-center gap-1.5 rounded-pill px-3 text-sm font-medium transition',
-        active ? 'bg-navy text-white dark:bg-sky dark:text-deep' : 'text-ink/75 hover:bg-surface-muted dark:text-light/75 dark:hover:bg-surface-dark-muted')}>
-      {icon}{label}
+      className={cx('inline-flex min-h-[36px] items-center gap-1.5 border-b-2 py-1 text-[0.9375rem] font-medium transition-colors',
+        active ? 'border-navy text-ink dark:border-sky dark:text-light' : 'border-transparent text-ink-500 hover:text-ink dark:text-light/60 dark:hover:text-light')}>
+      {label}
     </a>
   )
 }
@@ -392,12 +392,12 @@ function UserMenu({ user, onSignedOut }: { user: MeUser; onSignedOut: () => void
   }, [])
   return (
     <div ref={box} className="relative">
-      <button type="button" onClick={() => setOpen(o => !o)} aria-expanded={open} className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white dark:bg-sky dark:text-deep" aria-label="Account menu">
+      <button type="button" onClick={() => setOpen(o => !o)} aria-expanded={open} className="flex h-8 w-8 items-center justify-center rounded-full border border-surface-line bg-surface-muted text-[0.8125rem] font-semibold text-navy dark:border-surface-dark-line dark:bg-surface-dark-muted dark:text-light" aria-label="Account menu">
         {user.name?.slice(0, 1).toUpperCase() ?? '?'}
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-card border border-surface-line bg-surface p-1.5 shadow-card dark:border-surface-dark-line dark:bg-surface-dark">
-          <div className="px-2.5 py-2"><div className="truncate text-sm font-semibold">{user.name}</div><div className="truncate text-xs text-ink/60 dark:text-light/60">{user.email}</div></div>
+        <div className="absolute right-0 mt-2 w-60 rounded-card border border-surface-line bg-surface p-1.5 shadow-elev dark:border-surface-dark-line dark:bg-surface-dark">
+          <div className="px-2.5 py-2"><div className="truncate text-[0.9375rem] font-medium text-ink dark:text-light">{user.name}</div><div className="truncate text-[0.8125rem] text-ink-500 dark:text-light/55">{user.email}</div></div>
           <div className="border-t border-surface-line py-1 dark:border-surface-dark-line">
             {[['/dashboard', 'Dashboard'], ['/profile', 'Progress & badges'], ['/settings', 'Settings'], ['/certificates', 'Certificates'], ...(user.role === 'admin' ? [['/admin', 'Admin control room']] : [])].map(([href, label]) => (
               <a key={href} href={href} onClick={() => setOpen(false)} className="block rounded px-2.5 py-2 text-sm hover:bg-surface-muted dark:hover:bg-surface-dark-muted">{label}</a>
@@ -415,8 +415,9 @@ export function StreakChip() {
   if (!user) return null
   const count = user.streak?.count ?? 0
   return (
-    <a href="/dashboard" className={cx('inline-flex items-center gap-1 rounded-pill px-2 py-1 text-sm font-semibold', user.streak?.atRisk ? 'bg-warn/15 text-warn' : 'bg-gold/15 text-[#8a5b0d] dark:text-gold')} title={`${count}-day streak${user.streak?.atRisk ? ' — finish a level today' : ''}`}>
-      <span aria-hidden>{count > 0 ? '🔥' : '○'}</span><span className="tabular-nums">{count}</span>
+    <a href="/dashboard" className={cx('inline-flex items-center gap-1.5 text-[0.8125rem] font-medium', user.streak?.atRisk ? 'text-warn' : 'text-ink-500 hover:text-ink dark:text-light/55 dark:hover:text-light')} title={`${count}-day streak${user.streak?.atRisk ? ' — finish a level today' : ''}`}>
+      <span aria-hidden className={cx('inline-block h-1.5 w-1.5 rounded-full', count > 0 ? 'bg-gold' : 'bg-ink-300')} />
+      <span className="tabular-nums">{count}-day streak</span>
     </a>
   )
 }
@@ -427,14 +428,22 @@ export function BottomNav({ items }: { items: { href: string; label: string; ico
       <ul className="mx-auto flex max-w-course items-stretch justify-between px-2">
         {items.map(it => (
           <li key={it.href} className="flex-1">
-            <a href={it.href} className={cx('flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-card px-1 text-[11px] font-medium',
-              typeof window !== 'undefined' && window.location.pathname === it.href ? 'text-navy dark:text-sky' : 'text-ink/65 dark:text-light/65')}>
+            <a href={it.href} className={cx('flex min-h-[56px] flex-col items-center justify-center gap-1 px-1 text-[0.6875rem] font-medium transition-colors',
+              typeof window !== 'undefined' && window.location.pathname === it.href ? 'text-navy dark:text-sky' : 'text-ink-400 dark:text-light/45')}>
               {it.icon}<span>{it.label}</span>
             </a>
           </li>
         ))}
       </ul>
     </nav>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden>
+      <path d="m20 20-4.5-4.5M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z" />
+    </svg>
   )
 }
 
@@ -468,7 +477,7 @@ export function OfflineBanner() {
   }, [])
   if (online && queued === 0) return null
   return (
-    <div role="status" className={cx('px-3 py-2 text-center text-xs font-medium', online ? 'bg-success/12 text-success' : 'bg-warn/15 text-[#8a4b12] dark:text-warn')}>
+    <div role="status" className={cx('px-3 py-2 text-center text-[0.8125rem]', online ? 'bg-surface-muted text-ink-600 dark:bg-surface-dark-muted dark:text-light/70' : 'bg-surface-muted text-warn dark:bg-surface-dark-muted')}>
       {online
         ? `${queued} action${queued > 1 ? 's' : ''} waiting to sync — sending now.`
         : `Offline. Reading what is cached works; ${queued ? `${queued} action${queued > 1 ? 's are' : ' is'} queued` : 'nothing to do'} and will sync when you are back.`}
@@ -498,8 +507,18 @@ export function XpToaster() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-16 z-50 flex flex-col items-center gap-1.5 px-3 lg:bottom-6" aria-live="polite">
       {toasts.map(t => (
-        <div key={t.id} className="animate-slide-up rounded-pill bg-deep/95 px-4 py-2 text-sm font-semibold text-gold shadow-card">
-          +{t.xp} XP{t.label ? ` · ${t.label}` : ''}{t.badge ? ` · 🏅 ${t.badge}` : ''}
+        <div key={t.id} className="animate-slide-up rounded-card bg-navy px-4 py-2.5 text-[0.9375rem] text-white shadow-elev dark:bg-[#16263f]">
+          <span className="font-semibold text-gold">+{t.xp} XP</span>
+          {t.label ? <span className="text-white/75"> · {t.label}</span> : null}
+          {t.badge ? (
+            <span className="ml-1.5 inline-flex items-center gap-1 text-white/85">
+              · Badge unlocked: {t.badge}
+              {/* one pop, on the event that earned it — the only thing in the app that scales */}
+              <svg aria-hidden viewBox="0 0 24 24" className="animate-badge-pop inline-block h-3.5 w-3.5 text-gold" fill="currentColor">
+                <path d="M12 2l2.9 6.1 6.6.9-4.8 4.7 1.2 6.7L12 17.3 6.1 20.4l1.2-6.7L2.5 9l6.6-.9z" />
+              </svg>
+            </span>
+          ) : null}
         </div>
       ))}
     </div>

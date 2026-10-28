@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { Card, Chip, ProgressBar, cx, useApi } from '@cea/ui'
+import { Card, Pill, ProgressBar, cx, useApi } from '@cea/ui'
 
 type SessionStat = { course: string; session: number; learners: number; avgQuizPct: number; completed: number }
 
@@ -30,7 +30,7 @@ export function ContentClient() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Content</h1>
+          <h1 className="text-xl font-semibold text-ink dark:text-light">Content</h1>
           <p className="mt-0.5 text-sm text-ink/65 dark:text-light/65">The bundle the app serves, plus the lint the build gate uses.</p>
         </div>
         <code className="rounded-card bg-surface-muted px-2 py-1 text-xs dark:bg-surface-dark-muted">{data.data!.rebuild.command}</code>
@@ -39,7 +39,7 @@ export function ContentClient() {
       {r.totals && (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {Object.entries(r.totals).filter(([, v]) => typeof v === 'number').map(([k, v]) => (
-            <Card key={k}><p className="text-xs uppercase tracking-wide text-ink/55 dark:text-light/55">{k}</p><p className="text-lg font-semibold tabular-nums">{Number(v).toLocaleString()}</p></Card>
+            <Card key={k}><p className="text-[0.8125rem] text-ink/55 dark:text-light/55">{k}</p><p className="text-lg font-semibold tabular-nums">{Number(v).toLocaleString()}</p></Card>
           ))}
         </div>
       )}
@@ -50,7 +50,7 @@ export function ContentClient() {
           <div className="flex gap-1.5">
             {(['critical', 'warn', 'info'] as const).map(l => (
               <button key={l} type="button" onClick={() => setLevel(l)} aria-pressed={level === l}
-                className={cx('min-h-[34px] rounded-pill px-2.5 text-xs font-medium', level === l ? 'bg-navy text-white' : 'border border-surface-line dark:border-surface-dark-line')}>
+                className={cx('min-h-[34px] rounded-card px-2.5 text-xs font-medium', level === l ? 'bg-navy text-white' : 'border border-surface-line dark:border-surface-dark-line')}>
                 {l} {counts[l] ?? 0}
               </button>
             ))}
@@ -63,10 +63,10 @@ export function ContentClient() {
           <ul className="mt-3 space-y-1.5">
             {issues.slice(0, 60).map((i: any, n: number) => (
               <li key={n} className="flex flex-wrap items-baseline gap-2 text-sm">
-                <Chip tone={i.level === 'critical' ? 'error' : i.level === 'warn' ? 'warn' : 'muted'}>{i.level}</Chip>
+                <Pill tone={i.level === 'critical' ? 'error' : i.level === 'warn' ? 'warn' : 'muted'}>{i.level}</Pill>
                 <span className="font-mono text-xs">{i.course}{i.session ? ` · s${String(i.session).padStart(2, '0')}` : ''}</span>
                 <span className="min-w-0 flex-1">{i.message}</span>
-                <span className="text-xs uppercase tracking-wide text-ink/50 dark:text-light/50">{i.kind}</span>
+                <span className="text-[0.8125rem] text-ink/50 dark:text-light/50">{i.kind}</span>
               </li>
             ))}
             {issues.length > 60 && <li className="text-xs text-ink/60 dark:text-light/60">+{issues.length - 60} more</li>}

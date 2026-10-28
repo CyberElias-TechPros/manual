@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, Chip } from '@cea/ui'
+import { Button, Card, Pill } from '@cea/ui'
 
 /** Public verifier: an employer without an account should learn the truth in 10 seconds. */
 export function VerifyClient({ initial }: { initial: string }) {
@@ -28,8 +28,8 @@ export function VerifyClient({ initial }: { initial: string }) {
   return (
     <div className="mx-auto max-w-reading space-y-4 py-2">
       <header>
-        <p className="text-xs uppercase tracking-widest text-ink/55 dark:text-light/55">For employers</p>
-        <h1 className="mt-1 text-2xl font-bold">Verify a CEA certificate</h1>
+        <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink/55 dark:text-light/55">For employers</p>
+        <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">Verify a CEA certificate</h1>
         <p className="mt-1 text-sm text-ink/70 dark:text-light/70">
           Type the code from the bottom right of the certificate. It confirms the learner’s name, the course, the grade and the date — nothing else,
           and it is not stored.
@@ -49,7 +49,7 @@ export function VerifyClient({ initial }: { initial: string }) {
 
       {state === 'ok' && res?.valid && (
         <Card className="border-success/55 bg-success/6">
-          <div className="flex items-center gap-2"><Chip tone="success">genuine</Chip><span className="font-mono text-sm">{res.code}</span></div>
+          <div className="flex items-center gap-2"><Pill tone="success">genuine</Pill><span className="font-mono text-sm">{res.code}</span></div>
           <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
             <Field label="Learner" value={res.learnerName} />
             <Field label="Course" value={res.course} />
@@ -81,7 +81,7 @@ export function VerifyClient({ initial }: { initial: string }) {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs uppercase tracking-wide text-ink/55 dark:text-light/55">{label}</dt>
+      <dt className="text-[0.8125rem] text-ink/55 dark:text-light/55">{label}</dt>
       <dd className="font-medium">{value}</dd>
     </div>
   )

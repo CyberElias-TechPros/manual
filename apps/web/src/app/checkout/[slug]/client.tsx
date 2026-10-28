@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, Chip, ProgressBar, StatBlock, cx, mutate, request, useApi, useSession } from '@cea/ui'
+import { Button, Card, Label, Pill, ProgressBar, StatBlock, cx, mutate, request, useApi, useSession } from '@cea/ui'
 import { PAYMENT, formatNgn } from '@cea/config'
 
 type Options = {
@@ -35,24 +35,24 @@ export function CheckoutClient({ course, reference }: { course: any; reference: 
     try { await navigator.clipboard.writeText(text); setCopied(label); setTimeout(() => setCopied(null), 2000) } catch { setCopied(null) }
   }, [])
 
-  if (opts.loading) return <Card><p className="text-sm">Loading the payment instructions…</p></Card>
-  if (opts.error) return <Card className="text-center"><p className="text-sm">The academy could not be reached ({opts.error.message}).</p><Button size="sm" className="mt-3" onClick={opts.reload}>Retry</Button></Card>
+  if (opts.loading) return <p className="text-[0.9375rem] text-ink-500 dark:text-light/55">Loading the payment instructions…</p>
+  if (opts.error) return <p className="text-[0.9375rem] text-ink-600 dark:text-light/70">The academy could not be reached ({opts.error.message}). <button className="font-medium text-navy underline underline-offset-2 dark:text-sky" onClick={opts.reload}>Retry</button></p>
   if (!user) return (
-    <Card className="mx-auto max-w-reading text-center">
-      <h1 className="text-lg font-semibold">Create the free account first</h1>
-      <p className="mt-1 text-sm text-ink/70 dark:text-light/70">A payment reference has to belong to someone, and we need a way to tell you when it is approved.</p>
-      <Link href={`/auth/register?next=/checkout/${course.slug}`} className="mt-3 inline-flex min-h-[44px] items-center rounded-pill bg-navy px-4 text-sm font-medium text-white">Create account</Link>
-    </Card>
+    <div className="mx-auto max-w-measure py-10 text-center">
+      <h1 className="text-xl font-semibold text-ink dark:text-light">Create the free account first</h1>
+      <p className="mx-auto mt-2 max-w-measure text-[0.9375rem] leading-relaxed text-ink-500 dark:text-light/60">A payment reference has to belong to someone, and we need a way to tell you when it is approved.</p>
+      <Link href={`/auth/register?next=/checkout/${course.slug}`} className="mt-5 inline-flex min-h-[44px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white">Create account</Link>
+    </div>
   )
 
   const data = opts.data!
   if (data.alreadyEnrolled || active?.status === 'approved') {
     return (
-      <Card className="border-success/50 bg-success/6 text-center">
-        <h1 className="text-lg font-semibold">You already have this course</h1>
-        <p className="mt-1 text-sm text-ink/75 dark:text-light/75">{course.displayTitle || course.name} is unlocked. Do not send another transfer — if you did, reply to the approval email and we will sort it out.</p>
-        <Link href={`/learn/${course.slug}/1`} className="mt-3 inline-flex min-h-[44px] items-center rounded-pill bg-navy px-4 text-sm font-medium text-white">Start level 1</Link>
-      </Card>
+      <div className="mx-auto max-w-measure py-10 text-center">
+        <h1 className="text-xl font-semibold text-ink dark:text-light">You already have this course</h1>
+        <p className="mx-auto mt-2 max-w-measure text-[0.9375rem] leading-relaxed text-ink-600 dark:text-light/70">{course.displayTitle || course.name} is unlocked. Do not send another transfer — if you did, reply to the approval email and we will sort it out.</p>
+        <Link href={`/learn/${course.slug}/1`} className="mt-5 inline-flex min-h-[44px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white">Start level 1</Link>
+      </div>
     )
   }
 
@@ -99,101 +99,101 @@ export function CheckoutClient({ course, reference }: { course: any; reference: 
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-5">
+    <div className="mx-auto max-w-reading pb-8">
       <header>
-        <p className="text-xs uppercase tracking-widest text-ink/55 dark:text-light/55">Checkout</p>
-        <h1 className="mt-1 text-2xl font-bold">{course.displayTitle || course.name}</h1>
-        <p className="mt-1 text-sm text-ink/70 dark:text-light/70">
+        <Label>Checkout</Label>
+        <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">{course.displayTitle || course.name}</h1>
+        <p className="mt-2.5 text-[0.9375rem] text-ink-500 dark:text-light/55">
           {data.course.sessionsCount} levels{data.course.certificate ? ' · certificate on completion' : ''}. One payment, yours for life.
         </p>
       </header>
 
-      <Card className="border-gold/50 bg-paper dark:bg-surface-dark-muted">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-base font-semibold">Step 1 · transfer {formatNgn(data.feeNgn)}</h2>
-          <span className="text-xs text-ink/60 dark:text-light/60">{PAYMENT.bank}</span>
+      <Card variant="ring" className="mt-8">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h2 className="text-base font-medium text-ink dark:text-light">1 · Transfer {formatNgn(data.feeNgn)}</h2>
+          <span className="text-[0.8125rem] text-ink-500 dark:text-light/55">{PAYMENT.bank}</span>
         </div>
-        <dl className="mt-3 space-y-2 text-sm">
+        <dl className="mt-4 space-y-1 text-[0.9375rem]">
           <PayRow label="Account name" value={PAYMENT.accountName} onCopy={() => copy(PAYMENT.accountName, 'name')} copied={copied === 'name'} />
           <PayRow label="Account number" value={PAYMENT.accountNumber} mono onCopy={() => copy(PAYMENT.accountNumber, 'number')} copied={copied === 'number'} />
           <PayRow label="Amount" value={formatNgn(data.feeNgn)} onCopy={() => copy(formatNgn(data.feeNgn), 'amount')} copied={copied === 'amount'} />
           <PayRow label="Reference" value={ref || '—'} mono hint="Put this in the narration/description field of the transfer." />
         </dl>
         {!ref && <Button size="sm" className="mt-3" onClick={startIntent} loading={state === 'busy'}>Create my reference</Button>}
-        <p className="mt-3 text-xs text-ink/65 dark:text-light/65">
+        <p className="mt-4 text-[0.8125rem] leading-relaxed text-ink-500 dark:text-light/55">
           The reference is how the accounts team matches your bank line to your account, so please do not invent one.
         </p>
       </Card>
 
-      <Card>
-        <h2 className="text-base font-semibold">Step 2 · send us the receipt</h2>
-        <p className="mt-1 text-sm text-ink/70 dark:text-light/70">A screenshot of the transfer, or the bank’s receipt PDF. {Math.round(data.proofLimits.maxBytes / 1024 / 1024)} MB max · PNG, JPG, WebP or PDF.</p>
+      <Card variant="ring" className="mt-6">
+        <h2 className="text-base font-medium text-ink dark:text-light">2 · Send us the receipt</h2>
+        <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-ink-500 dark:text-light/60">A screenshot of the transfer, or the bank’s receipt PDF. {Math.round(data.proofLimits.maxBytes / 1024 / 1024)} MB max · PNG, JPG, WebP or PDF.</p>
         {active?.status === 'pending' && active?.proof_key ? (
-          <div className="mt-3 rounded-card bg-warn/10 p-3 text-sm">
-            <div className="flex items-center gap-2"><Chip tone="warn">awaiting approval</Chip><span className="font-mono text-xs">{active.reference}</span></div>
-            <p className="mt-1.5 text-ink/75 dark:text-light/75">Received. An admin approves receipts within {PAYMENT.slaHours}h; your levels open the moment it happens and we email you.</p>
+          <div className="mt-4 rounded-card bg-surface-muted p-4 dark:bg-surface-dark-muted">
+            <div className="flex items-center gap-2.5"><Pill tone="warn">awaiting approval</Pill><span className="font-mono text-[0.8125rem] text-ink-500">{active.reference}</span></div>
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-600 dark:text-light/70">Received. An admin approves receipts within {PAYMENT.slaHours}h; your levels open the moment it happens and we email you.</p>
             <div className="mt-2 flex flex-wrap gap-2">
               <Button size="sm" variant="outline" onClick={() => mine.reload()}>Check status</Button>
-              {ref && <a className="inline-flex min-h-[36px] items-center rounded-pill px-3 text-sm underline" href={`/api/uploads/${active.proof_key}`}>view my receipt</a>}
+              {ref && <a className="inline-flex min-h-[36px] items-center text-[0.875rem] text-navy underline underline-offset-2 dark:text-sky" href={`/api/uploads/${active.proof_key}`}>view my receipt</a>}
             </div>
           </div>
         ) : (
-          <form onSubmit={uploadProof} className="mt-3 space-y-3">
+          <form onSubmit={uploadProof} className="mt-4 space-y-4">
             <div>
-              <label htmlFor="proof" className="block text-sm font-medium">Receipt file</label>
+              <label htmlFor="proof" className="block text-[0.9375rem] font-medium text-ink dark:text-light">Receipt file</label>
               <input id="proof" ref={fileRef} type="file" accept={data.proofLimits.types.join(',')}
-                className="mt-1 block w-full rounded-card border border-surface-line bg-surface p-2 text-sm file:mr-3 file:rounded-pill file:border-0 file:bg-navy file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white dark:border-surface-dark-line dark:bg-surface-dark dark:file:bg-sky dark:file:text-deep" />
+                className="mt-1 block w-full rounded-card border border-surface-line bg-surface p-2 text-sm file:mr-3 file:rounded-card file:border-0 file:bg-navy file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white dark:border-surface-dark-line dark:bg-surface-dark dark:file:bg-sky dark:file:text-deep" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label htmlFor="amount" className="block text-sm font-medium">Amount you sent (₦)</label>
+                <label htmlFor="amount" className="block text-[0.9375rem] font-medium text-ink dark:text-light">Amount you sent (₦)</label>
                 <input id="amount" inputMode="numeric" value={amount} onChange={e => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
-                  className="mt-1 min-h-[44px] w-full rounded-card border border-surface-line bg-surface px-3 tabular-nums dark:border-surface-dark-line dark:bg-surface-dark" />
+                  className="mt-1.5 min-h-[46px] w-full rounded-card border border-surface-line bg-surface px-3.5 tabular-nums text-ink outline-none transition-colors focus:border-navy dark:border-surface-dark-line dark:bg-surface-dark dark:text-light dark:focus:border-sky" />
               </div>
               <div>
-                <label htmlFor="note" className="block text-sm font-medium">Note for the accounts team (optional)</label>
+                <label htmlFor="note" className="block text-[0.9375rem] font-medium text-ink dark:text-light">Note for the accounts team (optional)</label>
                 <input id="note" value={note} onChange={e => setNote(e.target.value)} placeholder="e.g. transferred from Opay at 20:14"
-                  className="mt-1 min-h-[44px] w-full rounded-card border border-surface-line bg-surface px-3 dark:border-surface-dark-line dark:bg-surface-dark" />
+                  className="mt-1.5 min-h-[46px] w-full rounded-card border border-surface-line bg-surface px-3.5 text-ink outline-none transition-colors placeholder:text-ink-400 focus:border-navy dark:border-surface-dark-line dark:bg-surface-dark dark:text-light dark:placeholder:text-light/40 dark:focus:border-sky" />
               </div>
             </div>
             {state === 'uploading' && <ProgressBar value={progress} label={`uploading ${progress}%`} />}
             <div className="flex flex-wrap items-center gap-3">
               <Button type="submit" loading={state === 'uploading'} disabled={!ref}>Send receipt</Button>
-              {!ref && <span className="text-xs text-warn">Create the reference first.</span>}
+              {!ref && <span className="text-[0.8125rem] text-warn">Create the reference in step 1 first.</span>}
             </div>
-            {error && <p role="alert" className="rounded-card bg-error/10 p-2 text-sm text-error">{error}</p>}
+            {error && <p role="alert" className="rounded-card bg-error/8 px-4 py-3 text-[0.9375rem] leading-relaxed text-error">{error}</p>}
           </form>
         )}
       </Card>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="mt-8 grid grid-cols-3 gap-x-6 border-y border-surface-line py-5 dark:border-surface-dark-line">
         <StatBlock label="Status" value={active?.status ?? 'not started'} tone={active?.status === 'approved' ? 'success' : active?.status === 'rejected' ? 'error' : undefined} />
         <StatBlock label="Fee" value={formatNgn(data.feeNgn)} hint="one-off, no renewal" />
         <StatBlock label="Includes" value={`${data.course.sessionsCount} levels`} hint={data.course.certificate ? '+ certificate' : 'no certificate'} />
       </div>
 
-      <Card className="text-sm">
-        <h2 className="font-semibold">Refunds, in plain words</h2>
-        <p className="mt-1 text-ink/75 dark:text-light/75">
+      <section className="mt-8">
+        <h2 className="text-base font-medium text-ink dark:text-light">Refunds, in plain words</h2>
+        <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-600 dark:text-light/70">
           {PAYMENT.refundWindowDays} days from approval, as long as you have not opened level 3 — that is the line where the course has clearly
           been used. Write to hello@cea.ng with your reference. The first level stays free either way, so you never have to guess
           whether the teaching suits you.
         </p>
-        <p className="mt-2 text-xs text-ink/60 dark:text-light/60">Full terms: <Link href="/terms" className="underline">/terms</Link>.</p>
-      </Card>
+        <p className="mt-3 text-[0.8125rem] text-ink-500 dark:text-light/55">Full terms: <Link href="/terms" className="text-navy underline underline-offset-2 dark:text-sky">Terms of use</Link>.</p>
+      </section>
     </div>
   )
 }
 
 function PayRow({ label, value, mono, hint, onCopy, copied }: { label: string; value: string; mono?: boolean; hint?: string; onCopy?: () => void; copied?: boolean }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-surface-line pb-2 last:border-0 dark:border-surface-dark-line">
+    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-surface-line py-2.5 last:border-0 dark:border-surface-dark-line">
       <div className="min-w-0">
-        <dt className="text-xs uppercase tracking-wide text-ink/55 dark:text-light/55">{label}</dt>
-        <dd className={cx('truncate text-[15px] font-semibold', mono && 'font-mono text-[15px]')}>{value}</dd>
-        {hint && <p className="text-xs text-ink/60 dark:text-light/60">{hint}</p>}
+        <dt className="text-[0.8125rem] text-ink-500 dark:text-light/55">{label}</dt>
+        <dd className={cx('truncate text-[0.9375rem] font-medium text-ink dark:text-light', mono && 'font-mono')}>{value}</dd>
+        {hint && <p className="mt-0.5 text-[0.8125rem] leading-relaxed text-ink-500 dark:text-light/50">{hint}</p>}
       </div>
-      {onCopy && <button type="button" onClick={onCopy} className="min-h-[34px] rounded-pill border border-surface-line px-2.5 text-xs font-medium hover:bg-surface-muted dark:border-surface-dark-line">{copied ? 'copied ✓' : 'copy'}</button>}
+      {onCopy && <button type="button" onClick={onCopy} className="min-h-[36px] px-1 text-[0.8125rem] font-medium text-navy underline underline-offset-2 hover:text-ink dark:text-sky dark:hover:text-light">{copied ? 'copied ✓' : 'copy'}</button>}
     </div>
   )
 }

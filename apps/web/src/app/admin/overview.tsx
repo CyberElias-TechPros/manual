@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { Card, Chip, ProgressBar, StatBlock, cx, useApi } from '@cea/ui'
+import { Card, Pill, ProgressBar, StatBlock, cx, useApi } from '@cea/ui'
 import { formatNgn } from '@cea/config'
 
 type K = {
@@ -24,7 +24,7 @@ export function OverviewClient() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Admin</h1>
+          <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Admin</h1>
           <p className="mt-0.5 text-sm text-ink/65 dark:text-light/65">Day {data.data!.today} · content built {new Date(data.data!.generatedAt).toLocaleString('en-NG')}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -39,7 +39,7 @@ export function OverviewClient() {
         <Card className="border-warn/50 bg-warn/8">
           <h2 className="text-base font-semibold">{k.pendingApprovals} receipt{k.pendingApprovals > 1 ? 's' : ''} waiting on a human</h2>
           <p className="mt-1 text-sm text-ink/75 dark:text-light/75">The learner’s next level is blocked until this is cleared. The SLA we promise is 24 hours.</p>
-          <Link href="/admin/payments" className="mt-2 inline-flex min-h-[40px] items-center rounded-pill bg-navy px-4 text-sm font-medium text-white">Open the queue</Link>
+          <Link href="/admin/payments" className="mt-2 inline-flex min-h-[40px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Open the queue</Link>
         </Card>
       )}
 
@@ -86,7 +86,7 @@ export function OverviewClient() {
                 <div className="mt-1 flex items-center gap-1">
                   {(f.steps ?? []).map((st: any) => (
                     <span key={st.pct} title={`${st.pct}% of the course completed by ${st.count}`} className="flex-1">
-                      <span className="block h-1.5 rounded-pill bg-gold/70" style={{ opacity: f.steps[0].count ? 0.25 + 0.75 * (st.count / Math.max(1, f.steps[0].count)) : 0.15 }} />
+                      <span className="block h-1.5 rounded-card bg-gold/70" style={{ opacity: f.steps[0].count ? 0.25 + 0.75 * (st.count / Math.max(1, f.steps[0].count)) : 0.15 }} />
                       <span className="mt-0.5 block text-center text-[10px] tabular-nums text-ink/55 dark:text-light/55">{st.pct}%</span>
                     </span>
                   ))}
@@ -100,7 +100,7 @@ export function OverviewClient() {
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-base font-semibold">Ads (last 30 days)</h2>
-          <Chip tone={k.adBlocked ? 'warn' : 'muted'}>{k.adBlocked} blocked by policy</Chip>
+          <Pill tone={k.adBlocked ? 'warn' : 'muted'}>{k.adBlocked} blocked by policy</Pill>
         </div>
         <div className="mt-2 grid gap-3 sm:grid-cols-3 text-sm">
           <StatBlock label="Impressions" value={k.adImpressions} />
@@ -115,5 +115,5 @@ export function OverviewClient() {
   )
 }
 
-const pill = (warn: boolean, extra = '') => cx('inline-flex min-h-[38px] items-center rounded-pill border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line', warn && extra)
+const pill = (warn: boolean, extra = '') => cx('inline-flex min-h-[38px] items-center rounded-card border border-surface-line px-3 text-sm font-medium dark:border-surface-dark-line', warn && extra)
 const pct = (a: number, b: number) => (b ? Math.round((a / b) * 100) : 0)

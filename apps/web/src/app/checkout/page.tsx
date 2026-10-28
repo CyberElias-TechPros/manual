@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { Card } from '@cea/ui'
+import { CourseRows } from '@cea/ui'
 import { blurb, courseList } from '@/lib/content'
 
 /**
@@ -11,23 +11,19 @@ import { blurb, courseList } from '@/lib/content'
 export default function CheckoutIndex() {
   const courses = courseList()
   return (
-    <div className="mx-auto max-w-2xl space-y-4 px-1 py-6">
-      <h1 className="text-xl font-semibold text-navy dark:text-light">Choose the course to pay for</h1>
-      <p className="text-sm text-ink/70 dark:text-light/70">
-        Payment is one bank transfer per course, with its own reference — so the page that shows you
-        the account details needs to know which course you mean. Pick one and the details, the amount
-        and the “I have paid” step appear there.
+    <div className="mx-auto max-w-reading py-6">
+      <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Choose the course to pay for</h1>
+      <p className="mt-3 text-base leading-relaxed text-ink-600 dark:text-light/70">
+        Payment is one bank transfer per course, with its own reference — so the page that shows the account details needs to
+        know which course you mean. Pick one and the amount, the transfer details and the “I have paid” step appear there.
       </p>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {courses.map(c => (
-          <Card key={c.slug} hover className="!p-3">
-            <a href={`/checkout/${c.slug}`} className="block">
-              <div className="font-medium text-navy dark:text-light">{c.displayTitle || c.name}</div>
-              <div className="mt-0.5 line-clamp-2 text-xs text-ink/65 dark:text-light/65">{blurb(c)}</div>
-              <div className="mt-1.5 font-mono text-xs text-gold">{c.feeNgn ? `₦${c.feeNgn.toLocaleString('en-NG')}` : 'fee on request'}</div>
-            </a>
-          </Card>
-        ))}
+      <div className="mt-6 border-t border-surface-line dark:border-surface-dark-line">
+        <CourseRows
+          courses={courses.map(c => ({
+            slug: c.slug, title: c.displayTitle || c.name, blurb: blurb(c),
+            meta: `${c.sessionsCount} levels`, feeNgn: c.feeNgn, href: `/checkout/${c.slug}`,
+          }))}
+        />
       </div>
     </div>
   )
