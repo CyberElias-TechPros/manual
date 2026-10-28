@@ -142,7 +142,7 @@ export function CheckoutClient({ course, reference }: { course: any; reference: 
             <div>
               <label htmlFor="proof" className="block text-[0.9375rem] font-medium text-ink dark:text-light">Receipt file</label>
               <input id="proof" ref={fileRef} type="file" accept={data.proofLimits.types.join(',')}
-                className="mt-1 block w-full rounded-card border border-surface-line bg-surface p-2 text-sm file:mr-3 file:rounded-card file:border-0 file:bg-navy file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white dark:border-surface-dark-line dark:bg-surface-dark dark:file:bg-sky dark:file:text-deep" />
+                className="mt-1.5 block w-full rounded-card border border-surface-line bg-surface px-3.5 py-2.5 text-[0.9375rem] text-ink outline-none transition-colors focus:border-navy file:mr-3 file:border-0 file:bg-transparent file:p-0 file:text-[0.9375rem] file:font-medium file:text-navy file:underline file:underline-offset-2 dark:border-surface-dark-line dark:bg-surface-dark dark:text-light dark:file:text-sky dark:focus:border-sky" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
