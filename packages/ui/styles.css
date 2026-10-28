@@ -1,0 +1,58 @@
+/*
+ * 1.1/1.2/10.5 — the few global rules the component classes cannot express.
+ * Kept tiny on purpose: this file plus Tailwind's used utilities is the whole
+ * stylesheet budget for a learner on a metered SIM.
+ */
+@layer base {
+  :root { --cea-focus: #1a365d; color-scheme: light; }
+  .dark { --cea-focus: #62b3ec; color-scheme: dark; }
+
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  }
+
+  body { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; overflow-wrap: break-word; }
+
+  /* 10.5 WCAG AA: one visible focus style everywhere, never removed */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--cea-focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  :where(a, button, input, select, textarea):disabled { cursor: not-allowed; }
+
+  /* 44px targets on touch, without inflating dense desktop rows */
+  @media (pointer: coarse) {
+    :where(nav a, nav button, [data-tap]):is(a, button) { min-height: 44px; }
+  }
+
+  ::selection { background: rgba(214, 158, 46, .35); }
+
+  /* 1.6 dark mode: pictures on a white PDF background would glare at night */
+  .dark :where(img, video) { filter: brightness(.92) contrast(1.02); }
+  .dark img[alt*="logo" i], .dark .cea-invert { filter: invert(1) hue-rotate(180deg) brightness(1.08) contrast(.95); }
+}
+
+@layer utilities {
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+}
+
+/*
+ * Certificates (gap fix) print as a clean A4 sheet: no nav, no ads, no chrome.
+ * This is why there is no PDF library in the bundle — the browser renders it.
+ */
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+  body { background: #fff !important; color: #000 !important; }
+  header, nav, footer, [role="progressbar"], .no-print, ins, iframe, aside[aria-label] { display: none !important; }
+  .cea-print-sheet { box-shadow: none !important; border: 1px solid #cbd5e1 !important; break-inside: avoid; }
+}
+
+/* Skip link (10.5) */
+.cea-skip { position: absolute; left: -9999px; top: 0; z-index: 60; }
+.cea-skip:focus { left: .5rem; top: .5rem; padding: .5rem .9rem; background: #fff; border-radius: 0 0 10px 10px; box-shadow: 0 2px 12px rgba(0,0,0,.18); }
