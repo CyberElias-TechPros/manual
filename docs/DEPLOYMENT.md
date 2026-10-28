@@ -185,7 +185,7 @@ wrangler d1 export cea-learn --remote --output=backups/cea-$(date +%F).sql
 
 ```bash
 pnpm install                # no build scripts run; see pnpm-workspace.yaml's allowBuilds
-pnpm dev                    # :3000 web (API mounted in-process) + :8787 standalone Node API
+pnpm dev --api              # :3000 web (API mounted in-process) + :8787 the standalone Node API
 pnpm db:seed                # dev DB + demo admin/learner/smoke accounts + access code
 pnpm content:watch          # rebuild the bundle on any content edit
 pnpm test                   # unit + corpus + leak audit + corpus lint
@@ -193,6 +193,8 @@ node tools/smoke-api.mjs http://localhost:8787   # against the standalone API
 node tools/smoke-api.mjs http://localhost:3000   # against Next's route handler
 ```
 
-`tools/dev.mjs` prints both URLs and tails the logs. Payment proofs land in
+`tools/dev.mjs` runs the web app on :3000 with the API mounted in-process; `--api` additionally
+starts the standalone Node API on :8787, which is the runtime the Worker mirrors and therefore what
+the second smoke run above targets. It prints both URLs and tails the logs. Payment proofs land in
 `var/uploads`, email in `var/mail`, the database in `var/cea-learn.sqlite` — all gitignored, all
 safe to delete.
