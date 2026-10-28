@@ -14,7 +14,7 @@ export function ProfileClient() {
   const summary = useApi<any>(user ? '/api/summary' : null)
   const courses = useApi<{ courses: any[] }>(user ? '/api/courses' : null)
   const [tab, setTab] = useState<'badges' | 'courses' | 'data'>('badges')
-  if (loading) return <p className="text-sm text-ink/60 dark:text-light/60">Loading your progress…</p>
+  if (loading) return <p className="text-sm text-ink-500 dark:text-light/60">Loading your progress…</p>
   if (!user) return (
     <div className="mx-auto max-w-measure py-12 text-center">
       <h1 className="text-2xl font-semibold text-ink dark:text-light">Sign in to see your badges</h1>

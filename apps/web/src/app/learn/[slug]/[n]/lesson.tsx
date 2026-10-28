@@ -357,7 +357,8 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
           </div>
         )}
 
-        <main key={`${stage.id}-${stepping ? sub : 'x'}`} className="mt-9 max-w-reading animate-fade-in">
+        {/* not a <main> — the layout owns that landmark and the skip link targets it */}
+        <div key={`${stage.id}-${stepping ? sub : 'x'}`} className="mt-9 max-w-reading animate-fade-in">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <h2 className="text-xl font-semibold text-ink dark:text-light">
               {stepping ? currentRead?.title ?? READ_STAGE.label : stage.label}
@@ -387,7 +388,7 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
               sendFlashcards={sendFlashcards} onNotice={setBanner}
             />
           )}
-        </main>
+        </div>
 
         {stage.id !== 'finish' && (
           <div className="mt-10 flex max-w-reading flex-wrap items-center justify-between gap-4 border-t border-surface-line pt-5 dark:border-surface-dark-line">

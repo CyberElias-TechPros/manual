@@ -36,7 +36,7 @@ export function UsersClient() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-ink dark:text-light">Learners</h1>
-          <p className="mt-0.5 text-sm text-ink/65 dark:text-light/65">Search by name, email or phone. Guests are included — they are the top of the funnel.</p>
+          <p className="mt-0.5 text-sm text-ink-500 dark:text-light/65">Search by name, email or phone. Guests are included — they are the top of the funnel.</p>
         </div>
         <Link href="/admin" className="text-sm underline">← Overview</Link>
       </header>
@@ -44,7 +44,7 @@ export function UsersClient() {
       <form onSubmit={e => e.preventDefault()}>
         <label className="sr-only" htmlFor="uq">Search learners</label>
         <input id="uq" value={q} onChange={e => setQ(e.target.value)} placeholder="chidi, chidi@…, 0803…"
-          className="min-h-[44px] w-full rounded-card border border-surface-line bg-surface px-3 text-[15px] dark:border-surface-dark-line dark:bg-surface-dark" />
+          className="min-h-[44px] w-full rounded-card border border-surface-line bg-surface px-3.5 text-base dark:border-surface-dark-line dark:bg-surface-dark" />
       </form>
 
       {note && <p role="status" className="rounded-card bg-surface-muted px-3 py-2 font-mono text-sm dark:bg-surface-dark-muted">{note}</p>}
@@ -59,13 +59,13 @@ export function UsersClient() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[15px] font-semibold">{u.name}</span>
+                      <span className="text-[0.9375rem] font-medium">{u.name}</span>
                       {u.role !== 'learner' && <Pill tone="gold">{u.role}</Pill>}
                       {u.isGuest && <Pill tone="muted">guest</Pill>}
                       {u.banned && <Pill tone="error">suspended</Pill>}
                       <Pill tone="navy">{u.rank}</Pill>
                     </div>
-                    <p className="mt-0.5 text-xs text-ink/60 dark:text-light/60">{u.email}{u.phone ? ` · ${u.phone}` : ''} · joined {new Date(u.joinedAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })} · last active {u.lastActive ?? 'never'}</p>
+                    <p className="mt-0.5 text-xs text-ink-500 dark:text-light/60">{u.email}{u.phone ? ` · ${u.phone}` : ''} · joined {new Date(u.joinedAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })} · last active {u.lastActive ?? 'never'}</p>
                     <p className="mt-1 text-sm tabular-nums">{u.xp.toLocaleString()} XP · streak {u.streak} (best {u.best}) · {u.enrolled.length} enrolled · {Object.values(u.completed ?? {}).reduce((a: number, b: any) => a + Number(b), 0)} levels done</p>
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-1.5">
@@ -145,7 +145,7 @@ function GrantRow({ userId, onDone, busy, setBusy }: { userId: string; onDone: (
   return (
     <div className="rounded-card bg-surface-muted p-2 text-xs dark:bg-surface-dark-muted">
       <p className="font-medium">Grant access without payment</p>
-      <p className="mt-0.5 text-ink/60 dark:text-light/60">For a scholarship, a workshop attendee, or “yes we took cash at the office”. It is audited and the learner gets an email.</p>
+      <p className="mt-0.5 text-ink-500 dark:text-light/60">For a scholarship, a workshop attendee, or “yes we took cash at the office”. It is audited and the learner gets an email.</p>
       <div className="mt-1.5 flex flex-wrap items-end gap-1.5">
         <select value={slug} onChange={e => setSlug(e.target.value)} aria-label="Course"
           className="min-h-[40px] rounded-card border border-surface-line bg-surface px-2 text-sm dark:border-surface-dark-line dark:bg-surface-dark">

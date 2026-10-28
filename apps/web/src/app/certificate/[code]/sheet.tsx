@@ -25,28 +25,28 @@ export function CertificateSheet({ code }: { code: string }) {
     return () => ac.abort()
   }, [code])
 
-  if (state === 'loading') return <div className="mx-auto max-w-[52rem] px-3 py-10 text-center text-sm text-ink/60 dark:text-light/60">Checking the register…</div>
+  if (state === 'loading') return <div className="py-10 text-center text-[0.9375rem] text-ink-500 dark:text-light/55">Checking the register…</div>
   if (state !== 'ready' || !cert) {
     return (
-      <main className="mx-auto flex min-h-[70vh] max-w-reading flex-col items-center justify-center gap-3 px-3 text-center">
-        <h1 className="text-xl font-bold">{state === 'missing' ? 'That code is not in the register' : 'The register is unreachable'}</h1>
-        <p className="text-sm text-ink/70 dark:text-light/70">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+        <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">{state === 'missing' ? 'That code is not in the register' : 'The register is unreachable'}</h1>
+        <p className="mx-auto mt-3 max-w-measure text-[0.9375rem] leading-relaxed text-ink-600 dark:text-light/70">
           {state === 'missing'
             ? <>Nothing was issued for <span className="font-mono">{code}</span>. Codes are printed in one block on the certificate — no spaces. A code typed from a screenshot of an older certificate will not match either, because the academy re-issues them.</>
             : 'The verifier did not answer. This is us, not you — try again in a moment.'}
         </p>
-        <div className="mt-1 flex flex-wrap justify-center gap-2">
-          <Link href="/certificates/verify" className="inline-flex min-h-[44px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Use the verifier</Link>
-          {state === 'error' && <button type="button" onClick={() => location.reload()} className="inline-flex min-h-[44px] items-center rounded-card border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">Retry</button>}
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+          <Link href="/certificates/verify" className="inline-flex min-h-[48px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white hover:bg-[#152c4d]">Use the verifier</Link>
+          {state === 'error' && <button type="button" onClick={() => location.reload()} className="text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-sky">Try again now</button>}
         </div>
-      </main>
+      </div>
     )
   }
 
   return (
     <div className="mx-auto max-w-[56rem] px-3 py-6">
       <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-ink/70 dark:text-light/70">
+        <p className="text-sm text-ink-600 dark:text-light/70">
           <span className="font-medium text-success">Verified</span> · issued {new Date(cert.issuedAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
         <div className="flex gap-2">
@@ -84,7 +84,7 @@ export function CertificateSheet({ code }: { code: string }) {
         </footer>
       </article>
 
-      <p className="no-print mt-4 text-xs text-ink/60 dark:text-light/60">
+      <p className="no-print mt-4 text-xs text-ink-500 dark:text-light/60">
         Print → “Save as PDF” for a copy to attach to an application. Anyone can confirm this document at
         <Link href={`/certificates/verify?code=${cert.code}`} className="underline"> /certificates/verify</Link> using the code at the bottom right —
         it shows the name, course, grade and date, and nothing else.

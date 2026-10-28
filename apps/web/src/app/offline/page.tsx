@@ -1,24 +1,45 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { linkClass } from '@cea/ui'
 export const metadata: Metadata = { title: 'You are offline', robots: { index: false } }
 
-/** 10.4 — the fallback the service worker serves when a navigation misses the cache. */
+/**
+ * 10.4 — the fallback the service worker serves when a navigation misses the cache. It has to answer
+ * one question: what can I still do right now? — so it leads with reading, and puts payment (the one
+ * thing that genuinely cannot work offline) second.
+ */
 export default function OfflinePage() {
   return (
-    <main className="mx-auto flex min-h-[80vh] max-w-reading flex-col justify-center gap-4 px-3 py-10">
-      <span aria-hidden className="text-4xl">📡</span>
-      <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">No signal — the app is still open</h1>
-      <p className="text-[15px] text-ink/75 dark:text-light/75">
-        Everything you have read on this device is still available: open the menu and go to a level you have visited. Quizzes you take now are
-        saved on the phone and sent the moment you reconnect, so nothing you answer is lost.
+    <div className="py-10">
+      <p className="text-[0.8125rem] text-ink-500 dark:text-light/55">Offline mode</p>
+      <h1 className="mt-2 text-2xl font-semibold tracking-snugish text-ink dark:text-light">No signal — the app is still open</h1>
+      <p className="mt-3 max-w-reading text-base leading-relaxed text-ink-600 dark:text-light/70">
+        Everything you have read on this device is still available. Open the menu and pick a level you
+        have visited before. Quizzes you take now are saved on the phone and sent the moment you
+        reconnect, so nothing you answer is lost.
       </p>
-      <ul className="list-disc space-y-1 pl-5 text-sm text-ink/70 dark:text-light/70">
-        <li><strong>What works offline:</strong> reading, quizzes, notes, your own cached diagrams.</li>
-        <li><strong>What waits:</strong> uploading a payment receipt, new levels you have not opened, certificates.</li>
-        <li><strong>Tip:</strong> before you travel or the network gets thin, open the next level once — that is all it takes to cache it.</li>
-      </ul>
-      <p className="text-xs text-ink/55 dark:text-light/55">
-        If a page here looks empty, it was not cached — the academy keeps lesson text small on purpose, so it is fetched once and kept from then on.
+      <dl className="mt-8 max-w-reading divide-y divide-surface-line dark:divide-surface-dark-line">
+        <div className="py-3">
+          <dt className="text-[0.8125rem] text-ink-500 dark:text-light/55">Works with no network</dt>
+          <dd className="mt-0.5 text-[0.9375rem] text-ink-700 dark:text-light/80">Reading, diagrams you have opened, quizzes, your notes and bookmarks.</dd>
+        </div>
+        <div className="py-3">
+          <dt className="text-[0.8125rem] text-ink-500 dark:text-light/55">Waits for a signal</dt>
+          <dd className="mt-0.5 text-[0.9375rem] text-ink-700 dark:text-light/80">Uploading a payment receipt, the first time you open a new level, certificates.</dd>
+        </div>
+        <div className="py-3">
+          <dt className="text-[0.8125rem] text-ink-500 dark:text-light/55">Before the network gets thin</dt>
+          <dd className="mt-0.5 text-[0.9375rem] text-ink-700 dark:text-light/80">Open the next level once — that is all it takes to keep it on this device.</dd>
+        </div>
+      </dl>
+      <p className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+        <Link href="/courses" className={linkClass}>Open the catalogue</Link>
+        <Link href="/settings" className={linkClass}>Data-saver settings</Link>
       </p>
-    </main>
+      <p className="mt-8 max-w-reading border-t border-surface-line pt-4 text-[0.8125rem] leading-relaxed text-ink-500 dark:border-surface-dark-line dark:text-light/55">
+        If a cached page looks empty, its diagrams were not saved — lesson text is kept small on purpose and
+        fetched once, images only when there is room for them.
+      </p>
+    </div>
   )
 }

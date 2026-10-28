@@ -85,7 +85,7 @@ export default function StyleguidePage() {
         <p>
           Neutral ramp for everything that is not an action or a verdict: <code>ink-900</code> to <code>ink-50</code>{' '}
           (one grey-blue family, defined once in <code>packages/config/tailwind-preset.cjs</code>). Text never uses a
-          raw opacity like <code>text-ink/65</code> on a tinted panel — the ramp replaces it, because an opacity grey
+          raw opacity like <code>text-ink-500</code> on a tinted panel — the ramp replaces it, because an opacity grey
           changes value with the surface underneath.
         </p>
       </section>

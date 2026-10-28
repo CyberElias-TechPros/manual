@@ -1,27 +1,47 @@
 'use client'
 import { useEffect } from 'react'
 import Link from 'next/link'
+import { Button, linkClass } from '@cea/ui'
 
+/**
+ * The two failure modes here are different and the copy says which one happened: no network (keep
+ * reading what is cached, nothing is lost) versus a real render error (the digest is the thing to
+ * send us). Answers stay queued on the phone either way, so the page leads with that rather than
+ * with an apology.
+ */
 export default function AppError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => { console.error('[cea-learn] render error', error) }, [error])
   const offline = typeof navigator !== 'undefined' && !navigator.onLine
   return (
-    <main className="mx-auto flex min-h-[70vh] max-w-reading flex-col justify-center gap-3 px-3 py-10">
-      <span aria-hidden className="text-3xl">{offline ? '📡' : '⚠️'}</span>
-      <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">{offline ? 'This device lost the network' : 'Something broke on this screen'}</h1>
-      <p className="text-[15px] text-ink/75 dark:text-light/75">
+    <div className="py-10">
+      <p className="text-[0.8125rem] text-ink-500 dark:text-light/55">{offline ? 'No connection' : 'Something broke on this screen'}</p>
+      <h1 className="mt-2 text-2xl font-semibold tracking-snugish text-ink dark:text-light">
+        {offline ? 'The signal went, your progress did not' : 'This screen could not be drawn'}
+      </h1>
+      <p className="mt-3 max-w-reading text-base leading-relaxed text-ink-600 dark:text-light/70">
         {offline
-          ? 'You can keep reading anything already cached. Retry when a signal is back — nothing you answered was thrown away.'
-          : 'The lesson you were reading is safe; your quiz answers are queued on this phone. Try again, and if it happens twice the academy wants to know.'}
+          ? 'Anything already cached on this device still opens — go to a level you have read before. Retry when a signal is back; nothing you answered was thrown away.'
+          : 'The level you were reading is safe, and quiz answers typed on this phone are still queued here. Try again — if it happens twice, the academy wants the details.'}
       </p>
-      {error?.message && !offline && (
-        <pre className="max-h-32 overflow-auto rounded-card bg-surface-muted p-3 font-mono text-xs text-ink/70 dark:bg-surface-dark-muted dark:text-light/70">{error.message}</pre>
-      )}
-      <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={reset} className="inline-flex min-h-[44px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Try again</button>
-        <Link href="/dashboard" className="inline-flex min-h-[44px] items-center rounded-card border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">Dashboard</Link>
-        <a href={`mailto:hello@cea.ng?subject=${encodeURIComponent('Broke in CEA Learn')}&body=${encodeURIComponent(String(error?.digest ?? error?.message ?? ''))}`} className="inline-flex min-h-[44px] items-center rounded-card px-2 text-sm underline">Report it</a>
+      {!offline && error?.message ? (
+        <pre className="mt-6 max-h-32 overflow-auto rounded-card bg-surface-muted p-3 font-mono text-[0.8125rem] leading-relaxed text-ink-600 dark:bg-surface-dark-muted dark:text-light/70">{error.message}</pre>
+      ) : null}
+      <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <Button onClick={reset}>Try again</Button>
+        <Link href="/dashboard" className={linkClass}>Go to my dashboard</Link>
+        {!offline && (
+          <a
+            href={`mailto:hello@cea.ng?subject=${encodeURIComponent('Broke in CEA Learn')}&body=${encodeURIComponent([
+              error?.digest ? `digest: ${error.digest}` : '',
+              error?.message ? `message: ${error.message}` : '',
+              `url: ${typeof location !== 'undefined' ? location.pathname : ''}`,
+            ].filter(Boolean).join('\n'))}`}
+            className={linkClass}
+          >
+            Tell us what happened
+          </a>
+        )}
       </div>
-    </main>
+    </div>
   )
 }

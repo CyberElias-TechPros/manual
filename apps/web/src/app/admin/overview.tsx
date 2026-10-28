@@ -14,7 +14,7 @@ type K = {
 /** 11.1/11.2 — the numbers the academy actually runs on: signups, approvals, revenue, pass rate. */
 export function OverviewClient() {
   const data = useApi<{ kpis: K; enrolmentsByCourse: { course: string; count: number }[]; funnel: any[]; generatedAt: string; today: string }>('/api/admin/overview')
-  if (data.loading) return <p className="text-sm text-ink/60 dark:text-light/60">Loading the ledger…</p>
+  if (data.loading) return <p className="text-sm text-ink-500 dark:text-light/60">Loading the ledger…</p>
   if (data.error) return <Card><p className="text-sm text-error">{data.error.message}</p></Card>
   const k = data.data!.kpis
   const top = [...(data.data!.enrolmentsByCourse ?? [])].sort((a, b) => b.count - a.count).slice(0, 8)
@@ -25,7 +25,7 @@ export function OverviewClient() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Admin</h1>
-          <p className="mt-0.5 text-sm text-ink/65 dark:text-light/65">Day {data.data!.today} · content built {new Date(data.data!.generatedAt).toLocaleString('en-NG')}</p>
+          <p className="mt-0.5 text-sm text-ink-500 dark:text-light/65">Day {data.data!.today} · content built {new Date(data.data!.generatedAt).toLocaleString('en-NG')}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href="/admin/payments" className={pill(k.pendingApprovals > 0, k.pendingApprovals ? 'bg-warn/15 text-warn' : '')}>Approvals {k.pendingApprovals > 0 ? `(${k.pendingApprovals})` : ''}</Link>
@@ -38,7 +38,7 @@ export function OverviewClient() {
       {k.pendingApprovals > 0 && (
         <Card className="border-warn/50 bg-warn/8">
           <h2 className="text-base font-semibold">{k.pendingApprovals} receipt{k.pendingApprovals > 1 ? 's' : ''} waiting on a human</h2>
-          <p className="mt-1 text-sm text-ink/75 dark:text-light/75">The learner’s next level is blocked until this is cleared. The SLA we promise is 24 hours.</p>
+          <p className="mt-1 text-sm text-ink-600 dark:text-light/75">The learner’s next level is blocked until this is cleared. The SLA we promise is 24 hours.</p>
           <Link href="/admin/payments" className="mt-2 inline-flex min-h-[40px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Open the queue</Link>
         </Card>
       )}
@@ -70,12 +70,12 @@ export function OverviewClient() {
                 <ProgressBar value={e.count} max={maxEnrol} />
               </li>
             ))}
-            {!top.length && <li className="text-sm text-ink/60 dark:text-light/60">Nobody has paid yet. Approvals here are the fastest way to change that.</li>}
+            {!top.length && <li className="text-sm text-ink-500 dark:text-light/60">Nobody has paid yet. Approvals here are the fastest way to change that.</li>}
           </ul>
         </Card>
         <Card>
           <h2 className="text-base font-semibold">Free level → paid</h2>
-          <p className="mt-1 text-sm text-ink/70 dark:text-light/70">The funnel the whole business sits on (README 7.6). A big drop between “level 1 finished” and “intent created” means the price or the pitch is wrong, not the teaching.</p>
+          <p className="mt-1 text-sm text-ink-600 dark:text-light/70">The funnel the whole business sits on (README 7.6). A big drop between “level 1 finished” and “intent created” means the price or the pitch is wrong, not the teaching.</p>
           <ul className="mt-3 space-y-2.5 text-sm">
             {(data.data!.funnel ?? []).slice(0, 8).map((f: any) => (
               <li key={f.course}>
@@ -87,7 +87,7 @@ export function OverviewClient() {
                   {(f.steps ?? []).map((st: any) => (
                     <span key={st.pct} title={`${st.pct}% of the course completed by ${st.count}`} className="flex-1">
                       <span className="block h-1.5 rounded-card bg-gold/70" style={{ opacity: f.steps[0].count ? 0.25 + 0.75 * (st.count / Math.max(1, f.steps[0].count)) : 0.15 }} />
-                      <span className="mt-0.5 block text-center text-[10px] tabular-nums text-ink/55 dark:text-light/55">{st.pct}%</span>
+                      <span className="mt-0.5 block text-center text-[10px] tabular-nums text-ink-500 dark:text-light/55">{st.pct}%</span>
                     </span>
                   ))}
                 </div>
@@ -108,7 +108,7 @@ export function OverviewClient() {
           <StatBlock label="Revenue estimate" value="—" hint="read it from the AdSense console; we never put the code that reads money in the learner bundle" />
         </div>
       </Card>
-      <p className="pb-4 text-xs text-ink/55 dark:text-light/55">
+      <p className="pb-4 text-xs text-ink-500 dark:text-light/55">
         All figures come from the same D1 the app writes to; nothing here is a second source of truth. <Link href="/admin/settings" className="underline">Change fees</Link> · <Link href="/admin/content" className="underline">lint report</Link>.
       </p>
     </div>

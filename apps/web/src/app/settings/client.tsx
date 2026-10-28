@@ -33,7 +33,7 @@ export function SettingsClient() {
     return () => window.removeEventListener('cea:queue', upd as EventListener)
   }, [])
 
-  if (loading) return <p className="text-sm text-ink/60 dark:text-light/60">Loading settings…</p>
+  if (loading) return <p className="text-sm text-ink-500 dark:text-light/60">Loading settings…</p>
 
   async function save(what: string, payload: Record<string, unknown>) {
     setState(s => ({ ...s, [what]: 'busy' })); setMsg(null)
@@ -53,7 +53,7 @@ export function SettingsClient() {
     <div className="mx-auto max-w-reading space-y-4">
       <header>
         <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Settings</h1>
-        <p className="mt-0.5 text-sm text-ink/70 dark:text-light/70">Theme, data, privacy and password. The first two work even with no signal.</p>
+        <p className="mt-0.5 text-sm text-ink-600 dark:text-light/70">Theme, data, privacy and password. The first two work even with no signal.</p>
       </header>
 
       <Card>
@@ -108,7 +108,7 @@ export function SettingsClient() {
 
           <Card>
             <h2 className="text-base font-semibold">Password</h2>
-            <p className="mt-1 text-xs text-ink/60 dark:text-light/60">Ten characters or more. Changing it signs you out everywhere else.</p>
+            <p className="mt-1 text-xs text-ink-500 dark:text-light/60">Ten characters or more. Changing it signs you out everywhere else.</p>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <Field label="Current password"><input type="password" value={pw.current} onChange={e => setPw(p => ({ ...p, current: e.target.value }))} autoComplete="current-password" className={inputCls} /></Field>
               <Field label="New password"><input type="password" value={pw.next} onChange={e => setPw(p => ({ ...p, next: e.target.value }))} autoComplete="new-password" className={inputCls} /></Field>
@@ -118,7 +118,7 @@ export function SettingsClient() {
               Change password
             </Button>
             {state.pw === 'error' && msg && <p role="alert" className="mt-2 text-sm text-error">{msg}</p>}
-            <p className="mt-2 text-xs text-ink/60 dark:text-light/60">Forgotten it instead? <Link href="/auth/forgot" className="underline">Use the reset email</Link>.</p>
+            <p className="mt-2 text-xs text-ink-500 dark:text-light/60">Forgotten it instead? <Link href="/auth/forgot" className="underline">Use the reset email</Link>.</p>
           </Card>
 
           <Card>
@@ -128,13 +128,13 @@ export function SettingsClient() {
               <Button size="sm" variant="outline" onClick={async () => { const r = await flushQueue(); setMsg(`Sent ${r.sent}. ${r.left} still waiting.`) }}>Sync now</Button>
               <Button size="sm" variant="ghost" onClick={async () => { if ('caches' in window) { await Promise.all((await caches.keys()).map(k => caches.delete(k))) } setMsg('Cached levels cleared. They will come back as you read.') }}>Clear cached lessons</Button>
             </div>
-            <p className="mt-2 text-xs text-ink/60 dark:text-light/60">
+            <p className="mt-2 text-xs text-ink-500 dark:text-light/60">
               The app works as an installable program: add it to your home screen and the last four levels you read stay available with no connection at all.
             </p>
             {user.isGuest && (
               <div className="mt-3 rounded-card bg-sky/12 p-3 text-sm">
                 <p className="font-medium">This is a guest pass</p>
-                <p className="mt-1 text-ink/75 dark:text-light/75">Add an email and password and it becomes a real account — same XP, same streak, and it survives a broken phone.</p>
+                <p className="mt-1 text-ink-600 dark:text-light/75">Add an email and password and it becomes a real account — same XP, same streak, and it survives a broken phone.</p>
                 <GuestUpgrade onDone={refresh} />
               </div>
             )}
@@ -142,7 +142,7 @@ export function SettingsClient() {
 
           <Card className="border-error/40">
             <h2 className="text-base font-semibold text-error">Danger zone</h2>
-            <p className="mt-1 text-sm text-ink/75 dark:text-light/75">
+            <p className="mt-1 text-sm text-ink-600 dark:text-light/75">
               Deleting your account removes your profile, progress, XP and notes. Payment receipts are kept in the accounts ledger for
               {` ${PAYMENT.retentionGraceDays} days`} because Nigerian tax law asks for them, then deleted.
             </p>
@@ -168,7 +168,7 @@ export function SettingsClient() {
       )}
 
       {msg && !user ? <p role="status" className="text-sm text-success">{msg}</p> : null}
-      <p className="pb-2 text-xs text-ink/55 dark:text-light/55">
+      <p className="pb-2 text-xs text-ink-500 dark:text-light/55">
         Something not on this list? The academy answers at <a href="mailto:hello@cea.ng" className="underline">hello@cea.ng</a>.
       </p>
     </div>
@@ -201,7 +201,7 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="min-w-[12rem] flex-1">
         <p className="text-sm font-medium">{label}</p>
-        {hint && <p className="mt-0.5 text-xs text-ink/60 dark:text-light/60">{hint}</p>}
+        {hint && <p className="mt-0.5 text-xs text-ink-500 dark:text-light/60">{hint}</p>}
       </div>
       <div className="shrink-0">{children}</div>
     </div>
@@ -213,7 +213,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
     <label className="block text-sm font-medium">
       <span>{label}</span>
       <div className="mt-1 font-normal">{children}</div>
-      {hint && <span className="mt-1 block text-xs font-normal text-ink/60 dark:text-light/60">{hint}</span>}
+      {hint && <span className="mt-1 block text-xs font-normal text-ink-500 dark:text-light/60">{hint}</span>}
     </label>
   )
 }

@@ -59,7 +59,7 @@ export function SearchClient({ initial }: { initial: string }) {
             autoComplete="off"
             className="min-h-[48px] w-full rounded-card border border-surface-line bg-surface px-4 pr-20 text-base text-ink outline-none transition-colors placeholder:text-ink-400 focus:border-navy dark:border-surface-dark-line dark:bg-surface-dark dark:text-light dark:placeholder:text-light/40 dark:focus:border-sky"
           />
-          {busy && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-ink/55 dark:text-light/55">…</span>}
+          {busy && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-ink-500 dark:text-light/55">…</span>}
           {!busy && q && <button type="button" onClick={() => setQ('')} className="absolute right-3 top-1/2 -translate-y-1/2 px-1 text-[0.8125rem] text-ink-500 underline underline-offset-2 hover:text-ink dark:text-light/55">clear</button>}
         </div>
       </form>

@@ -23,7 +23,7 @@ export function CertificatesClient() {
     return (
       <Card className="mx-auto max-w-reading text-center">
         <h1 className="text-xl font-semibold text-ink dark:text-light">Certificates</h1>
-        <p className="mt-1.5 text-sm text-ink/70 dark:text-light/70">Sign in to request the certificate for a course you finished. Anyone can check a code without an account.</p>
+        <p className="mt-1.5 text-sm text-ink-600 dark:text-light/70">Sign in to request the certificate for a course you finished. Anyone can check a code without an account.</p>
         <div className="mt-3 flex flex-wrap justify-center gap-2">
           <Link href="/auth/login?next=/certificates" className="inline-flex min-h-[44px] items-center rounded-card bg-navy px-4 text-sm font-medium text-white">Sign in</Link>
           <Link href="/certificates/verify" className="inline-flex min-h-[44px] items-center rounded-card border border-surface-line px-4 text-sm font-medium dark:border-surface-dark-line">Verify a code</Link>
@@ -56,7 +56,7 @@ export function CertificatesClient() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Certificates</h1>
-          <p className="mt-0.5 text-sm text-ink/70 dark:text-light/70">Every level completed, a 70% average across the knowledge checks, and the capstone submitted — then the academy issues the code.</p>
+          <p className="mt-0.5 text-sm text-ink-600 dark:text-light/70">Every level completed, a 70% average across the knowledge checks, and the capstone submitted — then the academy issues the code.</p>
         </div>
         <Link href="/certificates/verify" className="text-sm font-medium text-blue underline underline-offset-4 dark:text-sky">Verify somebody else’s →</Link>
       </header>
@@ -77,14 +77,14 @@ export function CertificatesClient() {
               <Card className="cea-print-sheet">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-[15px] font-semibold capitalize">{cert.course.replace(/-/g, ' ')}</h2>
-                    <p className="mt-0.5 text-xs text-ink/60 dark:text-light/60">{cert.learner_name} · {new Date(cert.issued_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    <h2 className="text-[0.9375rem] font-medium capitalize">{cert.course.replace(/-/g, ' ')}</h2>
+                    <p className="mt-0.5 text-xs text-ink-500 dark:text-light/60">{cert.learner_name} · {new Date(cert.issued_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                   </div>
                   <Pill tone="gold">{cert.grade}</Pill>
                 </div>
                 <p className="mt-2 font-mono text-sm">{cert.code}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                  <span className="text-ink/60 dark:text-light/60">{cert.sessions_completed} levels · avg quiz {cert.avg_quiz_pct}%</span>
+                  <span className="text-ink-500 dark:text-light/60">{cert.sessions_completed} levels · avg quiz {cert.avg_quiz_pct}%</span>
                   <Link href={`/certificate/${cert.code}`} className="min-h-[34px] rounded-card bg-navy px-3 font-medium text-white inline-flex items-center">Open & print</Link>
                 </div>
               </Card>
@@ -101,8 +101,8 @@ export function CertificatesClient() {
               <li key={c.slug}>
                 <Card className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="text-[15px] font-semibold">{c.displayTitle || c.name}</h3>
-                    <p className="text-xs text-ink/60 dark:text-light/60">{c.sessionsCount} levels · certificate on completion</p>
+                    <h3 className="text-base font-medium">{c.displayTitle || c.name}</h3>
+                    <p className="text-xs text-ink-500 dark:text-light/60">{c.sessionsCount} levels · certificate on completion</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Link href={`/courses/${c.slug}/map`} className="inline-flex min-h-[36px] items-center rounded-card border border-surface-line px-3 text-sm dark:border-surface-dark-line">map</Link>

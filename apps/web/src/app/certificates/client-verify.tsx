@@ -28,9 +28,9 @@ export function VerifyClient({ initial }: { initial: string }) {
   return (
     <div className="mx-auto max-w-reading space-y-4 py-2">
       <header>
-        <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink/55 dark:text-light/55">For employers</p>
+        <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink-500 dark:text-light/55">For employers</p>
         <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">Verify a CEA certificate</h1>
-        <p className="mt-1 text-sm text-ink/70 dark:text-light/70">
+        <p className="mt-1 text-sm text-ink-600 dark:text-light/70">
           Type the code from the bottom right of the certificate. It confirms the learner’s name, the course, the grade and the date — nothing else,
           and it is not stored.
         </p>
@@ -58,7 +58,7 @@ export function VerifyClient({ initial }: { initial: string }) {
             <Field label="Levels completed" value={String(res.sessionsCompleted)} />
             <Field label="Average assessment" value={`${res.avgQuizPct}%`} />
           </dl>
-          <p className="mt-3 text-xs text-ink/60 dark:text-light/60">
+          <p className="mt-3 text-xs text-ink-500 dark:text-light/60">
             Need a signed PDF or a phone call to the academy? Email hello@cea.ng quoting the code.
           </p>
         </Card>
@@ -66,12 +66,12 @@ export function VerifyClient({ initial }: { initial: string }) {
       {state === 'ok' && !res?.valid && (
         <Card className="border-error/55 bg-error/6">
           <h2 className="text-base font-semibold">No certificate with that code</h2>
-          <p className="mt-1 text-sm text-ink/75 dark:text-light/75">Double-check the letters (0 and O are not used) and the dashes. If it still fails, ask the holder for the PDF, or email the code to hello@cea.ng and we will look it up by hand.</p>
+          <p className="mt-1 text-sm text-ink-600 dark:text-light/75">Double-check the letters (0 and O are not used) and the dashes. If it still fails, ask the holder for the PDF, or email the code to hello@cea.ng and we will look it up by hand.</p>
         </Card>
       )}
       {state === 'bad' && <p role="alert" className="text-sm text-error">{res?.error || 'That did not work.'}</p>}
 
-      <p className="text-xs text-ink/60 dark:text-light/60">
+      <p className="text-xs text-ink-500 dark:text-light/60">
         Issued by <Link href="/courses" className="underline">CEA Learn courses</Link>. Certificates require every level, a 70% average and the capstone.
       </p>
     </div>
@@ -81,7 +81,7 @@ export function VerifyClient({ initial }: { initial: string }) {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[0.8125rem] text-ink/55 dark:text-light/55">{label}</dt>
+      <dt className="text-[0.8125rem] text-ink-500 dark:text-light/55">{label}</dt>
       <dd className="font-medium">{value}</dd>
     </div>
   )
