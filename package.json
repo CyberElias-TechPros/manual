@@ -1,0 +1,33 @@
+{
+  "name": "cea-learn",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CEA Learn \u2014 gamified, offline-tolerant learning app for Cyber Elias Academy (cea.ng). Monorepo per ROADMAP task 0.1.",
+  "packageManager": "pnpm@12.15.0",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "node tools/dev.mjs",
+    "build": "pnpm --filter @cea/content build && pnpm --filter @cea/web build",
+    "start": "pnpm --filter @cea/web start",
+    "typecheck": "tsc -p packages/content && tsc -p packages/ui && tsc -p apps/api && tsc -p apps/web",
+    "lint": "pnpm --filter @cea/content lint",
+    "content:extract": "python3 tools/pdf-extract/extract.py --all",
+    "content:build": "pnpm --filter @cea/content build",
+    "content:watch": "pnpm --filter @cea/content watch",
+    "content:lint": "pnpm --filter @cea/content lint:content",
+    "db:seed": "node tools/seed.mjs",
+    "test": "pnpm --filter @cea/content test && pnpm --filter @cea/web test && node tools/leak-audit.mjs && pnpm content:lint",
+    "worker:dev": "pnpm --filter @cea/api dev",
+    "worker:deploy": "pnpm --filter @cea/api deploy",
+    "test:smoke": "node tools/smoke-api.mjs",
+    "content:publish": "node tools/publish-content.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "tsx": "^4.19.2"
+  }
+}

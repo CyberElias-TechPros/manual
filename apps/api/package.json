@@ -1,0 +1,29 @@
+{
+  "name": "@cea/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx src/node-server.ts",
+    "dev:cf": "wrangler dev --local --port 8787",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply cea-learn --local",
+    "db:migrate:remote": "wrangler d1 migrations apply cea-learn --remote",
+    "types": "wrangler types",
+    "start": "tsx src/node-server.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.6.14"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "typescript": "^5.7.2",
+    "wrangler": "^3.99.0"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  }
+}
