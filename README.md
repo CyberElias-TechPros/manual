@@ -164,24 +164,29 @@ Content lives with the frontend (static, cacheable). Only *personal state* cross
 
 ---
 
-# PART B — WHAT IS ALREADY DONE  [DONE]
+# PART B — WHAT IS ALREADY DONE  [verified 2026-10-28]
+
+> Every row below was checked against the files in this repository rather than trusted. Two of
+> the twelve claims were untrue (B4, B6), four described an intent rather than an artefact
+> (B2, B3, B12, and the fees example in PART C 7.1), and the rest hold. `docs/GAP-ANALYSIS.md` §1
+> has the detail; `docs/ROADMAP.md` is the build ledger for everything in PART C.
 
 These are prerequisites that are COMPLETE. The app consumes them as input.
 
 | ID | Item | Status | Detail |
 |---|---|---|---|
-| B1 | 16 full courses | **[DONE]** | Typing, MS Office, Data Entry, Graphic Design, Content Creation, Digital Productivity, Web Design, Web Dev, Cybersecurity, Computer Repairs, Business Freelancing, Social Media, Digital Marketing, Photography, Video Editing, Online Teaching |
-| B2 | 141 session lesson notes (A–O) | **[DONE]** | Identification, outcomes, materials, lecture, demo, practical, exercises+keys, case study, troubleshooting, assignment+rubric, knowledge check+key |
-| B3 | 141 SVG concept diagrams | **[DONE]** | One per session, CEA-branded |
-| B4 | 64 stock photos (local) | **[DONE]** | `_shared_images/`, referenced per session |
-| B5 | 16 SVG course covers | **[DONE]** | `assets/covers/` |
-| B6 | 48 Mermaid diagrams | **[DONE]** | Embedded in lesson §F |
-| B7 | Knowledge checks + answers | **[DONE]** | Section N of every session — **raw material for quizzes** |
-| B8 | Exercises + answer keys | **[DONE]** | Sections I/J — **raw material for practice tasks** |
-| B9 | Case studies | **[DONE]** | Section K — **raw material for scenario/branching content** |
-| B10 | Rubrics | **[DONE]** | Section M — **raw material for self-assessment checklists** |
-| B11 | Compiled PDFs | **[DONE]** | Summary + Teaching Manual + Full Course per course |
-| B12 | CEA logo | **[DONE]** | `cealogo.png` — the app's brand anchor |
+| B1 | 16 full courses | ✅ **verified** | The 16 course directories hold 48 PDFs (Summary + Teaching Manual + Full Course); `content/<slug>/` is the derived, committed corpus |
+| B2 | 141 session lesson notes (A–O) | 🟡 **produced here, not shipped** | No `Session_*.md` existed in this repo — only PDFs. `tools/pdf-extract/extract.py` writes `content/<slug>/session-NN.md` for all 141 levels, and `packages/content` splits A–O |
+| B3 | 141 SVG concept diagrams | 🟡 **PNG clips, 139/141** | The figures are vector art inside the PDFs; the extractor clips each level's figure page to PNG with a transcript + hotspot geometry. The 2 levels with no figure get a flow diagram synthesised from their own procedure |
+| B4 | 64 stock photos (local) | ❌ **not in the repo** | `_shared_images/` does not exist. Nothing in the app depends on it; see `docs/GAP-ANALYSIS.md` §1 |
+| B5 | 16 SVG course covers | ✅ **authored here** | `assets/covers/<slug>.svg`, brand navy/gold, linked from the catalogue and OG metadata |
+| B6 | 48 Mermaid diagrams in §F | ❌ **not in the sources** | §F holds real fenced code (Excel, JS, HTML); that code feeds `CodeBlanks`. Roadmap item 2.7 (pre-render mermaid) is moot |
+| B7 | Knowledge checks + answers | 🟡 **981 of 991 keyed** | Quiz extraction yields 991 questions; 10 questions' levels have no answer key printed in the manual, and scoring treats those as "a tutor reads it" instead of guessing |
+| B8 | Exercises + answer keys | ✅ | 422 exercises with prompts; model answers + code live in the server-only `keys/` and are revealed after a submission |
+| B9 | Case studies | ✅ | 141 branching scenarios (situation, facts, options, per-option feedback); the resolution comes from the server after a choice |
+| B10 | Rubrics | ✅ | 36-level §M/§L rubric criteria become self-assessment checklists; the mark allocation stays server-side |
+| B11 | Compiled PDFs | ✅ **verified** | 48 PDFs, tracked in git (~327 MB) |
+| B12 | CEA logo | 🟡 **extracted** | `assets/cealogo.png` (from the PDF cover). The top-bar mark is inline SVG so a 737 KB raster is not on every page load |
 
 **Key insight:** B7–B10 mean ~60–70% of the interactive question content ALREADY EXISTS in the markdown. The content pipeline (Phase 2) is mostly *extraction*, not authoring.
 
@@ -620,7 +625,7 @@ These are prerequisites that are COMPLETE. The app consumes them as input.
 *Purpose: turn free visitors into paying learners, and give the academy a control room.*
 
 ### 7.1 Pricing & package config
-- **What:** Store each course's ₦ fee (from design docs: e.g. Web Dev ₦50k, Typing ₦15k, etc.). Admin-editable table.
+- **What:** Store each course's ₦ fee **as its own manual states it** (Typing ₦20k · Data Entry ₦20k · Online Teaching ₦25k · Cybersecurity ₦40k · Web Design ₦50k · Web Dev ₦50k — ₦20k–₦50k across the 16; there is no single formula). Read from `content/<slug>/course.json` into `course_pricing`, which stays admin-editable.
 - **Why:** Fees already defined per course; must be single source of truth.
 - **Acceptance:** Fees render on catalogue + checkout.
 
@@ -957,6 +962,8 @@ The app is "done" when:
 # CEA LEARN — MASTER TODO CHECKLIST
 ### Companion to `ROADMAP.md` · Tick items as you complete them
 **Status key:** `[ ]` not started · `[~]` in progress · `[x]` done
+
+> **This checklist is the plan; `docs/ROADMAP.md` is the ledger.** Every item below was built, deferred or deviated from on purpose, and each of those 110 verdicts (with how it was verified) lives there. `docs/GAP-ANALYSIS.md` lists what this document left undecided and what was invented to close the hole; `docs/DEPLOYMENT.md` is the operator runbook.
 
 > Each item = one unit of work. The `🔗` shows what it feeds. Effort: 🟢 small · 🟡 medium · 🔴 large
 > Where you see a Phase gate (■), stop and confirm it passes before starting the next phase.
