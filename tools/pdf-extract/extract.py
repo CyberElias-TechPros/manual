@@ -300,7 +300,14 @@ KIND_BY_TITLE = [
     (r"EVALUATION NOTES|INSTRUCTOR NOTES", "instructor_notes"),
     (r"RUBRIC", "rubric"),
 ]
-SECTION_HEAD_RE = re.compile(r"^([A-O])\.\s*([A-Z][A-Za-z ,&/\-\(\)0-9']{2,70})$")
+# The title class allows the typographic characters these manuals actually use — an em dash inside a
+# heading ("M. KNOWLEDGE CHECK — VIVA QUESTION LIST WITH MODEL ANSWERS") is what made the splitter
+# reject the section outright, and the rejection was silent: that level lost its whole knowledge
+# check and its model answers, and the app has been calling it "no answer key in the source PDF" ever
+# since. A mis-decoded copy of the dash (the "â€”" mojibake) is allowed too, for runs before
+# fix_mojibake has touched the page.
+SECTION_TITLE_CHARS = r"A-Za-z ,&/\-\(\)0-9'\u2018\u2019\u201c\u201d\u2013\u2014\u00c2\u00a0:"
+SECTION_HEAD_RE = re.compile(rf"^([A-O])\.\s*([A-Z][{SECTION_TITLE_CHARS}]{{2,80}})$")
 
 
 def classify_head(text: str) -> tuple[str, str] | None:
@@ -309,7 +316,7 @@ def classify_head(text: str) -> tuple[str, str] | None:
         return None
     letter, title = m.group(1), m.group(2).strip()
     f = flat(title)
-    if not re.match(r"^[A-Z][A-Z ,&/\-\(\)0-9']{2,}$", f):
+    if not re.match(rf"^[A-Z][{SECTION_TITLE_CHARS}]{{2,}}$", f):
         return None
     for pat, kind in KIND_BY_TITLE:
         if re.search(pat.replace(" ", ""), f):

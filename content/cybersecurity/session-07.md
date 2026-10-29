@@ -154,7 +154,7 @@
 
 **Connection to previous work:** In Sessions 1–6 learners learned individual defensive skills — one lock, one door, one room at a time. This session teaches them to walk through a whole small business, room by room, write down what they find, and decide which problems matter most. It is the bridge from "I can secure my own phone" to "I can advise a small business."
 
-**Preparation before class:** Academy PCs on and logged in; projector ready; printed vignette cards (one business per pair) from Appendix 7A; printed findings-table worksheets (Section H); whiteboard divided into a 3Ã —3 risk grid drawn before class; the running example Adaeze Fashion written on the board.
+**Preparation before class:** Academy PCs on and logged in; projector ready; printed vignette cards (one business per pair) from Appendix 7A; printed findings-table worksheets (Section H); whiteboard divided into a 3 —3 risk grid drawn before class; the running example Adaeze Fashion written on the board.
 
 ## B. Learning Outcomes
 <!-- kind:outcomes -->

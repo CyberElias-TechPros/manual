@@ -394,7 +394,9 @@ Be calm and honest about limits ("I did not test any system; I observed with per
 Questions to ask the class:
 "What did I say instead of 'it's High'?" (Likelihood and impact reason.)
 "What did I demonstrate, and on whose account?" (One action, my own.)
-H. GUIDED PRACTICAL EXERCISE (18 minutes) — Capstone build
+
+## H. GUIDED PRACTICAL EXERCISE (18 minutes) — Capstone build
+<!-- kind:guided_practical -->
 Objective: With the instructor guiding, each learner assembles their capstone report from their S7 and S8 work and prepares a
 short presentation.
 Materials: Learner's S7 findings table, S8 improvement plan, S8 incident card, the report structure (F.3), the rubric (L), a word
@@ -430,7 +432,9 @@ Improvement plan with quick wins first, who/when/cost
 Incident card included
 Conclusion present
 Report saved in CEA-Sec-YourName
-I. INDEPENDENT CLASS EXERCISE (15 minutes) — Present and viva
+
+## I. INDEPENDENT CLASS EXERCISE (15 minutes) — Present and viva
+<!-- kind:exercise -->
 Task: Each learner presents their capstone report (3 minutes) and answers viva questions (2 minutes). The instructor and class
 use the rubric.
 Objective: Demonstrate clear presentation and defend the reasoning behind findings, risk ratings and recommendations.
@@ -531,7 +535,9 @@ Symptoms: No demo during the presentation. Corrective steps: Show one setting (M
 account and explain why it reduces risk. Prevention: Prepare the demo before the session.
 Distinguish likely vs confirmed: In your report, say what you observed and how you know it (who showed you / where you
 looked). Do not present a guess as a confirmed fact.
-L. SESSION ASSIGNMENT — THE CAPSTONE (and full rubric)
+
+## L. SESSION ASSIGNMENT — THE CAPSTONE (and full rubric)
+<!-- kind:assignment -->
 Assignment title: "Capstone — Defensive Security Assessment Report and Presentation for Adaeze Fashion (or your chosen
 fictional business)."
 Purpose: Integrate every skill in the course into one professional deliverable and present it.
@@ -597,7 +603,9 @@ Common mistakes to avoid: missing scope/authorisation; all-High findings with no
 actions; incident card in the wrong order; jargon; assessing or demoing on a real/third-party system; claiming
 screenshots/scans not done; overrunning time.
 Instructor reference solution: the complete Adaeze Fashion report in Appendix 9A below.
-M. KNOWLEDGE CHECK — VIVA QUESTION LIST WITH MODEL ANSWERS
+
+## M. Knowledge Check — Viva Question List with Model Answers
+<!-- kind:knowledge_check -->
 (Instructor copy. Ask 2–3 per learner. Mark on understanding, not exact words. Accept any answer that shows the right idea.)
 Q1. What is a defensive security assessment, and how is it different from hacking?
 Model answer: A security assessment is a permission-based, organised look at a business's devices, accounts and habits to
