@@ -194,6 +194,7 @@ export function DashboardClient() {
 
       <div className="mt-10 max-w-reading">
         <AdSlot placement="dashboard-side" />
+        <AdSlot placement="dashboard-inline" variant="card" />
         <NgAdSlot placement="dashboard-side" />
       </div>
     </div>

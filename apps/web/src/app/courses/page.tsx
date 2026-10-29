@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { CourseRows } from '@cea/ui'
+import { AdSlot, CourseRows } from '@cea/ui'
 import { blurb, categories, courseList } from '@/lib/content'
 import { CourseFilter } from './filter'
 
@@ -65,6 +65,8 @@ export default function CoursesPage({ searchParams }: { searchParams?: { track?:
           />
         </section>
       )}
+
+      <AdSlot placement="catalogue-footer" />
     </div>
   )
 }

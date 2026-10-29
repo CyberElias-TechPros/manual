@@ -24,6 +24,7 @@ export function CourseSyllabus({ slug }: { slug: string }) {
         quizCount: s.quizCount, words: s.words, state: s.state,
       }))} />
       <AdSlot placement="course-after-syllabus" />
+      <AdSlot placement="course-side" variant="card" />
     </div>
   )
 }

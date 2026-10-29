@@ -193,7 +193,7 @@ export const ADS = {
       'map-side', 'lesson-top', 'lesson-inline', 'lesson-between-stages', 'after-question',
       'level-complete-side', 'level-complete-band', 'dashboard-side', 'dashboard-inline',
       'leaderboard-side', 'profile-side', 'certificate-top', 'auth-side', 'search-results',
-      'checkout-note', 'offline', 'notfound', 'styleguide',
+      'checkout-note', 'offline', 'notfound', 'styleguide', 'site-footer',
     ],
     /** 8.3 is retired by decision (2026-10-29). The floor that remains is `maxPerView` + data-saver. */
     forbidden: [],

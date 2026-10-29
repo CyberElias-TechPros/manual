@@ -6,12 +6,19 @@
  * review list where the teaching actually happens: verdict, model answer, why.
  *
  * Retries are unlimited and answers are kept between attempts, so a learner can fix only what was
- * wrong instead of retyping everything. Ads are structurally impossible in here: there is no slot
- * in this component (8.3 "never mid-quiz").
+ * wrong instead of retyping everything.
+ *
+ * There is exactly one ad slot in here (`after-question`), under the answer box. The old 8.3 rule
+ * ("never mid-quiz") was retired by the academy on 2026-10-29 when ads became the product's
+ * revenue; this is where the line now sits — a slot may sit below a question, but never between a
+ * submitted answer and its verdict, because reading whether you were right is the one moment in a
+ * check that belongs to the learner. Nothing here renders the verdict in the same screen as the slot:
+ * `graded` marks appear in the review list, after the check is over.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Question } from '@cea/content/schema'
 import { Button, Card, Label, Pill, ProgressBar, cx } from './primitives'
+import { AdSlot } from './shell'
 
 export interface GradedQuestion { id: string; correct: boolean | null; credit: number; modelAnswer: string; explanation: string; note: string; expected?: string[] }
 export interface QuizResult { correct: number; total: number; scorePct: number; passed: boolean; perfect: boolean; perQuestion: GradedQuestion[] }
@@ -118,6 +125,9 @@ export function QuizRunner({
           <Button onClick={() => setStep(s => Math.min(total - 1, s + 1))} disabled={!String(answers[q.id] ?? '').trim()}>Next</Button>
         )}
       </div>
+      {/* 8.x — under the answer, never between a question and its verdict: the learner must not have to
+          scroll past a banner to find out whether they were right. */}
+      <AdSlot placement="after-question" variant="card" />
       {!last && !String(answers[q.id] ?? '').trim() && (
         <p className="mt-2 text-right text-[0.8125rem] text-ink-500 dark:text-light/55">Answer this one to move on — a blank counts as wrong.</p>
       )}

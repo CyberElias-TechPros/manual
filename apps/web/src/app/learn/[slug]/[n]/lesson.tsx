@@ -351,6 +351,8 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
           </div>
         </div>
 
+        <AdSlot placement="lesson-top" />
+
         {banner && (
           <div role="status" className={cx('mt-6 flex max-w-reading items-start justify-between gap-4 px-4 py-3 text-[0.9375rem]', banner.tone === 'ok' ? 'bg-success/8 text-success' : 'bg-error/8 text-error')}>
             <span>{banner.text}</span>
@@ -390,6 +392,10 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
             />
           )}
         </div>
+
+        {/* the gap between stages is the one moment in a level where the learner has finished a thought
+            and has not yet started the next one; the ad lives there rather than inside a question */}
+        {stage.id !== 'finish' && <AdSlot placement="lesson-between-stages" variant="card" />}
 
         {stage.id !== 'finish' && (
           <div className="mt-10 flex max-w-reading flex-wrap items-center justify-between gap-4 border-t border-surface-line pt-5 dark:border-surface-dark-line">
@@ -634,6 +640,7 @@ function FinishStage({ lesson, checklist, onChecklist, readCount, needToRead, re
             <Link href={`/courses/${slug}/map`} className="inline-flex min-h-[44px] items-center text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-sky">See the map</Link>
             <Link href="/dashboard" className="inline-flex min-h-[44px] items-center text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-sky">Dashboard</Link>
           </div>
+          <AdSlot placement="level-complete-band" />
           <AdSlot placement="level-complete-side" />
         </div>
       ) : (

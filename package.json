@@ -18,7 +18,7 @@
     "content:watch": "pnpm --filter @cea/content watch",
     "content:lint": "pnpm --filter @cea/content lint:content",
     "db:seed": "node tools/seed.mjs",
-    "test": "pnpm --filter @cea/content test && pnpm --filter @cea/web test && node tools/leak-audit.mjs && node tools/assert-bundle-size.mjs",
+    "test": "pnpm --filter @cea/content test && pnpm --filter @cea/web test && node tools/leak-audit.mjs && node tools/ad-budget.mjs && node tools/assert-bundle-size.mjs",
     "worker:dev": "pnpm --filter @cea/api dev",
     "worker:deploy": "pnpm --filter @cea/api deploy",
     "test:smoke": "node tools/smoke-api.mjs",

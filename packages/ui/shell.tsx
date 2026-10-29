@@ -248,13 +248,89 @@ export function useDataSaver() {
   return { on, set }
 }
 
-/** 8.3 — placement policy expressed in code, so an ad can never appear mid-quiz. */
+/**
+ * 8.x — the ad surface, after the 2026-10-29 decision that ads carry the product while payments are
+ * paused. The old placement policy (nothing in the lesson body, nothing between a question and its
+ * verdict, two per view) is retired by that decision; what is *not* retired is the two promises that
+ * were never about revenue: a learner who turned data-saver on is not shown ads, and an ad is never
+ * the reason a page shifts or a learner waits.
+ *
+ * `adAllowed` therefore answers "may a slot be drawn here at all" (a placement on the list, and the
+ * learner has not opted out), while `ADS.enabled` answers only "has the network been approved".
+ * A frame with no approved network still renders — as a house promo — because an empty grey box in
+ * the middle of a lesson is worse for the sponsor, the academy and the learner.
+ */
 export type AdPlacement = typeof ADS.policy.allowedPlacements[number]
 export function adAllowed(placement: AdPlacement, opts: { dataSaver?: boolean; premium?: boolean } = {}): boolean {
-  if (!ADS.enabled) return false
   if (opts.premium) return false
-  if (opts.dataSaver) return false
+  if (ADS.policy.respectDataSaver !== false && opts.dataSaver) return false
+  if (!ADS.enabled && !ADS.fillEmpty) return false
   return (ADS.policy.allowedPlacements as readonly string[]).includes(placement)
+}
+
+/** The three shapes a slot comes in, so a heavy ad load still reads as a layout and not as litter. */
+export type AdVariant = 'band' | 'rail' | 'card'
+
+const AD_FRAME: Record<AdVariant, string> = {
+  band: 'w-full',
+  rail: 'w-full',
+  card: 'w-full',
+}
+
+/**
+ * What fills an unapproved (or simply unfilled) slot. Chosen from the placement name, not from a
+ * clock or Math.random: the server render and the first client render must agree, and a promo that
+ * changed on every repaint would be its own layout shift.
+ */
+const HOUSE_PROMOS = [
+  {
+    href: '/courses', kicker: 'Free while payments are paused',
+    title: 'Start any of the 16 courses today',
+    body: 'Every level is open right now — read a level, take the check, bank the XP.',
+    cta: 'Browse the catalogue',
+  },
+  {
+    href: '/leaderboard', kicker: 'This week at the academy',
+    title: 'Climb the leaderboard',
+    body: 'XP from reading, knowledge checks and practice tasks. Rookie to Legend, every rank is earned.',
+    cta: 'See the board',
+  },
+  {
+    href: '/courses/microsoft-office', kicker: 'Most started',
+    title: 'Microsoft Office, level by level',
+    body: 'Word, Excel and PowerPoint — from a blank screen to a document you would send a client.',
+    cta: 'Open the course',
+  },
+  {
+    href: `mailto:${'hello@cea.ng'}?subject=${encodeURIComponent('Sponsor slot on CEA Learn')}`, kicker: 'Sponsored · your ad here',
+    title: 'Reach learners finishing a skill this month',
+    body: 'Naira-rate placement in front of a Nigerian audience that is studying, not scrolling.',
+    cta: 'hello@cea.ng',
+  },
+]
+
+export function HouseAd({ placement, variant = 'band' }: { placement: string; variant?: AdVariant }) {
+  let h = 0
+  const seed = `cea-house|${placement}`
+  for (let i = 0; i < seed.length; i++) h = (h * 131 + seed.charCodeAt(i)) >>> 0
+  const promo = HOUSE_PROMOS[h % HOUSE_PROMOS.length]
+  return (
+    <a
+      href={promo.href}
+      data-ad-slot={placement}
+      className={cx(
+        'group block rounded-card border border-surface-line bg-surface px-4 py-4 text-left transition-colors hover:border-surface-line-strong dark:border-surface-dark-line dark:bg-surface-dark dark:hover:border-surface-dark-line-strong',
+        AD_FRAME[variant],
+      )}
+    >
+      <span className="block text-[0.6875rem] font-bold uppercase text-ink-500 dark:text-light/55">{promo.kicker}</span>
+      <span className="mt-1.5 block text-base font-bold tracking-snugish text-ink dark:text-light">{promo.title}</span>
+      <span className="mt-1 block max-w-measure text-[0.9375rem] leading-relaxed text-ink-600 dark:text-light/70">{promo.body}</span>
+      <span className="mt-2.5 inline-flex items-center gap-1 text-[0.9375rem] font-bold text-navy underline-offset-4 group-hover:underline dark:text-sky">
+        {promo.cta} <span aria-hidden="true">→</span>
+      </span>
+    </a>
+  )
 }
 
 /**
@@ -284,17 +360,26 @@ function useDeferredAd(ref: React.RefObject<HTMLElement | null>, enabled: boolea
   }, [visible])
 }
 
-export function AdSlot({ placement, label = 'Advertisement' }: { placement: AdPlacement; label?: string }) {
+export function AdSlot({ placement, label = 'Advertisement', variant = 'band' }: { placement: AdPlacement; label?: string; variant?: AdVariant }) {
   const { user } = useSession()
   const dataSaver = !!user?.prefs?.dataSaver
   const allowed = adAllowed(placement, { dataSaver })
   const ref = useRef<HTMLDivElement>(null)
-  useDeferredAd(ref, allowed)
+  // the auction is only ever requested for a real, approved network
+  useDeferredAd(ref, allowed && ADS.enabled)
   if (!allowed) return null
+  if (!ADS.enabled) {
+    // 8.6 — an unapproved network must never show the learner an empty box
+    return (
+      <aside className="my-8" aria-label="Sponsored">
+        <HouseAd placement={placement} variant={variant} />
+      </aside>
+    )
+  }
   // 10.1 CLS: the slot reserves its height even when the network returns nothing.
   return (
     <aside ref={ref} className="my-8 border-y border-surface-line bg-surface-muted/60 py-3 text-center dark:border-surface-dark-line dark:bg-surface-dark-muted/60" aria-label={label}>
-      <div className="text-[0.8125rem] text-ink-500 dark:text-light/55">{label}</div>
+      <div className="text-[0.8125rem] font-medium text-ink-500 dark:text-light/55">{label}</div>
       <ins className="adsbygoogle block" style={{ minHeight: 90 }} data-ad-client={`ca-pub-${(ADS as any).adsense.clientId.replace(/^ca-pub-/, '')}`}
         data-ad-slot={(ADS as any).adsense.slotCatalogue} data-ad-format="auto" data-full-width-responsive="true" />
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" data-ad-channel="cea-learn" />
@@ -308,6 +393,7 @@ export function NgAdSlot({ placement = 'dashboard-side' as AdPlacement }: { plac
   const allowed = adAllowed(placement, { dataSaver: !!user?.prefs?.dataSaver })
   const ref = useRef<HTMLDivElement>(null)
   if (!allowed) return null
+  if (!ADS.enabled) return <aside className="my-8" aria-label="Sponsored"><HouseAd placement={placement} /></aside>
   return (
     <aside ref={ref} className="my-8 border-y border-surface-line bg-surface-muted/60 py-3 text-center dark:border-surface-dark-line dark:bg-surface-dark-muted/60" aria-label="Sponsored">
       <div className="text-[0.8125rem] text-ink-500 dark:text-light/55">Sponsored · ngAdverts</div>
