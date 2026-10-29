@@ -267,6 +267,46 @@ the reason beside each entry. Nothing here needs a native build: `tsx`/`vitest` 
 binaries as optional dependencies, `sharp` is unused (§4.5), and `workerd` only matters for
 `wrangler dev` — which `pnpm dev` replaces by running the same Hono app on Node.
 
+### 4.9 The course metadata carried the PDF's page furniture
+
+The redesign put one sentence — the course's own promise — directly under every title, which made a
+content-pipeline flaw visible for the first time: `problem` existed for only 7 of 16 courses, and the
+seven that had it were **cut mid-word** ("…sales, logistics, church"), because `scan_field` took the
+rest of the label's line and stopped. The `audience` and `entry_requirements` lists were worse in a
+quieter way — they were the PDF's own line wraps, so the course page rendered
+
+    • This course is designed for:
+    • Shop owners, market traders and small business staff who handle money, customer data and WhatsApp business
+    • accounts.
+
+as three bullets: a heading, a sentence with its tail missing, and the tail as a bullet of its own.
+
+All of it is fixed in the extractor, not in the UI, so the corpus stays the clean copy and
+`pnpm content:build` remains reproducible:
+
+* `_CHROME` skips running headers and footers (`Photography | Cyber Elias Academy`,
+  `Cyber Elias Academy · Photography · Page 4 of 211`, `Page 12`, `© 2026 …`) instead of gluing them
+  into a sentence;
+* a field's value keeps reading past a blank line when the sentence has not ended, which is what the
+  page-break-in-a-paragraph case actually looks like, and re-joins a word the PDF hyphenated across a
+  line end;
+* prose fields (`problem`, `mission`, `assessment`, `scope_statement`) collect every candidate match
+  and return the first **complete** paragraph rather than the first hit, and keep their trailing full
+  stop — `strip(" .")` was eating it, which is why seven `problem` values read as run-on fragments;
+* `clean_list()` drops a lead-in that only announces the list below it ("What learners bring.",
+  "Typical class profile", "Primary Audience:"), re-joins a wrapped item (detected by a lowercase
+  start, or by the bullet above ending on a word that cannot end a sentence), dedupes, and is
+  idempotent — which is why there is now a `--clean-lists` mode that runs it over the stored
+  `content/*/course.json` without reading a PDF.
+
+Result: 16 of 16 courses carry a complete `problem` paragraph (252–690 characters, all of it from the
+manual), `packages/content/src/build.ts` derives a `tagline` from its first sentence clipped at a word
+boundary with an ellipsis rather than at character 190 mid-word, and
+`packages/content/test/corpus.test.ts` now fails the build if any course loses its promise, if a
+tagline is cut mid-word, or if a list item contains page furniture again. `--meta-only --only
+problem,audience` is the safe refresh: the numbers a human verified (`fee_ngn`, `weeks`,
+`sessions_count`, `certificate`) are not touched by a prose re-extraction.
+
 ## 5. Small things that still needed a decision
 
 | Question | Answer shipped | Where |

@@ -103,8 +103,10 @@ Notes that cost time if learned later:
 ```bash
 # content/ is the corpus; assets/ holds the clipped figures — both are committed sources
 git checkout -b content/refresh-<date>
-node tools/pdf-extract/extract.py --all            # re-read the PDFs (needs .venv-pdf: pymupdf+Pillow)
-node tools/pdf-extract/extract.py --all --repair-only   # encoding pass only, no re-split
+python3 tools/pdf-extract/extract.py --all            # re-read the PDFs (venv: pip install -r tools/pdf-extract/requirements.txt)
+python3 tools/pdf-extract/extract.py --repair-only    # encoding pass over content/**/*.md, no re-split
+python3 tools/pdf-extract/extract.py --meta-only --only problem,audience   # Part-1 prose only — never touches a fee or a count
+python3 tools/pdf-extract/extract.py --clean-lists    # re-run the page-furniture / line-wrap cleaner over course.json
 pnpm content:build                                  # bundle + lint + seed.sql + report.json
 node tools/link-assets.mjs                          # figures → apps/web/public/assets
 pnpm test                                           # 23 unit/integration + leak audit + lint gate
@@ -113,6 +115,10 @@ git add content assets && git commit && gh pr create
 # after merge:
 node tools/publish-content.mjs                      # KV + R2 (Worker)
 ```
+
+`--only <fields>` on `--meta-only` exists because a full metadata refresh would re-derive the
+hand-verified numbers too; `--clean-lists` is idempotent and is what stops a PDF's running header
+("Photography | Cyber Elias Academy") or a hard line wrap becoming a bullet in the UI.
 
 `--only index,courses` publishes a subset; `--dry-run` prints the plan; `--verify` reads every
 object back and compares bytes. A learner sees new text on the next request (KV is read
