@@ -57,7 +57,9 @@ export function LeaderboardClient({ course, period }: { course: string; period: 
 
       <div className="no-scrollbar -mx-1 mt-7 flex gap-5 overflow-x-auto px-1 sm:mx-0 sm:px-0" role="tablist" aria-label="Board scope">
         <BoardTab active={!tab.course} onClick={() => setTab(t => ({ ...t, course: '' }))}>All courses</BoardTab>
-        {(courses.data?.courses ?? []).slice(0, 8).map(c => (
+        {/* Every course gets a board, not the first eight: 16 courses and a scroller is exactly the
+            case the scroller exists for (5.6). */}
+        {(courses.data?.courses ?? []).map(c => (
           <BoardTab key={c.slug} active={tab.course === c.slug} onClick={() => setTab(t => ({ ...t, course: c.slug }))}>{c.displayTitle || c.name}</BoardTab>
         ))}
         <span className="mx-0.5 w-px shrink-0 self-stretch bg-surface-line dark:bg-surface-dark-line" aria-hidden />
@@ -80,7 +82,9 @@ export function LeaderboardClient({ course, period }: { course: string; period: 
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[0.9375rem] font-medium text-ink dark:text-light">{r.me ? `${r.name} (you)` : r.name}</span>
                   <span className="mt-0.5 block text-[0.8125rem] text-ink-500 dark:text-light/55">
-                    {tab.period === 'week' ? `${r.gained.toLocaleString()} XP this week` : `${(r.xp / 1000).toFixed(1)}k lifetime XP`}
+                    {tab.period === 'alltime' && tab.course
+                      ? `${r.gained.toLocaleString()} XP in this course`
+                      : tab.period === 'week' ? `${r.gained.toLocaleString()} XP this week` : `${(r.xp / 1000).toFixed(1)}k lifetime XP`}
                   </span>
                 </span>
                 <span className="shrink-0 text-right">

@@ -793,11 +793,19 @@ export function learnRoutes() {
       ? await q.all(c.env, `SELECT lw.user_id, u.name, u.xp, SUM(lw.xp) AS gained, u.avatar_seed FROM leaderboard_weekly lw JOIN users u ON u.id = lw.user_id
           WHERE lw.week = ? AND lw.course = ? AND u.leaderboard_opt_in = 1 AND u.is_guest = 0 AND u.banned_at IS NULL
           GROUP BY lw.user_id ORDER BY gained DESC LIMIT 50`, week, course || 'global')
-      : await q.all(c.env, `SELECT id AS user_id, name, xp, 0 AS gained, avatar_seed FROM users WHERE leaderboard_opt_in = 1 AND is_guest = 0 AND banned_at IS NULL ORDER BY xp DESC LIMIT 50`)
+      : course
+        // An all-time board *for one course* has to count what was earned in that course, or the tab
+        // would be a lie: the global lifetime sort ignores the filter. `xp_events` carries the course
+        // on every row (5.9), so the per-course sum is real and needs no new table.
+        ? await q.all(c.env, `SELECT e.user_id, u.name, u.xp, SUM(e.points) AS gained, u.avatar_seed
+            FROM xp_events e JOIN users u ON u.id = e.user_id
+            WHERE e.course = ? AND u.leaderboard_opt_in = 1 AND u.is_guest = 0 AND u.banned_at IS NULL
+            GROUP BY e.user_id, u.name, u.xp, u.avatar_seed ORDER BY gained DESC LIMIT 50`, course)
+        : await q.all(c.env, `SELECT id AS user_id, name, xp, 0 AS gained, avatar_seed FROM users WHERE leaderboard_opt_in = 1 AND is_guest = 0 AND banned_at IS NULL ORDER BY xp DESC LIMIT 50`)
     const out = {
       ok: true, period, course: course || 'global', week,
       rows: rows.map((r, i) => ({ pos: i + 1, name: r.name, xp: Number(r.xp), gained: Number(r.gained), id: r.user_id, me: r.user_id === u?.id, avatarSeed: r.avatar_seed })),
-      me: u && period === 'alltime' && !rows.some(r => r.user_id === u.id)
+      me: u && (period === 'alltime' || !!course) && !rows.some(r => r.user_id === u.id)
         ? { pos: null, name: u.name, xp: u.xp, gained: 0, id: u.id, me: true } : null,
       optInNote: 'Learners who turned leaderboards off are not listed.',
     }
