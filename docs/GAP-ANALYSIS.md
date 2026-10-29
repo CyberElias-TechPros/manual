@@ -112,6 +112,19 @@ be failed by a hole in the source document, and the app never grades on a guess.
 `OPEN`: retype those two lines in the manuals (or keep them tutor-marked) and `pnpm content:build`
 absorbs the fix.
 
+**The trap that fix opened, and why the corpus is not re-extracted wholesale.** Widening the title
+class promotes section headings that were previously swallowed — in five more levels, correctly. But
+`--all` also promotes a line *inside* a case study (`J. Viva / Demonstration — Question List with
+Model Answers`, Computer Repairs 12), which splits that section in two and takes its "Possible
+approaches / Recommended solution" tail with it; `buildScenarios` reads only the `case_study` section,
+so the level silently loses its case study (141 → 140). Found by extracting all 16 courses (12
+minutes) and diffing the built corpus level by level. The tool now refuses a lettered line that ends
+with a colon — that is a list introduction, not a section, and no section title in these manuals uses
+one — which removes the worst class of false promotion. The rest stays open: teach the extractor not
+to split a `case_study` section, then re-run `--all` with `git checkout -- content/*/course.json`
+behind it, because a per-course run also rewrites `course.json` from raw text and undoes §4.9. The
+corpus meanwhile keeps its reviewed state: 141 levels, 991 questions, 938,595 words.
+
 ### 2.8 Two levels have no figure in the source
 `social-media-management` levels 8 and 9 genuinely have no diagram page in the manual.
 Instead of shipping a level with no visual, the build synthesises one from the level's own

@@ -314,6 +314,12 @@ def classify_head(text: str) -> tuple[str, str] | None:
     m = SECTION_HEAD_RE.match(text.strip())
     if not m:
         return None
+    # A lettered line that ends with a colon is introducing a list, not opening a section
+    # ("B. Scoring the 5-mark presentation/viva (Rubric Section 3):"). Promoting it splits the real
+    # section in half, and the tail of a case study landing in a new section costs the level its
+    # scenario. No section title in these 16 manuals ends with a colon, so the rule is free.
+    if m.group(2).rstrip().endswith(':'):
+        return None
     letter, title = m.group(1), m.group(2).strip()
     f = flat(title)
     if not re.match(rf"^[A-Z][{SECTION_TITLE_CHARS}]{{2,}}$", f):
