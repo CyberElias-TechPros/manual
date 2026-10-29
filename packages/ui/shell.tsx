@@ -34,6 +34,24 @@ function writeJson(key: string, value: unknown) {
   try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* private mode / quota — the app still works, just without the cache */ }
 }
 
+/**
+ * Which guest pass, if any, belongs to this browser — one reader, because the register form and the
+ * dashboard both need it and they had drifted to two different keys (a merge that silently never
+ * ran). `cea:lastLevel` is the old name, kept as a fallback so a learner mid-pass is not orphaned.
+ */
+export const GUEST_KEY = 'cea:guest'
+export function guestIdOf(store: Pick<Storage, 'getItem'> = localStorage): string | null {
+  for (const key of [GUEST_KEY, 'cea:lastLevel']) {
+    try {
+      const raw = store.getItem(key)
+      if (!raw) continue
+      const id = (JSON.parse(raw) as { guestId?: unknown })?.guestId
+      if (typeof id === 'string' && id) return id
+    } catch { /* private mode, or a value written by an older build */ }
+  }
+  return null
+}
+
 export type QueuedMutation = { path: string; body: unknown; at: number; tries?: number }
 
 export function queuedMutations(): QueuedMutation[] {
@@ -276,7 +294,7 @@ export function AdSlot({ placement, label = 'Advertisement' }: { placement: AdPl
   // 10.1 CLS: the slot reserves its height even when the network returns nothing.
   return (
     <aside ref={ref} className="my-8 border-y border-surface-line bg-surface-muted/60 py-3 text-center dark:border-surface-dark-line dark:bg-surface-dark-muted/60" aria-label={label}>
-      <div className="text-[0.625rem] uppercase tracking-[0.14em] text-ink-400 dark:text-light/40">{label}</div>
+      <div className="text-[0.8125rem] text-ink-500 dark:text-light/55">{label}</div>
       <ins className="adsbygoogle block" style={{ minHeight: 90 }} data-ad-client={`ca-pub-${(ADS as any).adsense.clientId.replace(/^ca-pub-/, '')}`}
         data-ad-slot={(ADS as any).adsense.slotCatalogue} data-ad-format="auto" data-full-width-responsive="true" />
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" data-ad-channel="cea-learn" />
@@ -292,7 +310,7 @@ export function NgAdSlot({ placement = 'dashboard-side' as AdPlacement }: { plac
   if (!allowed) return null
   return (
     <aside ref={ref} className="my-8 border-y border-surface-line bg-surface-muted/60 py-3 text-center dark:border-surface-dark-line dark:bg-surface-dark-muted/60" aria-label="Sponsored">
-      <div className="text-[0.625rem] uppercase tracking-[0.14em] text-ink-400 dark:text-light/40">Sponsored · ngAdverts</div>
+      <div className="text-[0.8125rem] text-ink-500 dark:text-light/55">Sponsored · ngAdverts</div>
       <div style={{ minHeight: 90 }} data-cfasync="false">
         <script async src={`${(ADS as any).ngAdverts.script}?slot=${(ADS as any).ngAdverts.slots[0]}`} data-cfasync="false" />
       </div>

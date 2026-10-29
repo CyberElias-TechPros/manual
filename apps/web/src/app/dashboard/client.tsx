@@ -8,8 +8,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  AdSlot, Button, Label, NgAdSlot, Pill, ProgressBar, Skeleton, StatBlock, linkClass,
-  StreakFlame, request, useApi, useSession,
+  AdSlot, Button, GUEST_KEY, Label, NgAdSlot, Pill, ProgressBar, Skeleton, StatBlock, linkClass,
+  StreakFlame, guestIdOf, request, useApi, useSession,
 } from '@cea/ui'
 import { XP } from '@cea/config'
 
@@ -208,8 +208,7 @@ function GuestDashboard() {
   useEffect(() => {
     if (typeof window === 'undefined') return
     try {
-      const r = localStorage.getItem('cea:lastLevel')
-      if (r) setGuestId(JSON.parse(r).guestId ?? null)
+      setGuestId(guestIdOf(localStorage))
     } catch { /* ignore */ }
   }, [])
 
@@ -244,7 +243,7 @@ function GuestDashboard() {
               setBusy(true); setErr(null)
               try {
                 const r = await request<{ guestId: string }>('/api/auth/guest', { method: 'POST', body: {} })
-                localStorage.setItem('cea:lastLevel', JSON.stringify({ guestId: r.guestId }))
+                localStorage.setItem(GUEST_KEY, JSON.stringify({ guestId: r.guestId }))
                 setGuestId(r.guestId)
                 location.href = '/courses'
               } catch (e: any) { setErr(e?.message || 'Could not start the guest pass.') } finally { setBusy(false) }

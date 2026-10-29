@@ -12,9 +12,9 @@ export default function MapPage({ params }: { params: { slug: string } }) {
   return (
     <div className="space-y-4">
       <header>
-        <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink-500 dark:text-light/55">Mission map</p>
+        <p className="text-[0.8125rem] text-ink-500 dark:text-light/55">Level map</p>
         <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">{c.displayTitle || c.name}</h1>
-        <a href={`/courses/${c.slug}`} className="mt-1 inline-block text-sm text-blue underline underline-offset-4 dark:text-sky">← course details</a>
+        <a href={`/courses/${c.slug}`} className="mt-2 inline-block text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-sky">← Course details</a>
       </header>
       <CourseSyllabus slug={c.slug} />
     </div>

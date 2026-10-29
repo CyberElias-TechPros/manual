@@ -28,7 +28,7 @@ export function VerifyClient({ initial }: { initial: string }) {
   return (
     <div className="mx-auto max-w-reading space-y-4 py-2">
       <header>
-        <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink-500 dark:text-light/55">For employers</p>
+        <p className="text-[0.8125rem] text-ink-500 dark:text-light/55">For employers and tutors</p>
         <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">Verify a CEA certificate</h1>
         <p className="mt-1 text-sm text-ink-600 dark:text-light/70">
           Type the code from the bottom right of the certificate. It confirms the learner’s name, the course, the grade and the date — nothing else,

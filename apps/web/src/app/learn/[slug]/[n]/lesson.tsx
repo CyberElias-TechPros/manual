@@ -519,7 +519,7 @@ function ReadStage({ lesson, sections, sub, flow, dataSaver }:
         {list.map((s, i) => (
           <section key={s.letter} id={`sec-${s.letter}`} data-sec={s.letter} className="scroll-mt-24">
             {flow === 'all' && i > 0 && (
-              <h3 className="mb-1 text-[0.8125rem] font-medium uppercase tracking-[0.08em] text-ink-400 dark:text-light/45">{s.title}</h3>
+              <h3 className="mb-2 text-[0.8125rem] font-medium text-ink-400 dark:text-light/45">{s.title}</h3>
             )}
             <BlockList blocks={s.blocks} />
           </section>

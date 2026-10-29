@@ -58,7 +58,7 @@ export function CertificatesClient() {
           <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Certificates</h1>
           <p className="mt-0.5 text-sm text-ink-600 dark:text-light/70">Every level completed, a 70% average across the knowledge checks, and the capstone submitted — then the academy issues the code.</p>
         </div>
-        <Link href="/certificates/verify" className="text-sm font-medium text-blue underline underline-offset-4 dark:text-sky">Verify somebody else’s →</Link>
+        <Link href="/certificates/verify" className="text-[0.9375rem] font-medium text-navy underline underline-offset-4 dark:text-sky">Verify somebody else’s →</Link>
       </header>
 
       {msg && (

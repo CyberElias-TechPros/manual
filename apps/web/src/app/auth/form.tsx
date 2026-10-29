@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, ProgressBar, cx, request, useSession } from '@cea/ui'
+import { Button, Card, ProgressBar, cx, guestIdOf, request, useSession } from '@cea/ui'
 
 type Mode = 'login' | 'register' | 'forgot' | 'reset'
 
@@ -27,7 +27,7 @@ export function AuthForm({ mode, next, course, token, intro }: { mode: Mode; nex
   const target = safeNext(next)
 
   useEffect(() => {
-    try { setGuestId(JSON.parse(localStorage.getItem('cea:lastLevel') || '{}').guestId ?? null) } catch { /* ignore */ }
+    try { setGuestId(guestIdOf(localStorage)) } catch { /* private mode */ }
     first.current?.focus()
   }, [mode])
 
@@ -154,7 +154,7 @@ export function AuthForm({ mode, next, course, token, intro }: { mode: Mode; nex
             <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 pt-2 text-[0.9375rem]">
               {mode === 'login' && <>
                 <Link href="/auth/forgot" className="underline">Forgot password?</Link>
-                <Link href="/auth/register" className="font-medium text-blue dark:text-sky">New here? Create an account</Link>
+                <Link href="/auth/register" className="font-medium text-navy underline-offset-4 hover:underline dark:text-sky">New here? Create an account</Link>
               </>}
               {mode === 'register' && <Link href="/auth/login" className="underline">Already have an account? Sign in</Link>}
               {(mode === 'forgot' || mode === 'reset') && <Link href="/auth/login" className="underline">Back to sign in</Link>}
