@@ -188,9 +188,9 @@ black-box HTTP assertions run against both runtimes.
 |---|---|---|
 | 10.1 unit tests | ✅ | XP/streak/rank/gating/scoring are covered by the API smoke suite; parser + quiz extraction + corpus invariants by Vitest (`packages/content/test`, 17 tests) |
 | 10.2 API integration tests | ✅ | `tools/smoke-api.mjs` — 51 assertions: auth, CSRF, progress, quiz grading, gating (402), payment approval, uploads, certificates, admin, caps |
-| 10.3 E2E (Playwright) | 🔶 | `tools/route-walk.mjs` fetches and asserts all 35 routes in CI (status, content marker, no answer-key pattern, size ceiling) and the smoke suite drives the API end to end — what is missing is real *browser* interaction (hydration, offline queue, upload widget), which needs Playwright in the beta phase |
+| 10.3 E2E (Playwright) | 🔶 | `tools/route-walk.mjs` fetches and asserts all 36 routes in CI (status, content marker, no answer-key pattern, size ceiling), `tools/a11y-scan.mjs` scans the same rendered HTML for names/landmarks/headings/labels, and the smoke suite drives the API end to end — what is missing is real *browser* interaction (hydration, offline queue, upload widget), which needs Playwright in the beta phase |
 | 10.4 device/browser matrix | ⏳ | needs real hardware; the layout is mobile-first at 360 px and the PWA path is exercised manually |
-| 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens — **no automated axe pass**; drag ARIA n/a (6.2) |
+| 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens. Automated in CI by `node tools/a11y-scan.mjs` over 29 rendered pages while logged in as a learner (**0 findings**): accessible names, landmarks, heading order, form labels, duplicate ids, `aria-hidden` traps, `rel~="noopener"`, unique ids. Contrast ratio, focus order and computed style still need axe/Lighthouse against a deployed URL; drag ARIA n/a (6.2) |
 | 10.6 security review | 🔶 | OWASP-shaped: parameterised SQL only, CSP with nonces-free strict sources, no `dangerouslySetInnerHTML` except JSON-LD, upload type+size+ownership checks, IDOR guards on progress/payments/uploads, CSRF double submit, no secrets in the bundle (leak audit). A third-party pen test is out of reach here |
 | 10.7 load test (200 concurrent) | ❌ | no k6/autocannon harness yet; the p95 budget is met by construction (static JSON reads, indexed queries) but unproven under load |
 | 10.8 content QA sweep | ✅ | the lint gate *is* the sweep (mojibake, broken refs, ₦ format, structure), plus the manual read of the two repaired encodings; the 2 remaining unkeyed questions are recorded as warnings rather than silently patched (92 of the original 94 were this repo's extractor, now fixed — §2.7) |
@@ -218,7 +218,7 @@ black-box HTTP assertions run against both runtimes.
 1. **Deploy** — `DEPLOYMENT.md` §2–5, then set `CEA_DEPLOY_ENABLED` so CI's deploy jobs turn on.
 2. **Measure** — Lighthouse CI on the deployed URL against 9.1's numbers; replace "by construction".
 3. **Two answer-key lines in the source PDFs** — `web-design` level 10 q1 and `web-development` level 7 q3; retype them in the manual and `pnpm content:build` absorbs them (the other 92 unkeyed questions were ours and are fixed).
-4. **axe + Playwright pass** — closes the 10.5/10.3 halves and gates 11.1.
+4. **axe + Playwright pass** on a deployed URL — closes 10.5's contrast/focus-order half and 10.3's hydration half, and gates 11.1. The markup-level rules are automated already (`tools/a11y-scan.mjs`, in CI).
 5. **Receipt retention cron** (3.3 in GAP-ANALYSIS) and the tutor-mark queue for `needs a human` answers.
 6. **Feedback widget + table** (11.2) so the beta has a real intake.
 

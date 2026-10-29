@@ -24,7 +24,8 @@
     "test:smoke": "node tools/smoke-api.mjs",
     "content:publish": "node tools/publish-content.mjs",
     "content:check": "node tools/assert-bundle-size.mjs",
-    "routes:walk": "node tools/route-walk.mjs"
+    "routes:walk": "node tools/route-walk.mjs",
+    "a11y": "node tools/a11y-scan.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

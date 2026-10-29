@@ -118,3 +118,18 @@ No API route, no content schema, no award rule, no payment flow. XP, streak math
 the daily cap, the ad placements, and the leak model (answers never leave the server) are exactly as
 `README.md` and `docs/GAP-ANALYSIS.md` describe. This is a change to how the same product is
 presented, so the verification is a compile, the route walk, and the corpus gates — not a migration.
+
+## Audits this repo cannot run
+
+The rules above are checkable by eye, but three of the academy's acceptance criteria want a browser,
+and neither this repo's CI nor the sandbox it is built in has one. Stated plainly so a green check is
+never read as more than it is:
+
+| Wanted | What runs today, in CI | Still open |
+| --- | --- | --- |
+| axe-core a11y ≥ 90 (10.5) | `node tools/a11y-scan.mjs` — every accessibility rule that is visible in server-rendered HTML: accessible name on each `a`/`button`, one `<main>`, one `<h1>`, no skipped heading level, every control labelled (a placeholder is not a label), no focusable control inside `aria-hidden`, unique `id`s, `rel~="noopener"`, `role="button"` reachable by keyboard. 29 pages, walked logged in as a learner. | contrast ratio, focus order, live-region announcement timing — anything that needs computed style or a real DOM. Run axe/Lighthouse against the deployed URL. |
+| Lighthouse, Core Web Vitals (9.1) | `tools/assert-bundle-size.mjs` (87.2 kB shared First Load JS, ceilings asserted), and the ink-over-canvas ramp: contrast is a token decision, so a page cannot fail it on its own | field data on the network learners actually use |
+| Playwright E2E (10.3) | `tools/route-walk.mjs` (36 routes: status, content marker, no answer-key pattern) and `tools/smoke-api.mjs` (51 API assertions through the same handlers the Worker runs) | hydration, the offline queue, the receipt-upload widget |
+
+The left column is not a substitute for the right one; `docs/ROADMAP.md` keeps those rows 🔶 rather
+than ✅ for exactly this reason, and GATE 10 stays open until a deployed URL exists to measure.

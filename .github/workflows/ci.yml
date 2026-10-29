@@ -10,6 +10,7 @@ name: CI
 #   test            unit + corpus integration + the leak audit + the answer-key gate
 #   build           `next build` must pass on the deployment runtime, not just dev
 #   smoke           the 51 black-box API assertions, run against the built app
+#   routes + a11y   every page fetched, then scanned for names/landmarks/headings/labels in the HTML
 #
 # No image optimizer, no headless browser, no wrangler login: every step below runs on the
 # packages in this repo alone, so a fork can be green.
@@ -74,6 +75,7 @@ jobs:
           done
           node tools/smoke-api.mjs http://127.0.0.1:3000
           node tools/route-walk.mjs http://127.0.0.1:3000
+          node tools/a11y-scan.mjs http://127.0.0.1:3000
           kill $pid
 
       - name: Assert the corpus has not shrunk
