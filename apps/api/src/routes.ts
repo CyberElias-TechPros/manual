@@ -7,7 +7,7 @@
  * 7.1-7.12 (money + admin), 8.8 (ad telemetry), certificates (gap fix).
  */
 import { Hono, type Context } from 'hono'
-import { XP, PAYMENT, DEFAULT_FEES_NGN, ACCESS, ADS, formatNgn, RANKS, STREAK, RATE_LIMITS } from '@cea/config'
+import { XP, PAYMENT, DEFAULT_FEES_NGN, ACCESS, ADS, formatNgn, RANKS, STREAK, RATE_LIMITS, GAME } from '@cea/config'
 import type { CeaEnv, AuthUser } from './lib.js'
 import {
   ApiError, bad, cookie, csrfPair, hashPassword, id, verifyPassword,
@@ -16,7 +16,7 @@ import {
 } from './lib.js'
 import { accessFor, assertAccess, award, currentUser, getProgress, grant, issueSession, q, sendMail, upsertProgress, isoWeek, accessPolicy, dayKey, type Row } from './service.js'
 import { grade } from './scoring.js'
-import { lockState, rankFor, starsFor, questFor, streakAtRisk, BADGES } from './gamify.js'
+import { lockState, rankFor, starsFor, questFor, streakAtRisk, BADGES, spinRoll, comboBonus, longestCorrectRun } from './gamify.js'
 
 type Vars = { user: AuthUser | null }
 type Ctx = Context<{ Bindings: CeaEnv; Variables: Vars }>
@@ -525,6 +525,18 @@ export function learnRoutes() {
     await q.run(c.env, 'UPDATE progress SET quiz_best_pct = ?, quiz_attempts = quiz_attempts + 1, last_seen_at = ?, quiz_passed_at = COALESCE(quiz_passed_at, ?) WHERE user_id=? AND course=? AND session_number=?',
       best, now(), graded.passed ? now() : null, u.id, slug, n)
 
+    // 5.9 — the combo is measured here, from the marked answers, never from a counter the page
+    // keeps: reloading mid-quiz cannot inflate it, and the key rides the best score so a banked
+    // level cannot be farmed by retaking it.
+    const run = longestCorrectRun(graded.perQuestion ?? [])
+    let comboRes = null
+    if (run >= GAME.combo.trigger) {
+      comboRes = await award(c.env, {
+        userId: u.id, kind: 'combo', points: comboBonus(run),
+        key: `${slug}/${sessionSlug(n)}/combo/${best}`, course: slug, sessionNumber: n, meta: { run },
+      }, { course })
+    }
+
     let awardRes = null
     if (graded.passed) {
       const key = `${slug}/${sessionSlug(n)}/quiz/${best}`
@@ -534,7 +546,7 @@ export function learnRoutes() {
       }, { course })
     }
     await bumpQuest(c.env, u.id, graded.scorePct >= 80 ? 'quiz-80' : null)
-    return json(c, { ok: true, result: graded, best, award: awardRes })
+    return json(c, { ok: true, result: graded, best, award: awardRes, combo: run >= GAME.combo.trigger ? { run, award: comboRes } : null })
   })
 
   /**
@@ -673,10 +685,60 @@ export function learnRoutes() {
     }, { course })
     await bumpQuest(c.env, u.id, 'one-level')
     if (p.completed_at) return json(c, { ok: true, award: res, alreadyCompleted: true })
-    return json(c, { ok: true, award: res, session: { number: n, title: session.title }, course: { slug: course.slug, title: course.displayTitle, sessionsCount: course.sessionsCount } })
+    // 5.9 — showing up is worth something on its own: one flat bonus with the *first* level
+    // finished today. Counted from the awards table after this one was banked, so a count of 1
+    // means it was today's first; the key carries the day, so a re-tap cannot claim it twice.
+    let showUp = null
+    if (GAME.firstLevelToday) {
+      const bankedToday = await q.one(c.env,
+        "SELECT COUNT(*) AS n FROM awards WHERE user_id = ? AND kind = 'session_complete' AND substr(created_at,1,10) = ?",
+        u.id, dayKey(new Date()))
+      if (Number(bankedToday?.n ?? 0) === 1) {
+        showUp = await award(c.env, { userId: u.id, kind: 'first_level', key: `${dayKey(new Date())}:first-level` }, { course })
+      }
+    }
+    return json(c, { ok: true, award: res, showUp, session: { number: n, title: session.title }, course: { slug: course.slug, title: course.displayTitle, sessionsCount: course.sessionsCount } })
   })
 
   /** dashboard: resume where I left off + today's quest + streak health (5.8) */
+  /**
+   * 5.9 — the bonus wheel: the one reward in the app that is not a fixed number, so it is rolled
+   * here and not in the page. `spinRoll` hashes (user, day, which spin of the day), which means the
+   * prize is stable across a refresh, a second click, and a reload on another device — and it can
+   * only ever be one of the segments in `GAME.wheel`. The budget lives in the `awards` table (the
+   * idempotency key is `<day>:spin:<n>`), so a learner who clears localStorage or opens a second tab
+   * cannot spend tomorrow's spin today. A streak of `bonusSpinStreakDays` earns a second spin, which
+   * is the whole point: the wheel is a reward for consistency, not a lottery ticket.
+   */
+  a.post('/gamify/spin', async (c: Ctx) => {
+    const u = requireUser(c)
+    const day = dayKey(new Date())
+    const [userRow, banked] = await Promise.all([
+      q.one(c.env, 'SELECT streak_count, streak_freezes FROM users WHERE id = ?', u.id),
+      q.all(c.env, "SELECT payload FROM awards WHERE user_id = ? AND kind = 'spin' AND key LIKE ? ORDER BY created_at", u.id, `${day}:spin:%`),
+    ])
+    const streak = Number(userRow?.streak_count ?? 0)
+    const budget = GAME.wheel.spinsPerDay + (streak >= GAME.wheel.bonusSpinStreakDays ? 1 : 0)
+    const used = banked.length
+    if (used >= budget) {
+      const last = safeJson<Row>(banked[banked.length - 1]?.payload, {})
+      return json(c, { ok: true, spun: false, reason: 'spent', spinsToday: used, spinsLeft: 0, bonusAt: GAME.wheel.bonusSpinStreakDays, streak, last: last?.meta?.segment ?? null })
+    }
+    const roll = spinRoll(u.id, day, used)
+    const res = await award(c.env, {
+      userId: u.id, kind: 'spin', points: roll.segment.xp, key: `${day}:spin:${used}`, meta: { segment: roll.segment.id },
+    })
+    // The shield segment hands out a streak freeze, clamped to the same ceiling the weekly grant uses.
+    const freezes = Number(roll.segment.freeze ?? 0)
+    if (freezes > 0) {
+      await q.run(c.env, 'UPDATE users SET streak_freezes = MIN(?, streak_freezes + ?) WHERE id = ?', STREAK.maxFreezes, freezes, u.id)
+    }
+    return json(c, {
+      ok: true, spun: true, index: roll.index, segment: roll.segment, freezes: Math.min(STREAK.maxFreezes, Number(userRow?.streak_freezes ?? 0) + freezes),
+      spinsToday: used + 1, spinsLeft: budget - used - 1, bonusAt: GAME.wheel.bonusSpinStreakDays, award: res,
+    })
+  })
+
   a.get('/summary', async (c: Ctx) => {
     const u = c.get('user')
     const index = await c.env.CONTENT.index()
@@ -690,6 +752,15 @@ export function learnRoutes() {
     const pending = await q.all(c.env, "SELECT course, reference, created_at FROM payments WHERE user_id = ? AND status = 'pending' ORDER BY created_at DESC LIMIT 4", u.id)
     const certs = await q.all(c.env, 'SELECT * FROM certificates WHERE user_id = ? ORDER BY issued_at DESC', u.id)
     const mine = new Map(resume.map(r => [`${r.course}/${r.session_number}`, r]))
+    // Game HUD (5.9): the streak calendar wants "did this learner touch the app that day", not only
+    // "did they finish a level", so it reads xp_events — a quiz pass and a spin both light a square.
+    const since = new Date(Date.now() - GAME.streakCalendarWeeks * 7 * 864e5).toISOString()
+    const activityDays = (await q.all(c.env,
+      'SELECT substr(created_at,1,10) AS day, SUM(points) AS xp FROM xp_events WHERE user_id = ? AND created_at >= ? GROUP BY day ORDER BY day',
+      u.id, since)).map(r => ({ day: r.day, xp: Number(r.xp || 0) }))
+    const spinsUsed = Number((await q.one(c.env,
+      "SELECT COUNT(*) AS n FROM awards WHERE user_id = ? AND kind = 'spin' AND key LIKE ?", u.id, `${day}:spin:%`))?.n ?? 0)
+    const spinBudget = GAME.wheel.spinsPerDay + ((profile?.streak?.count ?? 0) >= GAME.wheel.bonusSpinStreakDays ? 1 : 0)
     return json(c, {
       ok: true, signedIn: true, user: profile, quest: { ...quest, progress: questRow?.progress ?? 0, done: !!questRow?.done },
       enrolments: enrols.map(e => e.course),
@@ -703,6 +774,8 @@ export function learnRoutes() {
         }
       }),
       activity: [...mine.values()].length,
+      activityDays,
+      spin: { spinsToday: spinsUsed, spinsLeft: Math.max(0, spinBudget - spinsUsed), bonusAt: GAME.wheel.bonusSpinStreakDays, streak: profile?.streak?.count ?? 0 },
       xpToday: Number((await q.one(c.env, 'SELECT COALESCE(SUM(points),0) t FROM xp_events WHERE user_id=? AND substr(created_at,1,10)=?', u.id, day))?.t ?? 0),
       weeklyXp: Number((await q.one(c.env, 'SELECT COALESCE(SUM(points),0) t FROM xp_events WHERE user_id=? AND created_at >= ?', u.id, new Date(Date.now() - 7 * 864e5).toISOString()))?.t ?? 0),
     })

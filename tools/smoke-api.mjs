@@ -49,7 +49,7 @@ function check(name, ok, detail = '') {
 // The access policy is one decision in @cea/config, so the expectations below are derived from it
 // rather than hard-coded to one mode: CEA_ACCESS_MODE=paid puts the gating assertions back to testing
 // a 402, and the default (free) makes them test that nothing is gated. Same suite, both products.
-const { ACCESS } = await import('../packages/config/index.js')
+const { ACCESS, GAME } = await import('../packages/config/index.js')
 const freeMode = ACCESS.mode === 'free'
 
 const email = process.env.CEA_SMOKE_EMAIL || 'smoke@cea.ng'
@@ -184,6 +184,35 @@ let paymentId = null
   check('badges were granted', (me.badges ?? []).length >= 1, JSON.stringify(me.badges ?? []).slice(0, 120))
   check('xpToday respects the daily cap', (sum.json?.xpToday ?? 0) <= 400 && (sum.json?.xpToday ?? 0) > 0, String(sum.json?.xpToday))
   check('rank computed', !!me.rank?.current?.name, JSON.stringify(me.rank ?? {}).slice(0, 160))
+
+  // 5.9 (gamification) — the HUD's data and the two rewards that are not a fixed number. Both are
+  // computed by this server: the page gets a segment id and a run length, never a price it chose.
+  check('summary carries the streak calendar and the wheel budget (5.9)',
+    Array.isArray(sum.json?.activityDays) && sum.json.activityDays.length >= 1 && typeof sum.json?.spin?.spinsLeft === 'number',
+    `days=${sum.json?.activityDays?.length} spin=${JSON.stringify(sum.json?.spin)}`)
+  check('a check reports its combo run rather than a client-claimed one (5.9)',
+    'combo' in (quiz.json ?? {}) && (quiz.json?.combo == null || quiz.json.combo.run >= GAME.combo.trigger),
+    JSON.stringify(quiz.json?.combo ?? null))
+  const showUpOk = !registeredNow || done.json?.alreadyCompleted === true || (done.json?.showUp?.xp ?? 0) > 0 || done.json?.showUp === null
+  check('the first level of the day pays a show-up bonus once (5.9)', showUpOk, JSON.stringify(done.json?.showUp ?? null))
+  const segIds = GAME.wheel.segments.map(s => s.id)
+  let spin = await call('POST', '/api/gamify/spin', {})
+  const spinFirst = spin.json
+  check('the wheel spins and the prize is one of the configured segments',
+    spin.status === 200 && spinFirst?.spun === true && segIds.includes(spinFirst?.segment?.id) && (spinFirst.award?.awarded ?? spinFirst.award?.xp) !== undefined,
+    JSON.stringify(spinFirst ?? {}).slice(0, 160))
+  // Burn the rest of the day's budget (a 3-day streak earns a second spin), then ask for one more.
+  let spinsLeft = spinFirst?.spinsLeft ?? 0
+  while (spinsLeft > 0) {
+    const next = await call('POST', '/api/gamify/spin', {})
+    spinsLeft = next.json?.spinsLeft ?? 0
+    if (next.json?.spun !== true) break
+  }
+  const greedy = await call('POST', '/api/gamify/spin', {})
+  check('a second spin after the day is spent is refused, not re-rolled',
+    greedy.json?.spun === false && greedy.json?.reason === 'spent' && segIds.includes(greedy.json?.last),
+    JSON.stringify(greedy.json ?? {}).slice(0, 160))
+  check('a repeat spin request cannot mint XP', greedy.json?.award === undefined, JSON.stringify(greedy.json ?? {}).slice(0, 120))
 
   const dup = await call('POST', '/api/learn/quiz', quizPayload)
   check('quiz retry allowed, best score kept', dup.status === 200, String(dup.status))

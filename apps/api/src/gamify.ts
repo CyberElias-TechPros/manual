@@ -24,7 +24,10 @@ export type XpKind =
   | 'spin' | 'combo' | 'first_level'
 
 /** 5.1 — the single XP table. */
-export function xpFor(kind: XpKind, opts: { perfect?: boolean; capLeft?: number; reason?: string } = {}): number {
+export function xpFor(
+  kind: XpKind,
+  opts: { perfect?: boolean; capLeft?: number; reason?: string; points?: number } = {},
+): number {
   const table: Record<XpKind, number> = {
     lesson_read: XP.lessonRead,
     quiz_pass: XP.quizPass + (opts.perfect ? XP.quizPerfectBonus : 0),
@@ -41,7 +44,11 @@ export function xpFor(kind: XpKind, opts: { perfect?: boolean; capLeft?: number;
     admin_adjust: 0,
     certificate: 100,
   }
-  const raw = table[kind] ?? 0
+  // The wheel's prize and a combo's size are computed on the server per learner, so those two kinds
+  // take `points` from the caller; every other kind's number comes from this table. That is the
+  // distinction that keeps the client from minting XP: it can never reach `points`, because the
+  // routes that accept learner input (`/learn/*`) never pass it.
+  const raw = (kind === 'spin' || kind === 'combo') && opts.points !== undefined ? opts.points : (table[kind] ?? 0)
   if (kind === 'admin_adjust') return opts.reason === 'manual' ? 0 : raw
   const cap = opts.capLeft === undefined ? Infinity : Math.max(0, opts.capLeft)
   return Math.min(raw, cap)
@@ -101,6 +108,21 @@ export function rollStreak(state: StreakState, now: Date = new Date(), opts: { e
     freezes: Math.min(STREAK.maxFreezes, Math.max(0, state.freezes - (usedFreeze ? 1 : 0)) + (opts.earnedFreeze ? 1 : 0)),
     lostDate: count === 1 && gap > 2 ? state.lastActiveDate ?? null : state.lostDate ?? null,
   }
+}
+
+/**
+ * Longest run of `correct === true` in a marked quiz (the `null`s are prose answers a tutor has yet
+ * to confirm — they neither build nor break a run). Drives the combo bonus: the reward is for
+ * stringing answers together, not for guessing at the end.
+ */
+export function longestCorrectRun(per: { correct?: boolean | null }[]): number {
+  let best = 0
+  let run = 0
+  for (const item of per) {
+    run = item?.correct === true ? run + 1 : 0
+    if (run > best) best = run
+  }
+  return best
 }
 
 export function streakAtRisk(state: StreakState, now: Date = new Date()): boolean {

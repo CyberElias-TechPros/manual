@@ -233,7 +233,7 @@ export async function award(env: CeaEnv, input: AwardInput, context?: { course?:
   const today = dayKey(new Date())
   const todayTotal = Number((await q.one(env, 'SELECT COALESCE(SUM(points),0) AS t FROM xp_events WHERE user_id = ? AND substr(created_at,1,10) = ?', userId, today))?.t ?? 0)
   const capLeft = Math.max(0, XP.dailyCap - todayTotal)
-  const base = xpFor(kind, { perfect: input.perfect, capLeft })
+  const base = xpFor(kind, { perfect: input.perfect, capLeft, points: input.points })
   const perfectExtra = kind === 'quiz_pass' && input.perfect ? Math.min(XP.quizPerfectBonus, Math.max(0, capLeft - base)) : 0
 
   // ---- streak (5.3): at most one increment per day, freeze can bridge a gap ----
@@ -305,7 +305,9 @@ export async function award(env: CeaEnv, input: AwardInput, context?: { course?:
     ? { name: rankAfter.current.name, min: rankAfter.current.min, index: rankAfter.rankIndex }
     : null
 
-  const payload = { xp: total, badges: newBadges, unlocked, totalXp: xp, rankUp }
+  // `meta` rides along so a duplicate of a per-day reward (a second spin request for the same slot)
+  // can echo back what the first one won instead of showing an empty result.
+  const payload = { xp: total, badges: newBadges, unlocked, totalXp: xp, rankUp, meta: input.meta ?? null }
   await q.run(env, 'UPDATE awards SET payload = ? WHERE user_id = ? AND key = ?', JSON.stringify(payload), userId, key)
 
   if (userRow.leaderboard_opt_in && total > 0) {
