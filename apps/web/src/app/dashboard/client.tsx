@@ -263,6 +263,8 @@ function GuestDashboard() {
 function DashboardSkeleton() {
   return (
     <div className="max-w-reading space-y-6 py-4" aria-busy="true">
+      {/* the page is called Dashboard whether or not the summary has landed yet */}
+      <h1 className="text-2xl font-semibold tracking-snugish text-ink sm:text-3xl dark:text-light">Dashboard</h1>
       <Skeleton className="h-8 w-64" />
       <Skeleton className="h-28 w-full rounded-card" />
       <div className="grid grid-cols-2 gap-6 border-y border-surface-line py-6 sm:grid-cols-4 dark:border-surface-dark-line">

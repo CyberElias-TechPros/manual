@@ -33,7 +33,14 @@ export function SettingsClient() {
     return () => window.removeEventListener('cea:queue', upd as EventListener)
   }, [])
 
-  if (loading) return <p className="text-sm text-ink-500 dark:text-light/60">Loading settings…</p>
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-reading py-10">
+        <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Settings</h1>
+        <p className="mt-3 text-[0.9375rem] text-ink-500 dark:text-light/60" role="status">Loading settings…</p>
+      </div>
+    )
+  }
 
   async function save(what: string, payload: Record<string, unknown>) {
     setState(s => ({ ...s, [what]: 'busy' })); setMsg(null)

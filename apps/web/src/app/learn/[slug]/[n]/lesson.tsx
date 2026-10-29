@@ -207,7 +207,7 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
     return () => io.disconnect()
   }, [flow, lesson, doMarkRead])
 
-  if (loading && !seed) return <LessonSkeleton />
+  if (loading && !seed) return <LessonSkeleton slug={slug} n={n} />
   if (error && !data) {
     if (error.status === 402) return <LockedCourse slug={slug} n={n} message={error.message} />
     if (error.status === 401) return <SignInPrompt slug={slug} n={n} />
@@ -715,10 +715,11 @@ function LevelTools({ slug, n, sections, className }: { slug: string; n: number;
   )
 }
 
-function LessonSkeleton() {
+function LessonSkeleton({ slug, n }: { slug: string; n: number }) {
   return (
     <div className="mx-auto max-w-reading py-14" aria-busy="true" aria-label="Loading level">
-      <div className="h-3 w-40 rounded bg-surface-muted dark:bg-surface-dark-muted" />
+      <p className="text-[0.8125rem] font-medium text-ink-500 dark:text-light/55">{courseLabel(slug)}</p>
+      <h1 className="mt-1 text-2xl font-semibold tracking-snugish text-ink dark:text-light">Level {n}</h1>
       <div className="mt-3 h-8 w-2/3 rounded bg-surface-muted dark:bg-surface-dark-muted" />
       <div className="mt-6 h-px w-full bg-surface-line dark:bg-surface-dark-line" />
       <div className="mt-8 space-y-4">
@@ -728,13 +729,24 @@ function LessonSkeleton() {
   )
 }
 
-function LockedCourse({ slug, message }: { slug: string; n: number; message: string }) {
+function LockedCourse({ slug, n, message }: { slug: string; n: number; message: string }) {
   return (
     <div className="mx-auto max-w-measure py-16">
-      <LockNote onUnlock={() => { location.href = `/checkout/${slug}` }} />
+      {/* the level body is behind a payment, but what page you are on is public information, and a
+          locked screen with no heading leaves a screen-reader user with nothing to announce */}
+      <p className="text-center text-[0.8125rem] font-medium text-ink-500 dark:text-light/55">{courseLabel(slug)}</p>
+      <h1 className="mt-1 text-center text-2xl font-semibold tracking-snugish text-ink dark:text-light">Level {n} is waiting for payment</h1>
+      <div className="mt-6">
+        <LockNote onUnlock={() => { location.href = `/checkout/${slug}` }} />
+      </div>
       <p className="mt-4 text-center text-[0.875rem] text-ink-500 dark:text-light/55">{message}</p>
     </div>
   )
+}
+
+/** The catalogue's own name, from the URL: public even when the level's text is not. */
+function courseLabel(slug: string) {
+  return slug.split('-').filter(Boolean).map(w => (w[0] as string).toUpperCase() + w.slice(1)).join(' ')
 }
 
 function SignInPrompt({ slug, n }: { slug: string; n: number }) {

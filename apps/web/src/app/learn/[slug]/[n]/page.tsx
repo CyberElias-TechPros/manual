@@ -34,7 +34,7 @@ export default function LearnPage({ params }: { params: { slug: string; n: strin
   const hit = sessionAt(c.slug, n)
   const seed = hit && hit.session.isFree ? { course: hit.course, session: hit.session, progress: null } : undefined
   return (
-    <Suspense fallback={<LessonSkeleton />}>
+    <Suspense fallback={<LessonSkeleton course={c.displayTitle || c.name} n={n} />}>
       <LessonView slug={c.slug} n={n} seed={seed} />
     </Suspense>
   )

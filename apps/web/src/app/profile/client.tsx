@@ -14,7 +14,15 @@ export function ProfileClient() {
   const summary = useApi<any>(user ? '/api/summary' : null)
   const courses = useApi<{ courses: any[] }>(user ? '/api/courses' : null)
   const [tab, setTab] = useState<'badges' | 'courses' | 'data'>('badges')
-  if (loading) return <p className="text-sm text-ink-500 dark:text-light/60">Loading your progress…</p>
+  if (loading) {
+    // a heading in the first paint: the page is "Progress & badges" before the numbers arrive too
+    return (
+      <div className="mx-auto max-w-reading py-10">
+        <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Progress &amp; badges</h1>
+        <p className="mt-3 text-[0.9375rem] text-ink-500 dark:text-light/60" role="status">Loading your progress…</p>
+      </div>
+    )
+  }
   if (!user) return (
     <div className="mx-auto max-w-measure py-12 text-center">
       <h1 className="text-2xl font-semibold text-ink dark:text-light">Sign in to see your badges</h1>

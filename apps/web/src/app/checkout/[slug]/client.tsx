@@ -35,8 +35,28 @@ export function CheckoutClient({ course, reference }: { course: any; reference: 
     try { await navigator.clipboard.writeText(text); setCopied(label); setTimeout(() => setCopied(null), 2000) } catch { setCopied(null) }
   }, [])
 
-  if (opts.loading) return <p className="text-[0.9375rem] text-ink-500 dark:text-light/55">Loading the payment instructions…</p>
-  if (opts.error) return <p className="text-[0.9375rem] text-ink-600 dark:text-light/70">The academy could not be reached ({opts.error.message}). <button className="font-medium text-navy underline underline-offset-2 dark:text-sky" onClick={opts.reload}>Retry</button></p>
+  // The title is in the server HTML on purpose. The transfer details arrive a moment later, but a
+  // page whose first paint has no heading at all reads as broken on a slow phone and gives a
+  // screen-reader user nothing to announce.
+  const head = (
+    <header>
+      <Label>Checkout</Label>
+      <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">{course.displayTitle || course.name}</h1>
+    </header>
+  )
+
+  if (opts.loading) return (
+    <div className="mx-auto max-w-reading pb-8">
+      {head}
+      <p className="mt-4 text-[0.9375rem] text-ink-500 dark:text-light/55" role="status">Loading the payment instructions…</p>
+    </div>
+  )
+  if (opts.error) return (
+    <div className="mx-auto max-w-reading pb-8">
+      {head}
+      <p className="mt-4 text-[0.9375rem] text-ink-600 dark:text-light/70">The academy could not be reached ({opts.error.message}). <button className="font-medium text-navy underline underline-offset-2 dark:text-sky" onClick={opts.reload}>Retry</button></p>
+    </div>
+  )
   if (!user) return (
     <div className="mx-auto max-w-measure py-10 text-center">
       <h1 className="text-xl font-semibold text-ink dark:text-light">Create the free account first</h1>
