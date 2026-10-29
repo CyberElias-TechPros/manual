@@ -101,6 +101,7 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
   const markRead = useSectionRead(slug, n)
   const [seconds, setSeconds] = useState(0)
   const [quiz, setQuiz] = useState<QuizResult | null>(null)
+  const [combo, setCombo] = useState<{ run: number } | null>(null)
   const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, { text: string; modelAnswer?: string }>>({})
   const [scenarios, setScenarios] = useState<Record<string, { chosen: string; correct: boolean | null; resolution?: string; correctId?: string | null }>>({})
   const [checklist, setChecklist] = useState<Record<string, boolean>>({})
@@ -226,11 +227,14 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
   if (!lesson || !stage) return null
 
   async function submitQuiz(answers: Record<string, string>, elapsedSec: number): Promise<QuizResult> {
-    const r = await request<{ result: QuizResult; award: any; best: number }>('/api/learn/quiz', {
+    const r = await request<{ result: QuizResult; award: any; best: number; combo?: { run: number } | null }>('/api/learn/quiz', {
       method: 'POST', body: { course: slug, session: n, answers, elapsedSec },
     })
     setQuiz(r.result)
+    setCombo(r.combo ?? null)
     announceAward(r.award, r.result.perfect ? 'perfect score' : 'knowledge check')
+    // The combo is its own award, so it toasts on its own: two numbers, two reasons, both from the server.
+    if (r.combo) announceAward((r as any).combo.award, `${r.combo.run} in a row`)
     if (r.award?.unlocked) setBanner({ tone: 'ok', text: `Level ${r.award.unlocked.sessionNumber} is open: ${r.award.unlocked.title}.` })
     return r.result
   }
@@ -277,11 +281,14 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
   async function finish() {
     setCompleting(true)
     try {
-      const r = await request<{ award: any; alreadyCompleted?: boolean }>('/api/learn/complete', {
+      const r = await request<{ award: any; alreadyCompleted?: boolean; showUp?: any }>('/api/learn/complete', {
         method: 'POST', body: { course: slug, session: n, timeSpentSec: Math.round((Date.now() - startedAt.current) / 1000) },
       })
       setFinished({ award: r.award, already: r.alreadyCompleted })
       announceAward(r.award, 'level complete')
+      // 5.9 — the show-up bonus rides the same response; it is a second number the API chose, so it
+      // gets its own line instead of being folded into the level's total.
+      if (r.showUp) announceAward(r.showUp, 'first level today')
       void refresh()
     } catch (e: any) {
       setBanner({ tone: 'bad', text: e?.message || 'Could not record that yet.' })
@@ -385,7 +392,7 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
           ) : (
             <ActivityStage
               stage={stage} lesson={lesson} slug={slug} n={n}
-              quiz={quiz} submitQuiz={submitQuiz} retryQuiz={() => setQuiz(null)}
+              quiz={quiz} combo={combo} submitQuiz={submitQuiz} retryQuiz={() => { setQuiz(null); setCombo(null) }}
               exerciseAnswers={exerciseAnswers} submitExercise={submitExercise}
               scenarios={scenarios} chooseScenario={chooseScenario}
               sendFlashcards={sendFlashcards} onNotice={setBanner}
@@ -542,7 +549,7 @@ function ReadStage({ lesson, sections, sub, flow, dataSaver }:
 }
 
 /** Everything the learner has to *do* in this stage, in the manual's own order. */
-function ActivityStage({ stage, lesson, quiz, submitQuiz, retryQuiz, exerciseAnswers, submitExercise, scenarios, chooseScenario, sendFlashcards, onNotice, slug, n }: any) {
+function ActivityStage({ stage, lesson, quiz, combo, submitQuiz, retryQuiz, exerciseAnswers, submitExercise, scenarios, chooseScenario, sendFlashcards, onNotice, slug, n }: any) {
   return (
     <div className="mt-7 space-y-10">
       {stage.sections.map((s: Section) => (
@@ -552,7 +559,7 @@ function ActivityStage({ stage, lesson, quiz, submitQuiz, retryQuiz, exerciseAns
             <div className="mt-6">
               <QuizRunner
                 questions={lesson.quiz.questions} passPercent={lesson.quiz.passPercent} title={lesson.quiz.title || 'Knowledge check'}
-                result={quiz} onSubmit={submitQuiz} onRetry={retryQuiz}
+                result={quiz} onSubmit={submitQuiz} onRetry={retryQuiz} combo={combo}
               />
             </div>
           )}

@@ -169,7 +169,13 @@ export function useApi<T>(path: string | null, deps: unknown[] = []): { data: T 
 export interface MeUser {
   id: string; email: string; name: string; role: 'learner' | 'admin'; isGuest: boolean
   xp: number; streak: { count: number; best: number; freezes: number; lastActiveDate: string | null; atRisk: boolean }
-  rank: { current: { key: string; name: string; min: number; blurb?: string }; next?: { key: string; name: string; min: number } | null }
+  // `rankFor` in the API returns the progress fields too, and the header HUD is the only reason the
+  // client needs them — the bar is drawn from the server's arithmetic, never re-derived here.
+  rank: {
+    current: { key: string; name: string; min: number; blurb?: string }
+    next?: { key: string; name: string; min: number } | null
+    rankIndex?: number; pctIntoRank?: number; toNext?: number
+  }
   prefs?: { dataSaver: boolean; leaderboardOptIn: boolean }
   badges?: { key: string; at: string }[]
   enrolled?: { course: string; source?: string; created_at?: string; expires_at?: string | null }[]
@@ -444,7 +450,7 @@ export function TopBar({ items }: { items: { href: string; label: string; icon?:
         <div className="ml-auto flex items-center gap-3">
           {user ? (
             <>
-              <StreakChip />
+              <XpHud />
               <a href="/search" aria-label="Search the academy" className="text-ink-500 transition-colors hover:text-ink lg:hidden dark:text-light/55 dark:hover:text-light"><SearchIcon /></a>
               <button type="button" className="rounded-card p-1.5 text-ink-600 focus-visible:outline-2 lg:hidden dark:text-light/70" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-label="Menu">
                 <Hamburger open={open} />
@@ -511,6 +517,54 @@ function UserMenu({ user, onSignedOut }: { user: MeUser; onSignedOut: () => void
         </div>
       )}
     </div>
+  )
+}
+
+/**
+ * The learner's number, on every screen (5.9). Three facts, one place: how far into the next rank you
+ * are, how many days in a row, what you banked today. It reads the session (`/api/auth/me` returns the
+ * same profile `/api/me` does), so it costs no extra request and it is already correct on first paint —
+ * a bar that animated in from zero after hydration would be a lie the learner watches twice a day.
+ *
+ * The bar is `role="progressbar"` with real numbers, and the whole thing is a link to the dashboard,
+ * where the wheel, the calendar and the quest live. It is 44px tall and the text stays at reading size.
+ */
+export function XpHud() {
+  const { user } = useSession()
+  if (!user) return null
+  const rank = user.rank ?? {}
+  const pct = Number(rank.pctIntoRank ?? 0)
+  const toNext = Number(rank.toNext ?? 0)
+  const count = user.streak?.count ?? 0
+  return (
+    <a href="/dashboard" aria-label={`${user.xp ?? 0} XP total, ${rank.current?.name ?? 'Starter'} rank, ${count}-day streak${toNext ? `, ${toNext} XP to ${rank.next?.name ?? 'the next rank'}` : ', top rank reached'}`}
+      className="group flex min-h-[44px] items-center gap-3 rounded-card px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy dark:focus-visible:outline-sky">
+      <span className={cx('inline-flex items-center gap-1 text-[0.8125rem] font-bold tabular-nums', count > 0 ? 'text-warn' : 'text-ink-500 dark:text-light/55')} title={`${count}-day streak${user.streak?.atRisk ? ' — finish a level today' : ''}`}>
+        <StreakMark active={count > 0} />
+        {count}
+      </span>
+      <span className="hidden min-w-[8.5rem] sm:block">
+        <span className="flex items-baseline justify-between gap-2 text-[0.75rem] font-semibold text-ink-500 dark:text-light/60">
+          <span className="truncate">{rank.current?.name ?? 'Starter'}</span>
+          <span className="tabular-nums">{toNext ? `${toNext} XP to ${rank.next?.name}` : 'top rank'}</span>
+        </span>
+        <span role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Progress to the next rank"
+          className="mt-1 block h-1.5 w-full overflow-hidden rounded-pill bg-surface-line dark:bg-surface-dark-muted">
+          <span className="block h-full rounded-pill bg-navy dark:bg-sky" style={{ width: `${Math.max(2, Math.min(100, pct))}%` }} />
+        </span>
+      </span>
+      <span className="text-[0.8125rem] font-bold tabular-nums text-ink dark:text-light">{user.xp ?? 0} XP</span>
+    </a>
+  )
+}
+
+/** A flame that is lit only while the streak is alive — gold means earned, here too. */
+function StreakMark({ active }: { active: boolean }) {
+  return (
+    <svg aria-hidden viewBox="0 0 16 16" className="h-4 w-4">
+      <path d="M8 1.5c2 2.6 4 4 4 6.6a4 4 0 0 1-8 0c0-1.3.5-2.2 1.3-3.2.3.9.8 1.4 1.4 1.6-.2-1.8-.1-3.4 1.3-5Z"
+        fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.2" />
+    </svg>
   )
 }
 
@@ -589,13 +643,15 @@ export function OfflineBanner() {
   )
 }
 
-export type AwardToast = { id: number; xp: number; label: string; badge?: string }
+export type AwardToast = { id: number; xp: number; label: string; badge?: string; rankUp?: string; combo?: number }
 let toastSeq = 1
 const listeners = new Set<(t: AwardToast) => void>()
 export function announceAward(award: any, label = '') {
   // `awarded: false` is the idempotency answer (already banked) — stay quiet then.
   if (!award || award.awarded === false || !award.xp) return
-  const t: AwardToast = { id: toastSeq++, xp: award.xp, label, badge: award.badges?.[0]?.name }
+  // `rankUp` is the API's answer ("this learner crossed a rank threshold"), never a client's guess
+  // at one — the payload carries it because the award is the only place the old total is known.
+  const t: AwardToast = { id: toastSeq++, xp: award.xp, label, badge: award.badges?.[0]?.name, rankUp: award.rankUp?.name, combo: award.meta?.run }
   listeners.forEach(fn => fn(t))
 }
 export function XpToaster() {
@@ -611,7 +667,9 @@ export function XpToaster() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-16 z-50 flex flex-col items-center gap-1.5 px-3 lg:bottom-6" aria-live="polite">
       {toasts.map(t => (
-        <div key={t.id} className="animate-slide-up rounded-card bg-navy px-4 py-2.5 text-[0.9375rem] text-white shadow-elev dark:bg-[#16263f]">
+        <div key={t.id} className={cx('animate-slide-up rounded-card px-4 py-2.5 text-[0.9375rem] text-white shadow-elev',
+          t.rankUp ? 'bg-[#8a5b0d] ring-2 ring-gold dark:bg-[#3a2b06]' : 'bg-navy dark:bg-[#16263f]')}>
+          {t.rankUp ? <span className="mr-1.5 font-bold text-gold">Level up — {t.rankUp}!</span> : null}
           <span className="font-semibold text-gold">+{t.xp} XP</span>
           {t.label ? <span className="text-white/75"> · {t.label}</span> : null}
           {t.badge ? (

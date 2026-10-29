@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   AdSlot, Button, GUEST_KEY, Label, NgAdSlot, Pill, ProgressBar, Skeleton, StatBlock, linkClass,
-  StreakFlame, guestIdOf, request, useApi, useSession,
+  SpinWheel, StreakCalendar, StreakFlame, guestIdOf, request, useApi, useSession,
 } from '@cea/ui'
 import { XP } from '@cea/config'
 
@@ -19,6 +19,8 @@ type Summary = {
   quest?: { kind: string; label: string; target: number; xp: number; progress: number; done: boolean }
   xpToday?: number
   weeklyXp?: number
+  activityDays?: { day: string; xp: number }[]
+  spin?: { spinsToday: number; spinsLeft: number; bonusAt: number; streak: number }
   enrolments?: string[]
   pendingPayments?: { course: string; reference: string; created_at: string }[]
   certificates?: any[]
@@ -128,6 +130,14 @@ export function DashboardClient() {
             <ProgressBar className="w-full max-w-[12rem]" value={Math.min(s.quest.progress, s.quest.target)} max={s.quest.target} tone={s.quest.done ? 'success' : 'navy'} />
           </div>
         )}
+      </section>
+
+      {/* 5.9 — the game half of the front door: the reward you can spend today and the record of the
+          days you showed up. Both read what the API already decided (`/api/summary`), and after a spin
+          the page re-reads the summary instead of editing the number locally. */}
+      <section aria-label="Your streak and today's bonus" className="mt-10 grid max-w-reading gap-5 lg:grid-cols-2">
+        <SpinWheel spin={s?.spin} onChanged={() => void summary.reload?.()} />
+        <StreakCalendar days={s?.activityDays} />
       </section>
 
       {s?.pendingPayments?.length ? (

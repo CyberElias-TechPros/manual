@@ -19,13 +19,17 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Question } from '@cea/content/schema'
 import { Button, Card, Label, Pill, ProgressBar, cx } from './primitives'
 import { AdSlot } from './shell'
+import { GAME } from '@cea/config'
+
+/** Where a run of correct answers becomes a combo — the same number the API pays on (5.9). */
+const COMBO_TRIGGER = GAME.combo.trigger
 
 export interface GradedQuestion { id: string; correct: boolean | null; credit: number; modelAnswer: string; explanation: string; note: string; expected?: string[] }
 export interface QuizResult { correct: number; total: number; scorePct: number; passed: boolean; perfect: boolean; perQuestion: GradedQuestion[] }
 
 export function QuizRunner({
   questions, passPercent = 60, title = 'Knowledge check', submitDisabled,
-  onSubmit, result, onRetry,
+  onSubmit, result, onRetry, combo,
 }: {
   questions: Question[]
   passPercent?: number
@@ -35,6 +39,11 @@ export function QuizRunner({
   onSubmit: (answers: Record<string, string>, elapsedSec: number) => Promise<QuizResult | null>
   result?: QuizResult | null
   onRetry?: () => void
+  /**
+   * The longest run of correct answers, measured by the API at marking time (5.9). Optional because a
+   * level with two questions cannot produce one — the line only appears when the server says it did.
+   */
+  combo?: { run: number } | null
 }) {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [step, setStep] = useState(0)
@@ -74,6 +83,12 @@ export function QuizRunner({
         </div>
         <div className="mt-4 max-w-measure">
           <ProgressBar value={result!.scorePct} tone={result!.passed ? 'success' : 'gold'} />
+          {combo && combo.run >= COMBO_TRIGGER ? (
+            <p className="mt-2 text-[0.9375rem] font-semibold text-ink dark:text-light">
+              <span className="rounded-pill bg-gold/20 px-2 py-0.5">{combo.run} in a row</span>{' '}
+              combo bonus banked with this check.
+            </p>
+          ) : null}
           <p className="mt-2 text-base text-ink-600 dark:text-light/75">
             {result!.passed
               ? 'Passed — XP banked. A better score is still possible; the best one counts.'
