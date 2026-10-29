@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button, Label, Pill, ProgressBar, RankChip, Stars, StreakFlame, useApi, useSession, cx } from '@cea/ui'
+import { AdSlot, Button, Label, Pill, ProgressBar, RankChip, Stars, StreakCalendar, StreakFlame, useApi, useSession, cx } from '@cea/ui'
 import { RANKS, XP } from '@cea/config'
 
 /**
@@ -77,6 +77,10 @@ export function ProfileClient() {
         </ol>
       </section>
 
+      <div className="mt-7 max-w-reading">
+        <StreakCalendar days={summary.data?.activityDays} />
+      </div>
+
       <nav aria-label="Profile sections" className="no-scrollbar -mx-1 mt-8 flex gap-6 overflow-x-auto px-1 sm:mx-0 sm:px-0" role="tablist">
         {([['badges', `Badges (${owned.size}/${catalogue.length})`], ['courses', 'Courses'], ['data', 'Data & privacy']] as const).map(([k, label]) => (
           <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
@@ -129,14 +133,18 @@ export function ProfileClient() {
             )
           })}
           {!(profile.enrolled ?? []).length && !Object.keys(completed).length && (
-            <li className="py-4 text-[0.9375rem] text-ink-500 dark:text-light/55">
-              No courses started yet. <Link href="/courses" className="font-medium text-navy underline underline-offset-2 dark:text-sky">Pick one</Link> — the first level of each is free.
+            <li className="py-4 text-[0.9375rem] text-ink-600 dark:text-light/70">
+              No courses started yet. <Link href="/courses" className="font-bold text-navy underline underline-offset-2 dark:text-sky">Pick any course</Link> — every level is open for free right now!
             </li>
           )}
         </ul>
       )}
 
       {tab === 'data' && <DataPanel profile={profile} />}
+
+      <div className="mt-8 max-w-reading">
+        <AdSlot placement="profile-side" variant="card" />
+      </div>
     </div>
   )
 }

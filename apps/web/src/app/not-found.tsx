@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { courseList } from '@/lib/content'
-import { linkClass } from '@cea/ui'
+import { AdSlot, linkClass } from '@cea/ui'
 
 /**
  * A 404 in this app is almost always a level number past the end of a course, a renamed slug, or a
@@ -27,6 +27,7 @@ export default function NotFound() {
           </li>
         ))}
       </ul>
+      <div className="max-w-reading"><AdSlot placement="notfound" variant="card" /></div>
       <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <Link href="/courses" className="inline-flex min-h-[48px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white hover:bg-[#152c4d]">Browse all courses</Link>
         <Link href="/dashboard" className={linkClass}>My dashboard</Link>

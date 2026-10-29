@@ -1,7 +1,8 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, Pill, ProgressBar, request, useApi, useSession } from '@cea/ui'
+import { AdSlot, Button, Card, Pill, ProgressBar, request, useApi, useSession } from '@cea/ui'
+import { isFreeAccess } from '@cea/config'
 
 type Cert = { code: string; course: string; learner_name: string; issued_at: string; grade: string; sessions_completed: number; avg_quiz_pct: number }
 type Checks = { sessionsCompleted: number; sessionsRequired: number; avgQuizPct: number; avgQuizRequired: number; capstoneDone: boolean }
@@ -34,7 +35,10 @@ export function CertificatesClient() {
 
   const mine = list.data?.certificates ?? []
   const enrolled = new Set((user as any).enrolled?.map?.((e: any) => e.course ?? e) ?? [])
-  const candidates = (courses.data?.courses ?? []).filter((c: any) => enrolled.has(c.slug) && !mine.some(m => m.course === c.slug))
+  const completedByCourse: Record<string, number> = (user as any).completedByCourse ?? {}
+  const candidates = (courses.data?.courses ?? []).filter((c: any) =>
+    (isFreeAccess() || enrolled.has(c.slug) || (completedByCourse[c.slug] ?? 0) > 0) && !mine.some(m => m.course === c.slug),
+  )
 
   async function issue(slug: string) {
     setBusy(slug); setMsg(null)
@@ -55,8 +59,8 @@ export function CertificatesClient() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Certificates</h1>
-          <p className="mt-0.5 text-sm text-ink-600 dark:text-light/70">Every level completed, a 70% average across the knowledge checks, and the capstone submitted — then the academy issues the code.</p>
+          <h1 className="text-2xl font-bold tracking-snugish text-ink dark:text-light">Your Certificates (+100 XP each)</h1>
+          <p className="mt-1 text-[0.9375rem] text-ink-600 dark:text-light/75">Finish every level in a course with at least a 70% quiz average to unlock your printable A4 certificate, +100 bonus XP, and public verification code!</p>
         </div>
         <Link href="/certificates/verify" className="text-[0.9375rem] font-medium text-navy underline underline-offset-4 dark:text-sky">Verify somebody else’s →</Link>
       </header>
@@ -114,6 +118,9 @@ export function CertificatesClient() {
           </ul>
         </section>
       )}
+      <div className="no-print max-w-reading">
+        <AdSlot placement="certificate-top" variant="card" />
+      </div>
     </div>
   )
 }

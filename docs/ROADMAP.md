@@ -5,7 +5,16 @@ with a "Done when" clause. This file is the **ledger of what was actually built*
 item numbers, with how each claim was verified. It is the document to argue with: if a row says
 ✅ and the code does not do it, that is a bug in this file.
 
-Dates: built 2026-10-28, on branch `arena/d2855a1d-manual`.
+Dates: built 2026-10-28, revised 2026-10-29, on branch `arena/d2855a1d-manual`.
+
+**The 2026-10-29 decisions**, because three of them overturn rules this ledger used to record as
+deliberate restraint. (1) **Payments are paused**: `ACCESS.mode = 'free'` in `packages/config` opens
+every level with no payment, while the price stays printed on each course card with a line explaining
+it; the payment code, tables, admin queue and emails are all still in the repo and unused.
+(2) **Ads everywhere**: `ADS.policy.forbidden` is emptied and `maxPerView` raised to 8, with 26 named
+placements — see §8. (3) **Gamification hard**: the XP/rank/streak HUD moved into the header on every
+screen, and the wheel, combos, show-up bonus and streak calendar were added — see §5 and §11. A fourth,
+softer change: the corpus now passes a plain-English pass on the way into the build — see §11.
 
 **Status key**
 · ✅ built and verified the way the item's "Done when" says
@@ -16,8 +25,8 @@ Dates: built 2026-10-28, on branch `arena/d2855a1d-manual`.
 · ⚠️ cannot be verified from inside this repo (needs the academy's accounts, DNS or a browser)
 
 **How "verified" is earned here** — not by eyeballing:
-`pnpm test` = 28 Vitest cases (18 over the content pipeline, 10 in the app: parser, quiz extraction,
-corpus invariants, the level's feedback line) + the leak audit + the corpus lint gate (0 critical);
+`pnpm test` = 45 Vitest cases (29 over the content pipeline, 16 in the app: parser, quiz extraction,
+plain-English pass, corpus invariants, the bonus wheel, the streak calendar, the level's feedback line) + the leak audit + the corpus lint gate (0 critical);
 `pnpm typecheck` = 4 projects; `next build`; `tools/route-walk.mjs` = 36 routes fetched and asserted
 (status, a page-defining phrase, no answer-key pattern in the HTML, a size ceiling);
 `tools/a11y-scan.mjs` = 31 rendered pages scanned for names, landmarks, headings, labels, ids;
@@ -114,10 +123,10 @@ black-box HTTP assertions run against both runtimes.
 | 5.3 streak engine | ✅ | Lagos-day rollover, gap-tolerant +1, freeze earned every 7 days (max 2) and consumed once, else reset |
 | 5.4 badges | ✅ | catalogue + `badgesEarned()` pure rule set (first lesson, perfect quiz, 7/30/100-day streak, 1k XP, course done, certificate…), showcase on `/profile` |
 | 5.5 award orchestration | ✅ | one idempotent `award()` per (user, kind, key) returning `{xp, levelUp, badges, unlock}`; every POST reuses it |
-| 5.6 leaderboards | ✅ | weekly + all-time, global + per-course, opt-in, KV/memory cached, ranks only visible to opted-in learners |
+| 5.6 leaderboards | ✅ | weekly + all-time, global + per-course, opt-in, KV/memory cached, ranks only visible to opted-in learners. 2026-10-29: the per-course *all-time* view used to ignore its own filter (it sorted lifetime XP); it now sums `xp_events` for that course, all 16 courses get a tab rather than the first eight, and the row says "160 XP in this course" instead of a lifetime number |
 | 5.7 level-map polish | ✅ | stars by quiz score, greyed locked path, boss styling on the capstone |
-| 5.8 daily quests + streak-at-risk nudge | ✅ | 5 quest kinds with XP, `GET /api/learn/due`, cron nudges (`/api/admin/nudges/run`) |
-| 5.9 anti-cheat | ✅ | server-side scoring only, `minCompletionSeconds`, `too_fast` rejection, daily cap 300, ungradeable questions excluded rather than guessed |
+| 5.8 daily quests + streak-at-risk nudge | ✅ | 5 quest kinds with XP, `GET /api/learn/due`, cron nudges (`/api/admin/nudges/run`). 2026-10-29: the quest, the streak and the rank bar now sit in the header (`XpHud`, every signed-in screen) and `/dashboard` gained a 12-week streak calendar fed by `xp_events` — a day with only a quiz pass lights up, because that is what showing up means |
+| 5.9 anti-cheat | ✅ | server-side scoring only, `minCompletionSeconds`, `too_fast` rejection, daily cap (`XP.dailyCap`, now 600), ungradeable questions excluded rather than guessed. The 2026-10-29 rewards were built to the same rule: the wheel's prize is `spinRoll(user, day, n)` on the server and its budget is counted from the `awards` table, a combo is measured from the marked answers, the show-up bonus is counted from today's awards — no route accepts a client's number, and `xpFor` honours a caller's `points` for `spin`/`combo` only, which `/learn/*` never passes |
 | **GATE 5** | ✅ | smoke suite asserts idempotency, the day cap, streak math and that a client cannot post XP |
 
 ## Phase 6 — interactivity
@@ -159,13 +168,14 @@ black-box HTTP assertions run against both runtimes.
 | item | status | note |
 |---|---|---|
 | 8.1 AdSense + site verification | 🔶 | tag with `ca-pub-9117572925263537`, deferred `adsbygoogle.push()`, reserved height; the property itself + verification file need the academy's account |
-| 8.2 ngAdverts 13225/13226 | 🔶 | `NgAdSlot` with `data-cfasync="false"`; slots fire only where policy allows |
-| 8.3 placement strategy + density cap | ✅ | `ADS.policy.allowedPlacements` (7 named slots), nothing renders outside it, no ad between a question and its feedback or inside prose |
+| 8.2 ngAdverts 13225/13226 | 🔶 | `NgAdSlot` with `data-cfasync="false"`; slots fire only where the placement list allows |
+| 8.3 placement strategy + density cap | ✅ 🟡 | was: 7 named slots, never inside a quiz/lesson body, never above the mobile fold, at most 2 per view. **Overturned by the academy on 2026-10-29** — 26 named placements (29 slots across 18 files), `forbidden: []`, `maxPerView: 8`. What is still enforced, by `tools/ad-budget.mjs` in `pnpm test`: a slot must name a placement that exists in config, nothing may be on both lists, no file places more than the ceiling. The band sits after `<main>` so the reading is still first paint, and a slot is never between an answer and its verdict |
 | 8.4 lazy-load + perf guard | ✅ | IntersectionObserver (200 px) + `requestIdleCallback`, min-height reserve so CLS stays 0 |
 | 8.5 ad-blocker soft message | ❌ | not built (would need a detection heuristic we prefer not to guess at) |
 | 8.6 AdSense policy audit | 🔶 | privacy + ToS pages, "Advertisement" labels, no ad-heavy pages; the manual audit itself is a launch task |
 | 8.7 privacy policy + ToS | ✅ | `/terms` and `/privacy` (refunds, retention, data-saver, ads, NDPR language) |
 | 8.8 revenue analytics | 🔶 | impression/blur/blocked counters via `/api/ads/event` + admin panel; no AdSense API import (needs credentials) |
+| 8.9 house fill (2026-10-29) | ✅ | with 24 placements, an unapproved network used to render 24 empty boxes. `HouseAd` now fills any slot with no live network — four promo cards (free catalogue, leaderboard, a course, "your ad here" for a sponsor) chosen by a hash of the placement name, so server and first client render agree and nothing repaints. Opt out with `NEXT_PUBLIC_ADS_FILL=off` |
 | **GATE 8** | ⚠️ | needs a live domain + approved AdSense account |
 
 ## Phase 9 — performance & reliability
@@ -192,7 +202,7 @@ black-box HTTP assertions run against both runtimes.
 | 10.2 API integration tests | ✅ | `tools/smoke-api.mjs` — 53 assertions: auth, CSRF, progress, quiz grading, gating (402), payment approval, uploads, certificates, admin, caps |
 | 10.3 E2E (Playwright) | 🔶 | `tools/route-walk.mjs` fetches and asserts all 36 routes in CI (status, content marker, no answer-key pattern, size ceiling), `tools/a11y-scan.mjs` scans the same rendered HTML for names/landmarks/headings/labels, and the smoke suite drives the API end to end — what is missing is real *browser* interaction (hydration, offline queue, upload widget), which needs Playwright in the beta phase |
 | 10.4 device/browser matrix | ⏳ | needs real hardware; the layout is mobile-first at 360 px and the PWA path is exercised manually |
-| 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens. Automated in CI by `node tools/a11y-scan.mjs` over 29 rendered pages while logged in as a learner (**0 findings**): accessible names, landmarks, heading order, form labels, duplicate ids, `aria-hidden` traps, `rel~="noopener"`, unique ids. Contrast ratio, focus order and computed style still need axe/Lighthouse against a deployed URL; drag ARIA n/a (6.2) |
+| 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens; the sponsored bands are `<aside aria-label="Sponsored">` with named links, and the wheel prints its prize as text in a live region. Automated in CI by `node tools/a11y-scan.mjs` over 31 rendered pages while logged in as a learner (**0 findings**): accessible names, landmarks, heading order, form labels, duplicate ids, `aria-hidden` traps, `rel~="noopener"`, unique ids. Contrast ratio, focus order and computed style still need axe/Lighthouse against a deployed URL; drag ARIA n/a (6.2) |
 | 10.6 security review | 🔶 | OWASP-shaped: parameterised SQL only, CSP with nonces-free strict sources, no `dangerouslySetInnerHTML` except JSON-LD, upload type+size+ownership checks, IDOR guards on progress/payments/uploads, CSRF double submit, no secrets in the bundle (leak audit). A third-party pen test is out of reach here |
 | 10.7 load test (200 concurrent) | ❌ | no k6/autocannon harness yet; the p95 budget is met by construction (static JSON reads, indexed queries) but unproven under load |
 | 10.8 content QA sweep | ✅ | the lint gate *is* the sweep (mojibake, broken refs, ₦ format, structure), plus the manual read of the two repaired encodings; the 2 remaining unkeyed questions are recorded as warnings rather than silently patched (92 of the original 94 were this repo's extractor, now fixed — §2.7) |
@@ -211,6 +221,8 @@ black-box HTTP assertions run against both runtimes.
 | 11.6 growth loops | 🔶 shareable certificate link + verify page exist; referral rewards and badge cards not built |
 | 11.7 weekly analytics ritual | 🔶 `/admin/overview` has the numbers; the ritual is a human practice, written into §8 |
 | 11.8 v2 backlog | 📋 recorded below |
+| 11.9 plain-English pass | ✅ 🟡 `content-plain/plain-pass.json` + `packages/content/src/plain.ts`: strips classroom trainer scripts (`Instructor Script:`, `Ask the class:`, glued `F.1` subheadings) from reading sections, rewrites all 16 course summaries in simple English, runs 102 everyday-word swaps, expands 87 acronyms on first mention, and renders 160 glossary terms above the reading across all 141 levels. Never touches code, headings or table rows, and a definition that breaks the plain rule fails the build. 🟡 because this is a *mechanical* pass: `content-plain/<slug>/session-NN.md` is the override hook for genuine level-by-level rewrites, and no rewrite has been written into it yet — that is 16 courses of trainer time, not a script |
+| 11.10 free access (payments paused) | ✅ `ACCESS.mode = 'free'` short-circuits `lockState`, which is the single door every surface reads (`assertAccess`, `accessFor`, the web's lock note, the smoke suite). Prices stay visible with a note; flipping `CEA_ACCESS_MODE=paid` restores gating with no migration. The smoke suite's gating assertions are derived from `ACCESS.mode`, so CI proves the right thing in either mode |
 | **GATE 11** | ⏳ |
 
 ---

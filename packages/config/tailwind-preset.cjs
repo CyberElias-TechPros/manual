@@ -25,20 +25,20 @@ const brand = {
 
 /** The neutral ramp. Text, rules and quiet fills come from here — never from the brand ramp. */
 const ink = {
-  DEFAULT: '#10203a',
-  900: '#10203a',
-  800: '#1c2b45',
-  700: '#31415c',
+  DEFAULT: '#0b172a',
+  900: '#0b172a',
+  800: '#13233f',
+  700: '#1d304f',
   // -600 and -500 are the two greys this app uses for *body* copy (secondary text, prose, table
-  // rows). Both were a touch light for a phone in daylight; they move down the ramp while keeping
-  // their distance from -700/-800, so "this line is less important" is still visible.
-  600: '#3d4c66',
-  500: '#54637d',
-  400: '#7b8798',
-  300: '#aab4c4',
-  200: '#d3dae4',
-  100: '#e8edf4',
-  50: '#f5f7fa',
+  // rows). Darkened significantly so nothing looks thin or faint on a phone in daylight, while
+  // keeping clear hierarchy between primary ink and supporting captions.
+  600: '#2a3d5d',
+  500: '#3c5070',
+  400: '#556885',
+  300: '#8494ad',
+  200: '#cfd8e4',
+  100: '#e5ebf3',
+  50: '#f4f7fb',
 }
 
 module.exports = {

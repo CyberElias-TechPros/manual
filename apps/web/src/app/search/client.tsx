@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Pill, cx, request } from '@cea/ui'
+import { AdSlot, Pill, cx, request } from '@cea/ui'
 
 type Hit = { course: string; courseTitle: string; sessionNumber: number; title: string; score: number; free?: boolean; locked?: boolean }
 
@@ -48,8 +48,8 @@ export function SearchClient({ initial }: { initial: string }) {
   return (
     <div className="mx-auto max-w-reading pb-8">
       <header>
-        <h1 className="text-2xl font-semibold tracking-snugish text-ink sm:text-3xl dark:text-light">Search the courses</h1>
-        <p className="mt-2.5 text-[0.9375rem] text-ink-500 dark:text-light/55">Titles, outcomes and lesson text. Levels you cannot open yet appear without their content.</p>
+        <h1 className="text-2xl font-bold tracking-snugish text-ink sm:text-3xl dark:text-light">Search all 16 courses</h1>
+        <p className="mt-2.5 text-[0.9375rem] text-ink-600 dark:text-light/75">Type any topic, tool or word (like Excel, phishing, flyer, JavaScript) to jump straight to the exact level that teaches it.</p>
       </header>
       <form role="search" className="mt-7" onSubmit={e => e.preventDefault()}>
         <label className="sr-only" htmlFor="q">Search</label>
@@ -92,6 +92,7 @@ export function SearchClient({ initial }: { initial: string }) {
           ))}
         </ul>
       )}
+      <AdSlot placement="search-results" variant="card" />
       {q.trim() && !hits.length && !busy && (
         <p className="mt-10 py-6 text-center text-[0.9375rem] text-ink-500 dark:text-light/55">
           No level matches “{q}” in what you can open. <Link className="font-medium text-navy underline underline-offset-2 dark:text-sky" href="/courses">Browse the catalogue</Link> to open more.

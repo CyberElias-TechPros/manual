@@ -57,15 +57,37 @@ type Payload = {
 
 /** Section kinds that are reading, as opposed to something the learner has to do. */
 const READ_KINDS = new Set(['lecture', 'concept', 'demo', 'overview', 'objective', 'recap', 'troubleshooting', 'reading', 'worked_example'])
+/** Trainer-sheet metadata sections hidden from step-by-step reading so Step 1 starts straight at the lesson. */
+const META_SECTION_KINDS = new Set(['identification', 'outcomes', 'materials'])
+const FRIENDLY_SECTION_TITLE: Record<string, string> = {
+  opening: 'Warm-up: why this matters',
+  prereq_review: 'Quick recap before we begin',
+  lecture: 'Main lesson (explained simply)',
+  demo: 'Step-by-step walkthrough',
+  guided_practical: 'Try it yourself, step by step',
+  troubleshooting: 'Common mistakes & easy fixes',
+  assignment: 'Extra practice challenge',
+}
+function friendlyTitle(s?: Section): string {
+  if (!s) return 'Read'
+  return FRIENDLY_SECTION_TITLE[s.kind] || s.title
+}
+const STAGE_XP: Record<string, number> = {
+  read: XP.lessonRead,
+  practise: XP.exerciseSubmit,
+  check: XP.quizPass,
+  case: XP.exerciseSubmit,
+  finish: XP.sessionComplete,
+}
 /** What each activity kind is called in the queue, and why it is there. */
 const ACTIVITY: Record<string, { id: string; label: string; intent: string; order: number }> = {
-  exercise: { id: 'practise', label: 'Practise', order: 1, intent: 'Do it once yourself, on the machine. This is where the skill actually lands.' },
-  knowledge_check: { id: 'check', label: 'Check', order: 2, intent: 'Answer every question in your own words. Nothing is timed, and you can retry as often as you like.' },
-  case_study: { id: 'case', label: 'Case study', order: 3, intent: 'A real decision, made the way you would make it on the job.' },
-  reflection: { id: 'review', label: 'Review', order: 4, intent: 'Run the cards once. The ones you mark “again” come back tomorrow.' },
+  exercise: { id: 'practise', label: 'Practise', order: 1, intent: `Try one practical task yourself (+${XP.exerciseSubmit} XP). You see the checklist first and the example answer right after.` },
+  knowledge_check: { id: 'check', label: 'Check', order: 2, intent: `Friendly quiz check (+${XP.quizPass} XP, +${XP.quizPerfectBonus} XP for 100%). No timer, unlimited retries, and simple everyday words count!` },
+  case_study: { id: 'case', label: 'Case study', order: 3, intent: `Pick what you would do in a real-life situation (+${XP.exerciseSubmit} XP).` },
+  reflection: { id: 'review', label: 'Review', order: 4, intent: 'Flip through the quick flashcards so the key ideas stick in your head.' },
 }
-const READ_STAGE = { id: 'read', label: 'Read', intent: 'One section at a time. Nothing here has to be memorised — you will use it in the stages after this.' }
-const FINISH_STAGE = { id: 'finish', label: 'Finish', intent: 'Tick what you actually did, then close the level so the next one opens.' }
+const READ_STAGE = { id: 'read', label: 'Read', intent: `Read one short part at a time (+${XP.lessonRead} XP). Every tricky word is explained in plain English — no need to memorise!` }
+const FINISH_STAGE = { id: 'finish', label: 'Finish', intent: `Tick off what you tried, claim your +${XP.sessionComplete} XP level bonus, and unlock the next level!` }
 
 /** Turn the level's sections into an ordered queue of stages: one idea per screen. */
 function buildStages(lesson?: Level | null): Stage[] {
@@ -74,9 +96,14 @@ function buildStages(lesson?: Level | null): Stage[] {
   for (const s of lesson.sections ?? []) {
     const activity = ACTIVITY[s.kind]
     if (!s.blocks?.length && !activity) continue
+    if (!activity && META_SECTION_KINDS.has(s.kind)) continue
     const id = activity && !READ_KINDS.has(s.kind) ? activity.id : 'read'
     if (!buckets.has(id)) buckets.set(id, [])
     buckets.get(id)!.push(s)
+  }
+  if (!buckets.has('read')) {
+    const fallback = (lesson.sections ?? []).filter(s => s.blocks?.length > 0 && !ACTIVITY[s.kind])
+    if (fallback.length) buckets.set('read', fallback)
   }
   const stages: Stage[] = []
   if (buckets.has('read')) stages.push({ ...READ_STAGE, sections: buckets.get('read')! })
@@ -139,7 +166,11 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
     seen.current.add(letter)
     setReadCount(seen.current.size)
     markRead(letter, 45)
-  }, [markRead])
+    // Auto-credit hidden trainer metadata sections (A/B/C) on the API so the 60% section threshold is met naturally
+    for (const ms of lesson?.sections ?? []) {
+      if (META_SECTION_KINDS.has(ms.kind) && ms.letter) markRead(ms.letter, 5)
+    }
+  }, [markRead, lesson])
 
   // 4.6 — one heartbeat for the whole level; the API caps what a minute of it is worth.
   useEffect(() => {
@@ -372,8 +403,8 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
         {/* not a <main> — the layout owns that landmark and the skip link targets it */}
         <div key={`${stage.id}-${stepping ? sub : 'x'}`} className="mt-9 max-w-reading animate-fade-in">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h2 className="text-xl font-semibold text-ink dark:text-light">
-              {stepping ? currentRead?.title ?? READ_STAGE.label : stage.label}
+            <h2 className="text-xl font-bold text-ink dark:text-light">
+              {stepping ? friendlyTitle(currentRead) : stage.label}
             </h2>
             {stepping && readSections.length > 1 && <Label>Section {Math.min(sub + 1, readSections.length)} of {readSections.length}</Label>}
           </div>
@@ -489,11 +520,12 @@ function StageRail({ stages, current, done, onPick }: { stages: Stage[]; current
             className={cx('flex shrink-0 items-center gap-2 rounded-card px-2.5 py-1.5 text-[0.8125rem] transition-colors duration-150',
               isNow ? 'font-medium text-ink dark:text-light' : 'text-ink-400 hover:text-ink dark:text-light/45 dark:hover:text-light/80')}
           >
-            <span aria-hidden className={cx('flex h-5 w-5 items-center justify-center rounded-full text-[0.6875rem] tabular-nums',
-              isDone && !isNow ? 'bg-navy text-white dark:bg-sky dark:text-deep' : isNow ? 'border-2 border-navy text-navy dark:border-sky dark:text-sky' : 'border border-surface-line-strong text-ink-300 dark:border-surface-dark-line-strong dark:text-light/35')}>
+            <span aria-hidden className={cx('flex h-5 w-5 items-center justify-center rounded-full text-[0.6875rem] font-bold tabular-nums',
+              isDone && !isNow ? 'bg-navy text-white dark:bg-sky dark:text-deep' : isNow ? 'border-2 border-navy text-navy dark:border-sky dark:text-sky' : 'border border-surface-line-strong text-ink-400 dark:border-surface-dark-line-strong dark:text-light/45')}>
               {isDone && !isNow ? '✓' : i + 1}
             </span>
-            {s.label}
+            <span>{s.label}</span>
+            {STAGE_XP[s.id] && !isDone ? <span className="text-[0.6875rem] font-bold text-[#8a5b0d] dark:text-gold">+{STAGE_XP[s.id]} XP</span> : null}
           </button>
         )
       })}
@@ -510,9 +542,9 @@ function ReadStage({ lesson, sections, sub, flow, dataSaver }:
   return (
     <>
       {leadIn && lesson.outcomes?.length > 0 && (
-        <div className="mt-6 border-l-2 border-gold pl-4">
-          <h3 className="text-[0.8125rem] font-medium text-ink-600 dark:text-light/65">By the end of this level you can</h3>
-          <ul className="mt-1.5 space-y-1 text-[0.9375rem] text-ink-700 dark:text-light/85">
+        <div className="mt-6 rounded-card border-l-4 border-gold bg-surface-muted/60 p-4 dark:bg-surface-dark-muted/50">
+          <h3 className="text-[0.875rem] font-bold text-ink dark:text-light">What you will be able to do after this level</h3>
+          <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[0.9375rem] text-ink-800 dark:text-light/90">
             {lesson.outcomes.map((o, i) => <li key={i}>{o}</li>)}
           </ul>
         </div>
@@ -549,6 +581,7 @@ function ReadStage({ lesson, sections, sub, flow, dataSaver }:
           <DiagramView diagram={lesson.diagram} dataSaver={dataSaver} alt={`${lesson.title} — diagram from the manual`} />
         </div>
       )}
+      <AdSlot placement="lesson-inline" variant="card" />
     </>
   )
 }
@@ -659,7 +692,7 @@ function FinishStage({ lesson, checklist, onChecklist, readCount, needToRead, re
         <div className="rounded-card border border-surface-line p-6 dark:border-surface-dark-line">
           <h3 className="text-base font-medium text-ink dark:text-light">Close this level</h3>
           <ul className="mt-3 space-y-2 text-[0.9375rem]">
-            <Requirement ok={!readingShort} label={`Read at least ${needToRead} of ${lesson.sections?.length ?? ''} sections`}>
+            <Requirement ok={!readingShort} label={`Read at least ${needToRead} of ${Math.max(needToRead, readCount)} reading parts`}>
               You are on {readCount}. <button type="button" className="text-navy underline underline-offset-2 dark:text-sky" onClick={() => onJump('read')}>Back to the reading</button>
             </Requirement>
             <Requirement ok={!quizPending} label="Take the knowledge check">

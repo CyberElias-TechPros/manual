@@ -13,7 +13,7 @@
     *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   }
 
-  body { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; overflow-wrap: break-word; }
+  body { text-rendering: optimizeLegibility; -webkit-font-smoothing: auto; overflow-wrap: break-word; font-weight: 500; }
 
   /* 10.5 WCAG AA: one visible focus style everywhere, never removed */
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {

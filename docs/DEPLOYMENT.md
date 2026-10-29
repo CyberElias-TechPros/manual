@@ -37,7 +37,9 @@ Names below are the ones the code actually reads — there are no others.
 | `APP_ENV` | API | `production` turns on secure cookies, strict secret check, tighter rate limits | `development` |
 | `CRON_PATH` | Worker | what the cron hits | `/api/admin/nudges/run?kind=both` |
 | `NEXT_PUBLIC_URL` | web | metadata base, sitemap/robots host, canonicals | `https://learn.cea.ng` |
-| `NEXT_PUBLIC_ADS` | web | set to `off` to disable every ad slot at build time | ads on, still policy-gated |
+| `NEXT_PUBLIC_ADS` | web | set to `off` to disable every ad slot at build time | ads on, gated by `ADS.policy` (placement list, `maxPerView`, Data Saver) |
+| `NEXT_PUBLIC_ADS_FILL` | web | `off` stops a slot with no approved network from rendering a house promo instead of nothing | house promos on — 24 placements would otherwise look broken |
+| `CEA_ACCESS_MODE` | web, API, tools | `paid` restores the paywall (`lockState`, the `402`, checkout, admin queue). Anything else = free access with prices still printed | `free` — the academy paused payments on 2026-10-29 |
 | `CEA_CONTENT_DIR` | both | where the built bundle lives | `apps/web/.content` (walks a few cwds, then fails loudly) |
 | `CEA_SQLITE` | Node API only | dev/demo database file | `var/cea-learn.sqlite` |
 | `CEA_ALLOW_LAB` | web | exposes `/styleguide/lab` | on in dev, off in production |
@@ -180,11 +182,16 @@ wrangler d1 export cea-learn --remote --output=backups/cea-$(date +%F).sql
 4. Content published (`publish-content.mjs`) and one level read in a **fresh** browser profile.
 5. `cea.ng` email: SPF `include:resend._netblocks…`-equivalent + DKIM + return-path verified,
    `MAIL_FROM` on that domain, then a real registration end-to-end (welcome + reset arrive).
-6. One real ₦ payment: intent → transfer → proof → approve → level 3 opens; CSV row matches the
-   Moniepoint statement.
+6. **Not applicable while payments are paused** (`CEA_ACCESS_MODE=free`): no learner can reach the
+   paywall, and no proof can be uploaded, so the flow is deliberately untested in production. Before
+   flipping it back to `paid`: one real ₦ payment end to end — intent → transfer → proof → approve →
+   level opens — and the CSV row against the Moniepoint statement.
 7. `/terms` + `/privacy` reviewed (refund window, 90-day receipts, NDPR erase path) — legal sign-off.
-8. AdSense property verified for the domain; the two ngAdverts slots load; nothing renders inside
-   a quiz (check `/learn/<slug>/1` with devtools).
+8. AdSense property verified for the domain; the two ngAdverts slots load. The density rule is
+   checked in CI (`node tools/ad-budget.mjs`: 26 allowed placements, no view over `maxPerView` 8), so
+   what remains a launch task is the human half — read `/learn/<slug>/1` on a metered phone and decide
+   whether five slots on the heaviest view is what the academy wants to sell, and confirm the count in
+   `/admin` (impressions vs `blocked`) once the network is live.
 9. Backups scheduled, restore rehearsed once.
 10. Staff trained on §6 (approve/reject/grant/ban/erase) with a written SOP — item 10.9's gate.
 

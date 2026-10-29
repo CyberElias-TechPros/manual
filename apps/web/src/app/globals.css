@@ -9,11 +9,11 @@
 @layer base {
   body {
     /* paper, not blue-grey: the reading surface must disappear */
-    @apply bg-canvas font-sans font-medium text-ink antialiased dark:bg-canvas-dark dark:text-light;
+    @apply bg-canvas font-sans font-medium text-ink dark:bg-canvas-dark dark:text-light;
     -webkit-text-size-adjust: 100%;
     font-feature-settings: 'kern' 1, 'liga' 1;
   }
-  h1, h2, h3 { @apply text-balance; }
+  h1, h2, h3 { @apply text-balance font-bold; }
   p { @apply text-pretty; }
   ::selection { background: rgba(26,54,93,.14); }
   /* a11y: never a marquee; nothing here is worth a vestibular trigger */
@@ -37,11 +37,11 @@
  * Long-form documents (privacy, terms, the design system) get the same reading rhythm as a
  * lesson: one measure, 1.7 leading, and space between siblings so <p> never touches <p>.
  */
-.cea-prose { @apply text-base leading-prose text-ink-700 dark:text-light/85; }
+.cea-prose { @apply font-medium text-base leading-prose text-ink-800 dark:text-light/95; }
 .cea-prose > * + * { margin-top: 1.75rem; }
 .cea-prose p, .cea-prose ul, .cea-prose ol, .cea-prose dl { max-width: 42rem; }
 .cea-prose li::marker { @apply text-ink-300; }
-.cea-prose strong { @apply font-semibold text-ink dark:text-light; }
+.cea-prose strong { @apply font-bold text-ink dark:text-light; }
 .cea-prose code { @apply rounded bg-surface-muted px-1 py-0.5 font-mono text-[0.88em] text-ink-800 dark:bg-surface-dark-muted dark:text-light/90; }
 .cea-prose a { @apply text-blue underline decoration-[1px] underline-offset-2 hover:text-navy dark:text-sky; }
 

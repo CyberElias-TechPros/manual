@@ -38,7 +38,7 @@ export function Button({
       {...rest}
       disabled={disabled || loading}
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-card border font-medium',
+        'inline-flex items-center justify-center gap-2 rounded-card border font-semibold',
         'transition-colors duration-150 ease-std',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy dark:focus-visible:outline-sky',
         'disabled:opacity-45 disabled:cursor-not-allowed min-h-[44px]',
@@ -86,11 +86,11 @@ export function Card({ as: As = 'div', variant = 'plain', pad = true, hover = fa
  * The one text-link treatment in the app. Exported as a class rather than a component so pages can
  * put it on `next/link` and keep prefetching (apps/web) while the kit stays router-free.
  */
-export const linkClass = 'font-medium text-navy underline-offset-4 hover:underline dark:text-sky'
+export const linkClass = 'font-semibold text-navy underline-offset-4 hover:underline dark:text-sky'
 
 /** A quiet piece of metadata: "9 levels · 4 weeks". No pill, no colour, 13px. */
 export function Label({ className, children }: { className?: string; children: ReactNode }) {
-  return <span className={cx('text-[0.8125rem] text-ink-500 dark:text-light/55', className)}>{children}</span>
+  return <span className={cx('text-[0.8125rem] font-medium text-ink-600 dark:text-light/70', className)}>{children}</span>
 }
 
 /** A state, not a decoration. One word, one dot, no fill. */
@@ -107,7 +107,7 @@ export function Pill({ tone = 'muted', className, children }: { tone?: 'navy' | 
     navy: 'bg-navy dark:bg-sky', gold: 'bg-gold', success: 'bg-success', error: 'bg-error', warn: 'bg-warn', muted: 'bg-ink-300',
   } as const
   return (
-    <span className={cx('inline-flex items-center gap-1.5 text-[0.8125rem] font-medium', tones[tone], className)}>
+    <span className={cx('inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold', tones[tone], className)}>
       <span aria-hidden className={cx('h-1.5 w-1.5 rounded-full', dot[tone])} />
       {children}
     </span>
@@ -125,7 +125,7 @@ export function SectionHead({ title, note, action, id }: { title: string; note?:
   return (
     <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-surface-line pb-3 dark:border-surface-dark-line">
       <div className="min-w-0">
-        <h2 id={id} className="text-xl font-semibold text-ink dark:text-light">{title}</h2>
+        <h2 id={id} className="text-xl font-bold text-ink dark:text-light">{title}</h2>
         {note ? <p className="mt-1 max-w-reading text-sm text-ink-500 dark:text-light/60">{note}</p> : null}
       </div>
       {action}

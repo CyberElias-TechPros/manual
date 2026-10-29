@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { AdSlot, CourseRows } from '@cea/ui'
+import { AdSlot, CourseRows, Pill } from '@cea/ui'
+import { isFreeAccess } from '@cea/config'
 import { blurb, categories, courseList } from '@/lib/content'
 import { CourseFilter } from './filter'
 
@@ -31,16 +32,21 @@ export default function CoursesPage({ searchParams }: { searchParams?: { track?:
   return (
     <div className="pb-6">
       <header className="max-w-3xl">
-        <h1 className="text-2xl font-semibold tracking-snugish text-ink sm:text-3xl dark:text-light">Courses</h1>
-        <p className="mt-3 max-w-reading text-base leading-relaxed text-ink-600 dark:text-light/70">
-          Each course runs in {all[0]?.sessionLengthMinutes || 105}-minute levels, three nights a week, in the order your instructor
-          follows. The first level is free so you can judge the teaching before you pay anything.
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-bold tracking-snugish text-ink sm:text-3xl dark:text-light">All {all.length} Courses</h1>
+          {isFreeAccess() && <Pill tone="success">Payments paused · Every level open free</Pill>}
+        </div>
+        <p className="mt-3 max-w-reading text-base leading-relaxed text-ink-700 dark:text-light/85">
+          Every course is broken into clear, beginner-friendly levels written in simple English. Earn XP, keep your daily streak,
+          unlock badges and claim a verified certificate — {isFreeAccess() ? 'with all levels unlocked for free right now (standard prices shown for later).' : 'starting with Level 1 free on every course.'}
         </p>
       </header>
 
       <div className="mt-8">
         <CourseFilter tracks={categories()} total={all.length} />
       </div>
+
+      <AdSlot placement="catalogue-inline" variant="card" />
 
       {courses.length === 0 ? (
         <div className="mt-10 py-10 text-center">

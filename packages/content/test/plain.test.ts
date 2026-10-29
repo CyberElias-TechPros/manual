@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { REPO } from '../src/build.js'
-import { expandAcronyms, glossaryFor, longSentenceShare, plainPass, plainPassIssues, sessionSource, simplify } from '../src/plain.js'
+import { cleanClassroomVoice, expandAcronyms, glossaryFor, longSentenceShare, plainPass, plainPassIssues, sessionSource, simplify } from '../src/plain.js'
 
 /**
  * The plain-English pass (11.x). These are the behaviours a learner would notice if they broke: a
@@ -90,5 +90,34 @@ describe('plain-English pass (11.x)', () => {
   it('honours a hand-rewritten level in content-plain/, and the extraction when there is none', () => {
     expect(sessionSource('web-development', 'session-01.md').overridden).toBe(false)
     expect(sessionSource('web-development', 'session-01.md').path).toContain('content/web-development/session-01.md')
+  })
+
+  it('strips trainer script labels and splits glued manual subheadings in reading sections only', () => {
+    const raw = [
+      '<!-- kind:lecture -->',
+      'Topic 1: What Is Word? (5 minutes) Instructor Script: "Word is a writing program."',
+      'F.1 Why security matters',
+      'The idea. Attackers want access.',
+      'Ask the class: What would you do?',
+      '<!-- kind:knowledge_check -->',
+      'Q1. Instructor Script: untouched here?',
+    ].join('\n')
+    const out = cleanClassroomVoice(raw)
+    expect(out).toContain('### Part 1: What Is Word?')
+    expect(out).toContain('Word is a writing program.')
+    expect(out).not.toContain('Topic 1:')
+    expect(out).toContain('### Why security matters')
+    expect(out).toContain('**The idea** — Attackers want access.')
+    expect(out).toContain('**Think about this:** What would you do?')
+    // knowledge_check is untouched so quiz extraction never shifts
+    expect(out).toContain('Q1. Instructor Script: untouched here?')
+  })
+
+  it('provides a beginner-friendly tagline and summary for all 16 courses', () => {
+    expect(Object.keys(plainPass().courses)).toHaveLength(16)
+    for (const c of Object.values(plainPass().courses)) {
+      expect(c.tagline.length).toBeGreaterThan(25)
+      expect(c.summary.length).toBeGreaterThan(40)
+    }
   })
 })

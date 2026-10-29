@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { Naira } from '@cea/ui'
-import { PAYMENT } from '@cea/config'
+import { PAYMENT, isFreeAccess } from '@cea/config'
 import { blurb, course, courseList, findCourse } from '@/lib/content'
 import { CourseAccessPanel, CourseSyllabus } from './client'
 
@@ -98,9 +98,10 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
         {first && (
           <section aria-labelledby="start-h" className="mt-2 max-w-reading lg:col-start-1 lg:row-start-2">
             <h2 id="start-h" className="sr-only">Start now</h2>
-            <p className="border-t border-surface-line pt-5 text-[0.9375rem] leading-relaxed text-ink-600 dark:border-surface-dark-line dark:text-light/65">
-              Level 1 — “{first.title}” — is free and open right now: {first.durationMinutes || 105} minutes, {first.outcomes?.length || 0} outcome
-              {first.outcomes?.length === 1 ? '' : 's'} and a {first.quiz?.questions?.length || 0}-question check. No card, no payment.
+            <p className="border-t border-surface-line pt-5 text-[0.9375rem] leading-relaxed text-ink-700 dark:border-surface-dark-line dark:text-light/80">
+              {isFreeAccess()
+                ? <>All <strong>{meta.sessionsCount} levels</strong> in this course are unlocked for free right now while payments are paused! Start with Level 1 — “{first.title}” — earn XP, build your streak and work toward your certificate.</>
+                : <>Level 1 — “{first.title}” — is free and open right now: {first.durationMinutes || 105} minutes, {first.outcomes?.length || 0} outcome{first.outcomes?.length === 1 ? '' : 's'} and a {first.quiz?.questions?.length || 0}-question check. No card, no payment.</>}
             </p>
           </section>
         )}
@@ -115,9 +116,9 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
         ) : null}
 
         <section id="syllabus" aria-labelledby="syllabus-h" className="scroll-mt-20 lg:col-start-1 lg:row-start-4">
-          <h2 id="syllabus-h" className="text-xl font-semibold text-ink dark:text-light">The map</h2>
-          <p className="mt-1.5 max-w-reading text-[0.9375rem] text-ink-500 dark:text-light/55">
-            Levels open in order, and each one is work you do rather than a video you sit through.
+          <h2 id="syllabus-h" className="text-xl font-bold text-ink dark:text-light">Course levels (click any level to play &amp; earn XP)</h2>
+          <p className="mt-1.5 max-w-reading text-[0.9375rem] text-ink-600 dark:text-light/70">
+            Follow the levels in order — every level explains new words in plain English, gives you a short practice task, and awards XP &amp; stars.
           </p>
           <CourseSyllabus slug={meta.slug} />
         </section>
@@ -144,9 +145,11 @@ export default function CoursePage({ params }: { params: { slug: string } }) {
               </div>
             ) : null}
             <div className="flex items-baseline justify-between gap-6 py-3.5">
-              <dt className="shrink-0 text-ink-500 dark:text-light/55">Fee</dt>
+              <dt className="shrink-0 font-semibold text-ink-600 dark:text-light/70">Standard fee</dt>
               <dd className="text-right text-[0.9375rem] text-ink dark:text-light">
-                <Naira amount={meta.feeNgn} className="font-medium" />, one-off · {PAYMENT.refundWindowDays}-day refund {PAYMENT.refundCondition}
+                {isFreeAccess()
+                  ? <><span className="text-ink-400 line-through dark:text-light/45"><Naira amount={meta.feeNgn} /></span> · <strong className="text-success">Free right now (payments paused)</strong></>
+                  : <><Naira amount={meta.feeNgn} className="font-bold" />, one-off · {PAYMENT.refundWindowDays}-day refund {PAYMENT.refundCondition}</>}
               </dd>
             </div>
           </dl>

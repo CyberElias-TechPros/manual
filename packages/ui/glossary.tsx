@@ -16,7 +16,7 @@ import { cx } from './primitives'
 
 export type GlossaryTerm = { term: string; plain: string }
 
-export function LevelGlossary({ terms, className, label = 'Words in this level, in plain English' }:
+export function LevelGlossary({ terms, className, label = 'Tricky words in this level — explained simply' }:
   { terms?: GlossaryTerm[] | null; className?: string; label?: string }) {
   const list = (terms ?? []).filter(t => t?.term && t?.plain)
   if (list.length === 0) return null
@@ -33,8 +33,8 @@ export function LevelGlossary({ terms, className, label = 'Words in this level, 
           </div>
         ))}
       </dl>
-      <p className="mt-3 border-t border-surface-line pt-2.5 text-[0.8125rem] leading-relaxed text-ink-500 dark:border-surface-dark-line dark:text-light/55">
-        Any word here you already know, skip. The reading does not assume it.
+      <p className="mt-3 border-t border-surface-line pt-2.5 text-[0.8125rem] leading-relaxed text-ink-600 dark:border-surface-dark-line dark:text-light/70">
+        New to any word above? Read its one-line meaning first — nothing in this level assumes you have seen it before.
       </p>
     </aside>
   )

@@ -58,7 +58,45 @@
     "USB": "the plug nearly every small device uses",
     "QR": "the square code a phone camera reads",
     "WI-FI": "networking over radio instead of cable",
-    "FAQ": "the answers page for questions people keep asking"
+    "FAQ": "the answers page for questions people keep asking",
+    "BVN": "your Bank Verification Number that links your Nigerian bank accounts",
+    "OTP": "a one-time secret code sent to your phone to confirm an action",
+    "POS": "the card machine used in shops and by cash agents",
+    "NIN": "your National Identification Number",
+    "USSD": "short star-and-hash phone codes like *901# that work without data",
+    "SIM": "the small chip inside your phone that holds your phone number",
+    "PIN": "your secret four- or six-digit number — never share it",
+    "ATM": "the cash machine outside a bank",
+    "2FA": "two-step sign-in using your password plus a code on your phone",
+    "SQL": "the language used to ask a database for information",
+    "CLI": "a text window where you type commands instead of clicking buttons",
+    "IDE": "the main app where programmers write and test code",
+    "SSL": "the security lock that scrambles data between a browser and a website",
+    "TLS": "the modern security lock that keeps website connections private",
+    "SSH": "a secure way to control another computer using typed commands",
+    "FTP": "an older way to copy files to or from a remote computer",
+    "CDN": "nearby servers around the world that deliver website files faster",
+    "SDK": "a starter kit of tools for building apps on a platform",
+    "CTA": "the button or link telling a visitor what to do next",
+    "B2B": "businesses selling to other businesses",
+    "B2C": "businesses selling straight to everyday customers",
+    "CAC": "Nigeria's Corporate Affairs Commission where businesses are registered",
+    "TIN": "Tax Identification Number for a person or business",
+    "VAT": "Value Added Tax added to goods and services",
+    "GIF": "an image format often used for short looping clips",
+    "MP4": "the standard file format for video that plays on any phone or PC",
+    "MP3": "the standard compressed file format for audio and music",
+    "FPS": "frames per second — how many still pictures play each second in video",
+    "DPI": "dots per inch — how sharp a printed image will look on paper",
+    "HEX": "a six-character colour code starting with #, like #1a365d",
+    "SSID": "the name of a wireless network you pick on your phone or laptop",
+    "MAC": "the unique hardware address built into a network card",
+    "GUI": "screens with buttons, icons and menus you click with a mouse or finger",
+    "CRUD": "the four basic data actions: create, read, update and delete",
+    "JWT": "a signed digital pass that proves you are signed in",
+    "CORS": "browser rules controlling which websites may ask your server for data",
+    "SPA": "a web app that updates one page smoothly instead of reloading",
+    "PWA": "a website you can save to your phone home screen like an app"
   },
   "substitutions": {
     "utilize": "use",
@@ -125,7 +163,44 @@
     "is able to": "can",
     "has the ability to": "can",
     "make use of": "use",
-    "due to the fact that": "because"
+    "due to the fact that": "because",
+    "utilized": "used",
+    "utilised": "used",
+    "demonstrate": "show",
+    "demonstrates": "shows",
+    "demonstrating": "showing",
+    "comprehend": "understand",
+    "configure": "set up",
+    "configured": "set up",
+    "configuring": "setting up",
+    "verify": "check",
+    "verifies": "checks",
+    "ensure": "make sure",
+    "ensures": "makes sure",
+    "subsequent": "next",
+    "predominantly": "mostly",
+    "consequently": "so",
+    "furthermore": "also",
+    "nevertheless": "still",
+    "endeavour": "try",
+    "endeavor": "try",
+    "proficiency": "skill",
+    "methodology": "method",
+    "terminology": "words",
+    "credentials": "login details",
+    "unauthorised": "without permission",
+    "unauthorized": "without permission",
+    "mitigate": "reduce",
+    "remediate": "fix",
+    "illustrate": "show",
+    "illustrates": "shows",
+    "retrieve": "get back",
+    "discard": "throw away",
+    "accomplish": "finish",
+    "erroneous": "wrong",
+    "modification": "change",
+    "modifications": "changes",
+    "modify": "change"
   },
   "glossary": [
     {
@@ -655,6 +730,184 @@
     {
       "term": "sla",
       "plain": "the promise of how fast a problem gets answered."
+    },
+    {
+      "term": "browser",
+      "plain": "the app you open to visit websites, like Chrome, Edge or Safari."
+    },
+    {
+      "term": "shortcut",
+      "plain": "a quick key press or icon that opens or does something faster."
+    },
+    {
+      "term": "folder",
+      "plain": "a named container on your computer that keeps related files together."
+    },
+    {
+      "term": "file extension",
+      "plain": "the letters after the dot in a file name, like .docx or .png."
+    },
+    {
+      "term": "cloud storage",
+      "plain": "saving files on an online computer so you can open them anywhere."
+    },
+    {
+      "term": "spreadsheet",
+      "plain": "a grid of rows and columns for numbers, lists and sums, like Excel."
+    },
+    {
+      "term": "ribbon",
+      "plain": "the strip of tool buttons across the top of Word, Excel or PowerPoint."
+    },
+    {
+      "term": "template",
+      "plain": "a ready-made starting layout you fill in with your own words."
+    },
+    {
+      "term": "margin",
+      "plain": "the clean empty space around the edge of a page or box."
+    },
+    {
+      "term": "alignment",
+      "plain": "lining text or boxes up neatly on the left, centre or right."
+    },
+    {
+      "term": "resolution",
+      "plain": "how many tiny picture dots make up a screen or photo."
+    },
+    {
+      "term": "aspect ratio",
+      "plain": "the shape of a screen or photo, like wide 16:9 or vertical 9:16."
+    },
+    {
+      "term": "crop",
+      "plain": "trimming the outer edges of a photo to focus on the main subject."
+    },
+    {
+      "term": "layer",
+      "plain": "one transparent sheet in a design or video stack you can move alone."
+    },
+    {
+      "term": "timeline",
+      "plain": "the strip in a video editor showing clips in order from start to end."
+    },
+    {
+      "term": "b-roll",
+      "plain": "extra cutaway shots shown while the main voice keeps speaking."
+    },
+    {
+      "term": "caption",
+      "plain": "on-screen words showing what is being said, or text under a post."
+    },
+    {
+      "term": "hook",
+      "plain": "the first three seconds or first line that makes someone keep watching."
+    },
+    {
+      "term": "algorithm",
+      "plain": "step-by-step rules a platform uses to decide what to show people."
+    },
+    {
+      "term": "retainer",
+      "plain": "a monthly fee a client pays you for ongoing work."
+    },
+    {
+      "term": "invoice",
+      "plain": "a clear bill listing what work you did, how much it costs and how to pay."
+    },
+    {
+      "term": "scope creep",
+      "plain": "when extra unpaid tasks quietly get added after you agreed a price."
+    },
+    {
+      "term": "portfolio",
+      "plain": "a neat collection of your best sample work that proves what you can do."
+    },
+    {
+      "term": "motherboard",
+      "plain": "the main circuit board inside a computer that every part plugs into."
+    },
+    {
+      "term": "driver",
+      "plain": "small software that teaches Windows how to talk to a piece of hardware."
+    },
+    {
+      "term": "thermal paste",
+      "plain": "heat-conducting paste between a processor chip and its cooling fan."
+    },
+    {
+      "term": "multimeter",
+      "plain": "a hand tool that measures voltage and checks if a wire is broken."
+    },
+    {
+      "term": "debugging",
+      "plain": "finding out why something is not working and fixing it step by step."
     }
-  ]
+  ],
+  "courses": {
+    "typing-computer-basics": {
+      "tagline": "Never used a computer comfortably before? Start right here — mouse, keyboard, files, folders and confident typing from zero.",
+      "summary": "This is the friendliest starting point in the academy. You learn what every part of a computer does, how to type without hunting for keys, how to save and find files neatly, and how to browse safely."
+    },
+    "microsoft-office": {
+      "tagline": "Create clean letters in Word, smart budgets in Excel and clear slide decks in PowerPoint that any employer will respect.",
+      "summary": "Almost every office job asks for Word, Excel and PowerPoint. Step by step, you will write formatted documents, run real formulas and charts, and build presentations from scratch."
+    },
+    "data-entry": {
+      "tagline": "Turn messy paper records and forms into clean, accurate spreadsheets fast — with zero formula headaches.",
+      "summary": "Businesses, hospitals, schools and NGOs need people who can enter, clean and check data without mistakes. You will master fast keyboard habits, sorting, filtering and error-checking."
+    },
+    "digital-productivity": {
+      "tagline": "Work smoothly with professional email, Google Docs, cloud folders, online calendars and team tools from phone or laptop.",
+      "summary": "Modern remote and office work happens in the cloud. Learn how to write sharp emails, share files safely without losing versions, organise meetings and keep your work tidy."
+    },
+    "graphic-design": {
+      "tagline": "Design eye-catching flyers, church & event posters, social media graphics and brand logos that clients happily pay for.",
+      "summary": "You do not need to know how to draw to become a strong designer. Learn colour, layout, clear fonts and practical design tools so every poster or flyer looks clean and professional."
+    },
+    "photography": {
+      "tagline": "Take sharp, well-lit portraits, event photos and product shots — using either a camera or the phone in your pocket.",
+      "summary": "Good photos come from light, framing and timing, not just expensive gear. Learn how to control exposure, pose people naturally, shoot products and edit clean final images."
+    },
+    "video-editing": {
+      "tagline": "Cut raw clips into smooth, engaging videos with clean sound, captions and pacing for YouTube, TikTok, Reels and clients.",
+      "summary": "Every brand and creator needs an editor who can turn rough footage into a story people watch to the end. Learn cutting, audio cleanup, titles, transitions and exporting."
+    },
+    "content-creation": {
+      "tagline": "Plan, script, shoot and publish helpful videos and posts on your phone that grow an audience and bring in customers.",
+      "summary": "Stop guessing what to post. Learn how to pick a clear topic, write strong hooks, film with good lighting and audio on a phone, and turn views into real income."
+    },
+    "social-media-management": {
+      "tagline": "Run business pages professionally — content calendars, captions, customer replies and clear monthly results reports.",
+      "summary": "Small businesses want someone reliable to handle their Instagram, Facebook, TikTok and WhatsApp presence. Learn how to plan a month of posts, grow engagement and charge monthly retainers."
+    },
+    "digital-marketing": {
+      "tagline": "Bring real paying customers to any business using search, WhatsApp funnels, landing pages and smart online ads.",
+      "summary": "Learn how people discover and buy things online in plain steps: choosing the right audience, writing offers that make sense, running small ad tests safely and tracking what worked."
+    },
+    "web-design": {
+      "tagline": "Build clean, mobile-friendly websites for businesses, portfolios and shops — laid out clearly for phones and laptops.",
+      "summary": "Every business needs a trustworthy home online. Learn how web pages are structured, styled and arranged so visitors immediately understand what is offered and how to get in touch."
+    },
+    "web-development": {
+      "tagline": "Make websites interactive with real JavaScript — buttons, forms, live updates and practical web apps from zero.",
+      "summary": "Go beyond static pages and learn how code actually thinks. Every concept — variables, functions, page updates and saving data — is explained in everyday English before you type a single line."
+    },
+    "cybersecurity": {
+      "tagline": "Protect phones, bank apps, company accounts and networks from scams, hackers, phishing links and data loss.",
+      "summary": "With bank apps, POS machines and WhatsApp scams everywhere, security is an essential skill. Learn how attacks happen in real life and the exact habits and tools that stop them."
+    },
+    "computer-repairs": {
+      "tagline": "Diagnose, fix, upgrade and service laptops and desktop PCs safely — from slow Windows systems to hardware faults.",
+      "summary": "Broken and slow computers are everywhere, and skilled technicians stay busy. Learn what every internal part does, how to troubleshoot step by step without guessing, and how to price repairs fairly."
+    },
+    "online-teaching": {
+      "tagline": "Turn any skill or school subject you know into clear, engaging online classes that students finish and recommend.",
+      "summary": "Teaching online is very different from talking in a room. Learn how to break lessons into simple steps, keep learners active on Zoom or WhatsApp, grade fairly and run your own paid cohorts."
+    },
+    "business-freelancing": {
+      "tagline": "Turn your practical skill into steady income — find clients, price your work confidently, send invoices and get paid.",
+      "summary": "Having a skill is half the job; getting paid fairly for it is the other half. Learn how to package your service, talk to clients, avoid unpaid extra work and manage your business money."
+    }
+  }
 }

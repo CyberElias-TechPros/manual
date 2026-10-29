@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { AdSlot, Card, Pill, Skeleton, cx, mutate, useApi, useSession } from '@cea/ui'
+import { AdSlot, Card, NgAdSlot, Pill, Skeleton, cx, mutate, useApi, useSession } from '@cea/ui'
 import { XP } from '@cea/config'
 
 type Row = { pos: number; name: string; xp: number; gained: number; id: string; me?: boolean; avatarSeed?: string }
@@ -110,7 +110,10 @@ export function LeaderboardClient({ course, period }: { course: string; period: 
             : 'You are leading this board. Keep the streak alive.'}
         </p>
       )}
-      <div className="mt-2 max-w-reading"><AdSlot placement="leaderboard-side" /></div>
+      <div className="mt-2 max-w-reading">
+        <AdSlot placement="leaderboard-side" />
+        <NgAdSlot placement="leaderboard-side" />
+      </div>
     </div>
   )
 }

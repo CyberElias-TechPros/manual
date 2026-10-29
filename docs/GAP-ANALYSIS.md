@@ -28,7 +28,7 @@ the README asserted, implied or omitted, and that the code had to answer anyway,
 | 6 | **B12** "`cealogo.png` — the app's brand anchor" | Not present as a file; the logo exists only as a vector on the PDF covers. | `CODE` — `extract.py` pulls the cover drawing into `assets/cealogo.png`; the catalogue covers are authored in SVG, the PWA icons in `apps/web/public/icons/` were made from the raster, and the top-bar mark is inline SVG so no page load pays for a 737 KB file. |
 | 7 | **7.1 fee example** "Typing & Computer Basics ₦15,000" | The Typing manual's own fee table says **₦20,000**, and the other 15 courses disagree with any single-number rule too (₦20k–₦50k). | `CODE` — fees are read from each manual into the bundle, and `DEFAULT_FEES_NGN` in `@cea/config` now matches the manuals exactly (it is only the fallback when `course_pricing` and the bundle are both silent). |
 | 8 | **Phase 5.4** "rank thresholds: Rookie 0 / Agent 500 / … / Legend 25000" + "XP: read 10, quiz 20 …" | Internally consistent, but **nothing said what earns a "read"** — "+10 XP for reading a session" is unimplementable as written. | `CODE` — see §2.1. |
-| 9 | **Phase 8.x** "AdSense + ngAdverts; never mid-quiz or mid-paragraph" | No placements list, no consent story, no fill/no-ad behaviour. | `CODE` + `DOC` — see §3.5 and §5.3. |
+| 9 | **Phase 8.x** "AdSense + ngAdverts; never mid-quiz or mid-paragraph" | No placements list, no consent story, no fill/no-ad behaviour. | `CODE` + `DOC` — see §3.5 and §5.3. (The "never mid-quiz" half was later retired by the academy and re-retired here in docs; the placements list, the fill behaviour and the density gate are what remains enforced.) |
 | 10 | **Phase 11.x** "refund policy, data retention" | Mentioned nowhere. The course PDFs promise a certificate and say nothing about refunds or retention. | `CODE` — see §4.2/§4.3, stated on `/terms` and `/privacy`. |
 
 ---
@@ -182,22 +182,43 @@ averages (Distinction ≥90 / Merit ≥80 / Pass), an A4 printable sheet
 (`/certificates/verify`) that returns name, course, grade, date and nothing else.
 `OPEN`: no signed PDF, no QR, no issuer of record in the academy's own letterhead.
 
-### 3.5 Ads: consent, filling, and "never mid-quiz"
-* `ADS.policy.allowedPlacements` is the only list an ad can use
-  (`home-top, home-mid, course-bottom, lesson-bottom, dashboard-side, leaderboard-side,
-  certificate-side`) — `AdSlot` refuses anything else, so a future contributor cannot place
-  an ad inside a quiz without changing the policy object.
+### 3.5 Ads: consent, filling, and what "policy" means now
+* **2026-10-29: the academy replaced the restraint with reach.** The earlier rule ("never inside a
+  quiz, exercise or lesson body; never above the fold on mobile; at most two per view", recorded here
+  as the reason 8.3 was ✅) is retired: `ADS.policy.allowedPlacements` is now 26 named placements —
+  including `lesson-top`, `lesson-between-stages`, `after-question`, `level-complete-band` — and
+  `ADS.policy.forbidden` is deliberately `[]`. An empty forbidden list is a decision, not an oversight,
+  and the reason is written where a reader will find it, in `packages/config/index.js`.
+* What the code still enforces, in `tools/ad-budget.mjs` (part of `pnpm test`): every
+  `<AdSlot placement="…">` names a placement that exists in config, nothing is on both lists, and no
+  file places more than `maxPerView` (8) slots. The site-wide band is added to every page's count, and
+  the check is static-per-file rather than runtime because a counter inside a render double-counts
+  under StrictMode — and deciding after paint would move the layout, which 10.1 spends real effort
+  keeping at CLS 0.
+* Placement still matters for *fairness to the learner*, and two lines survived the change: the band in
+  `layout.tsx` is after `<main>` in the DOM (the reading is the first paint and the skip link still
+  lands on content), and a slot is never between a submitted answer and its verdict.
 * No CMP is wired. In Nigeria that is fine; for the diaspora learners AdSense's own
   consent message is expected to cover EU traffic. `OPEN`: confirm with the AdSense account
   owner before launch (a real compliance task, not a code task).
-* What happens when no ad fills: the slot collapses to nothing (no empty grey box), and the
-  `blocked` event counter in `/api/ads/event` lets `/admin` see policy rejections.
+* What happens when no ad fills: since 2026-10-29 the box is never empty. An unapproved network renders
+  `HouseAd` — one of four promo cards, chosen by a hash of the placement name so SSR and the first
+  client render agree and nothing repaints under a thumb — because 24 empty grey boxes would look
+  broken rather than monetised. `NEXT_PUBLIC_ADS_FILL=off` restores "collapse to nothing"; the
+  `blocked` counter in `/api/ads/event` still lets `/admin` see rejections.
+* Data Saver is the one switch that still turns all of it off, and `adsAllowed` is what `/admin`
+  publishes into the page so a learner's choice is honoured without a refetch.
 
-### 3.6 Pricing psychology the README skipped
-Level 1 of every course is free — but the app also had to decide *when* to show the paywall.
-Shipped: the paywall appears (a) on the course page after the free level, (b) as a `402`
-`LockNote` when a locked level is opened, (c) never inside a quiz or after a correct answer,
-because a learner who just earned XP is being punished for learning.
+### 3.6 Pricing psychology, and the day it was paused
+Level 1 of every course was free; on 2026-10-29 the academy paused payments entirely, so *every*
+level is free while the fee stays printed. The decision is one value, `ACCESS.mode`, and `lockState`
+is the single door — `assertAccess` (the `402`), `accessFor` (the lock note the pages read), the
+checkout screens and the admin queue all fall out of it, which is why the pause needed no deletion.
+The paywall's original rules stay in the code and would return unchanged with `CEA_ACCESS_MODE=paid`:
+(a) on the course page after the free level, (b) as a `402` `LockNote` when a locked level is opened,
+(c) never inside a quiz or after a correct answer, because a learner who just earned XP is being
+punished for learning. What is added now is a line wherever a price appears — "Payments are paused —
+every level is open, start today free." — so the number reads as a deferred price rather than a bug.
 
 ---
 
@@ -261,8 +282,11 @@ level · a diagram and a case study everywhere · every course priced); `apps/we
 (6 assertions on the bundle reader, including that exactly one level per course is free);
 `tools/leak-audit.mjs` (no answer-bearing field in any learner file, and no path by which
 `keys/` could be served); the corpus lint gate with `--fail-on-critical`; and
-`tools/smoke-api.mjs` (53 black-box assertions: auth, CSRF, locks, XP, idempotency, quotas,
-uploads, payments, certificates, admin) run against both runtimes; `tools/route-walk.mjs` (35
+`tools/smoke-api.mjs` (59 black-box assertions: auth, CSRF, locks, XP, idempotency, quotas,
+uploads, payments, certificates, admin, the wheel and the combo — and the gating half reads
+`ACCESS.mode`, so the same suite proves "402 when paid" and "200 while payments are paused") run
+against both runtimes; `tools/ad-budget.mjs` (every slot names a real placement, nothing on both
+policy lists, no view over the ceiling); `tools/route-walk.mjs` (36
 routes fetched: expected status, a phrase that proves the page rendered *its* content, no
 answer-key pattern anywhere in the HTML, and a 900 KB ceiling per page so a hydration payload
 cannot silently double); `tools/assert-bundle-size.mjs` (the corpus may not shrink — 16 courses,

@@ -30,10 +30,12 @@ import { fileURLToPath } from 'node:url'
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
 
 export interface GlossaryTerm { term: string; plain: string }
+export interface PlainCourseCopy { tagline: string; summary: string }
 export interface PlainPass {
   acronyms: Record<string, string>
   substitutions: Record<string, string>
   glossary: GlossaryTerm[]
+  courses: Record<string, PlainCourseCopy>
 }
 
 const PASS_FILE = join(REPO, 'content-plain', 'plain-pass.json')
@@ -45,9 +47,14 @@ export function plainPass(): PlainPass {
   if (cached) return cached
   try {
     const raw = JSON.parse(readFileSync(PASS_FILE, 'utf8'))
-    cached = { acronyms: raw.acronyms || {}, substitutions: raw.substitutions || {}, glossary: raw.glossary || [] }
+    cached = {
+      acronyms: raw.acronyms || {},
+      substitutions: raw.substitutions || {},
+      glossary: raw.glossary || [],
+      courses: raw.courses || {},
+    }
   } catch {
-    cached = { acronyms: {}, substitutions: {}, glossary: [] }
+    cached = { acronyms: {}, substitutions: {}, glossary: [], courses: {} }
   }
   return cached
 }
@@ -154,11 +161,56 @@ export function glossaryFor(md: string, cap = 12, glossary = plainPass().glossar
   return found.sort((a, b) => a.at - b.at).slice(0, cap).map(x => x.term)
 }
 
+const READING_SECTION_KINDS = new Set([
+  'opening', 'prereq_review', 'lecture', 'demo', 'guided_practical', 'troubleshooting',
+])
+
+/**
+ * Step 0 — turn classroom trainer scripts ("Instructor Script:", "Ask the class:", "Write on the board:",
+ * and PDF subheadings glued onto "The idea.") into direct, warm, self-paced learner prose.
+ *
+ * Scoped strictly to reading sections (and outside fenced code blocks), so `knowledge_check`, `exercise`
+ * and `case_study` markers are never touched and every quiz question, exercise and answer key stays 1:1
+ * auditable against the source PDF.
+ */
+export function cleanClassroomVoice(md: string): string {
+  let kind = ''
+  let inFence = false
+  return md.replace(/\r/g, '').split('\n').map(line => {
+    const kindMatch = line.match(/^<!--\s*kind:([a-z_]+)\s*-->/i)
+    if (kindMatch) { kind = kindMatch[1].toLowerCase(); return line }
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; return line }
+    if (inFence || (kind && !READING_SECTION_KINDS.has(kind))) return line
+    if (/^\s*(#|\||>?\s*\|)/.test(line)) return line
+
+    let out = line
+    const hadScriptQuote = /Instructor\s+Script\s*:\s*"/i.test(out)
+    out = out.replace(/Instructor\s+Setup\s*:[^\n]*?(?=Instructor\s+Script\s*:)/gi, '')
+    out = out.replace(/^Topic\s+(\d+)\s*:\s*([^(\n]+?)\s*\(\d+\s*minutes?\)\s*Instructor\s+Script\s*:\s*"?/i, '### Part $1: $2\n\n')
+    out = out.replace(/^Topic\s+(\d+)\s*:\s*([^(\n]+?)\s*\(\d+\s*minutes?\)\s*/i, '### Part $1: $2\n\n')
+    out = out.replace(/Instructor\s+Script\s*:\s*"?/gi, '')
+    out = out.replace(/Instructor\s+Setup\s*:/gi, '**Setup:**')
+    out = out.replace(/Instructor\s+Demonstrates\s*\([^)]*\)\s*:/gi, '**Step-by-step walkthrough:**')
+    out = out.replace(/Ask\s+the\s+(?:class|learners|students|room)\s*:/gi, '**Think about this:**')
+    out = out.replace(/Write\s+on\s+the\s+(?:white)?board\s*:/gi, '**Key point to remember:**')
+    out = out.replace(/^([A-Z]\.\d+)\s+([A-Z][^\n.?!:]{2,80})$/, '\n### $2\n')
+    out = out.replace(/^([A-Z]\.\d+)\s+([A-Z][^\n.?!]{3,75}?)\s+(The idea\.|Plain-English definition\.|Why it matters\.|In plain English\.|How it works\.)/,
+      '\n### $2\n\n**$3**')
+    out = out.replace(/^(The idea|Plain-English definition|In plain English|Why it exists|Why it matters|What it protects|How it works|Real-life example|Rule of thumb|Watch out|Common mistake|Key takeaway)\.\s+/,
+      '\n**$1** — ')
+    if (hadScriptQuote && out.endsWith('"') && (out.match(/"/g) || []).length % 2 === 1) {
+      out = out.slice(0, -1)
+    }
+    return out
+  }).join('\n')
+}
+
 /** The whole pass, in one call, from the extracted markdown to what the build should parse. */
 export function applyPlainPass(md: string, slug: string, file: string): { md: string; overridden: boolean; source: string } {
   const src = sessionSource(slug, file)
   const raw = src.overridden ? readFileSync(src.path, 'utf8') : md
-  return { md: expandAcronyms(simplify(raw)), overridden: src.overridden, source: src.overridden ? `content-plain/${slug}/${file}` : `content/${slug}/${file}` }
+  const cleaned = src.overridden ? raw : cleanClassroomVoice(raw)
+  return { md: expandAcronyms(simplify(cleaned)), overridden: src.overridden, source: src.overridden ? `content-plain/${slug}/${file}` : `content/${slug}/${file}` }
 }
 
 // ---------------------------------------------------------------------------

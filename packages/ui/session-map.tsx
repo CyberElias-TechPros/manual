@@ -4,6 +4,7 @@
  * the API already computed (free / unlocked / locked / pending) plus stars and
  * the resume marker. Capstones render as boss nodes (5.7).
  */
+import { XP } from '@cea/config'
 import { Pill, Stars, cx } from './primitives'
 
 export interface MapSession {
@@ -31,10 +32,10 @@ export function SessionMap({ sessions, slug, hrefFor, onPick }:
 
   return (
     <div className="space-y-5">
-      <p className="text-[0.9375rem] text-ink-500 dark:text-light/55">
-        <span className="tabular-nums font-medium text-ink dark:text-light">{doneCount}</span> of {sessions.length} levels cleared
-        {sessions.some(s => s.isCapstone) ? ' · the last level is your final project' : ''}
-        {sessions.some(s => s.state?.state === 'pending') ? ' · a receipt is awaiting approval' : ''}
+      <p className="text-[0.9375rem] text-ink-600 dark:text-light/70">
+        <span className="tabular-nums font-bold text-ink dark:text-light">{doneCount}</span> of {sessions.length} levels finished
+        {' · '}earn up to <span className="font-bold text-[#8a5b0d] dark:text-gold">+{XP.lessonRead + XP.exerciseSubmit + XP.quizPass + XP.quizPerfectBonus + XP.sessionComplete} XP</span> on every level
+        {sessions.some(s => s.isCapstone) ? ' · final level = Boss Project' : ''}
       </p>
       {groups.map((g, gi) => (
         <section key={`${g.name}-${gi}`} aria-label={g.name}>
@@ -54,16 +55,16 @@ export function SessionMap({ sessions, slug, hrefFor, onPick }:
                     s.state?.state === 'locked' ? 'opacity-70' : 'hover:bg-surface-muted/50 dark:hover:bg-surface-dark-muted/50')}
                 >
                   <span className="min-w-0 flex-1">
-                    <span className={cx('text-[0.9375rem] font-medium leading-snug', s.state?.state === 'locked' ? 'text-ink-500 dark:text-light/50' : 'text-ink dark:text-light')}>
+                    <span className={cx('text-[0.9375rem] font-bold leading-snug', s.state?.state === 'locked' ? 'text-ink-500 dark:text-light/50' : 'text-ink dark:text-light')}>
                       <span className="mr-1.5 tabular-nums text-ink-400 dark:text-light/40">{s.number}</span>{s.title}
                     </span>
                     <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.8125rem] text-ink-500 dark:text-light/55">
                       {s.isFree && <Pill tone="success">free</Pill>}
                       {s.state?.state === 'pending' && <Pill tone="warn">awaiting approval</Pill>}
                       {s.state?.state === 'expired' && <Pill tone="error">access ended</Pill>}
-                      {s.isCapstone && <Pill tone="gold">final project</Pill>}
+                      {s.isCapstone ? <Pill tone="gold">Boss Project · +XP</Pill> : !s.state?.completed && s.state?.state !== 'locked' ? <Pill tone="gold">+{XP.lessonRead + XP.quizPass + XP.sessionComplete} XP</Pill> : null}
                       {s.minutes ? <span>{s.minutes} min</span> : null}
-                      {s.quizCount ? <span>{s.quizCount} questions</span> : null}
+                      {s.quizCount ? <span>{s.quizCount}-question check</span> : null}
                       {s.state?.quizBest != null ? <span className="tabular-nums">best {s.state.quizBest}%</span> : null}
                       {s.state?.exerciseSubmitted ? <span className="text-success">practice submitted</span> : null}
                       {s.state?.lastSeen && !s.state?.completed ? <span className="font-medium text-ink">resume here</span> : null}

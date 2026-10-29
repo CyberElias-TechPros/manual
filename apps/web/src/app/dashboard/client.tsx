@@ -69,7 +69,7 @@ export function DashboardClient() {
         <p className="mt-2 text-base leading-relaxed text-ink-600 dark:text-light/70">
           {nextUp
             ? <>Level {nextUp.sessionNumber} of {nextUp.course.replace(/-/g, ' ')} is waiting. {capLeft > 0 ? `You have ${capLeft} XP still available today.` : 'Today’s XP cap is reached — come back tomorrow, that is the point.'}</>
-            : 'Nothing in progress. The first level of every course is free, and it takes about 20 minutes to start.'}
+            : 'Nothing in progress yet — every level of all 16 courses is open for free right now! Spin the bonus wheel below or pick a course to start earning XP.'}
         </p>
       </header>
 
@@ -97,8 +97,8 @@ export function DashboardClient() {
       ) : (
         <section className="mt-8 max-w-reading">
           <div className="rounded-card border border-surface-line bg-surface p-5 sm:p-6 dark:border-surface-dark-line dark:bg-surface-dark">
-            <h2 className="text-lg font-medium text-ink dark:text-light">Pick a course and open its free level</h2>
-            <p className="mt-1.5 text-[0.9375rem] text-ink-500 dark:text-light/60">No payment, no card. Level 1 of all 16 courses is open to everyone.</p>
+            <h2 className="text-lg font-bold text-ink dark:text-light">Pick any course and start earning XP for free</h2>
+            <p className="mt-1.5 text-[0.9375rem] text-ink-600 dark:text-light/75">Payments are paused — every single level across all 16 courses is open for free right now.</p>
             <div className="mt-4 flex flex-wrap items-center gap-5">
               <Link href="/courses" className="inline-flex min-h-[44px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white hover:bg-[#152c4d]">Browse courses</Link>
               <Link className={linkClass} href="/learn/typing-computer-basics/1">Start with typing and computer basics</Link>
@@ -227,8 +227,7 @@ function GuestDashboard() {
     <div className="mx-auto max-w-reading py-4">
       <h1 className="text-2xl font-semibold tracking-snugish text-ink dark:text-light">Your dashboard starts with an account</h1>
       <p className="mt-3 text-base leading-relaxed text-ink-600 dark:text-light/70">
-        XP, streaks, badges and “continue where you stopped” need somewhere to live. A free account takes 20 seconds, works
-        offline, and nothing is charged until you choose a paid course.
+        XP, daily streaks, badges, the Daily Bonus Wheel and “continue where you stopped” all live on your free account. It takes 20 seconds to create, works offline, and all 16 courses are completely free right now.
       </p>
       <div className="mt-6 flex flex-wrap items-center gap-5">
         <Link href="/auth/register" className="inline-flex min-h-[48px] items-center rounded-card bg-navy px-5 text-[0.9375rem] font-medium text-white hover:bg-[#152c4d]">Create a free account</Link>
@@ -237,7 +236,7 @@ function GuestDashboard() {
 
       <section className="mt-12 border-t border-surface-line pt-6 dark:border-surface-dark-line">
         <h2 className="text-lg font-semibold text-ink dark:text-light">Trying it without an account?</h2>
-        <p className="mt-1.5 text-[0.9375rem] text-ink-500 dark:text-light/55">Level 1 of every course is open to everyone. Start with the one you are most curious about:</p>
+        <p className="mt-1.5 text-[0.9375rem] text-ink-600 dark:text-light/70">Every level of all 16 courses is open for free right now. Jump straight into one of our beginner favourites:</p>
         <ul className="mt-2 divide-y divide-surface-line dark:divide-surface-dark-line">
           {[['typing-computer-basics', 'Typing & Computer Basics'], ['microsoft-office', 'Microsoft Office'], ['graphic-design', 'Graphic Design'], ['web-development', 'Web Development']].map(([slug, name]) => (
             <li key={slug}>

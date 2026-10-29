@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { findCourse } from '@/lib/content'
+import { AdSlot } from '@cea/ui'
 import { CourseSyllabus } from '../client'
 
 export const metadata: Metadata = { title: 'Level map', robots: { index: false } }
@@ -16,6 +17,7 @@ export default function MapPage({ params }: { params: { slug: string } }) {
         <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">{c.displayTitle || c.name}</h1>
         <a href={`/courses/${c.slug}`} className="mt-2 inline-block text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-sky">← Course details</a>
       </header>
+      <AdSlot placement="map-side" variant="card" />
       <CourseSyllabus slug={c.slug} />
     </div>
   )

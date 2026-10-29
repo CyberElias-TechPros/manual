@@ -193,11 +193,11 @@ export const ADS = {
       'map-side', 'lesson-top', 'lesson-inline', 'lesson-between-stages', 'after-question',
       'level-complete-side', 'level-complete-band', 'dashboard-side', 'dashboard-inline',
       'leaderboard-side', 'profile-side', 'certificate-top', 'auth-side', 'search-results',
-      'checkout-note', 'offline', 'notfound', 'styleguide', 'site-footer',
+      'home-inline', 'home-mid', 'checkout-note', 'offline', 'notfound', 'styleguide', 'site-footer',
     ],
     /** 8.3 is retired by decision (2026-10-29). The floor that remains is `maxPerView` + data-saver. */
     forbidden: [],
-    maxPerView: 6,
+    maxPerView: 8,
     /** Learners who turn data-saver on still get no ads: it is their explicit choice, on a metered SIM. */
     respectDataSaver: true,
   },

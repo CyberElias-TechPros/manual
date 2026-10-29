@@ -96,9 +96,9 @@ export function SpinWheel({ spin, onChanged }: { spin?: SpinInfo | null; onChang
         <h2 id="wheel-h" className="text-[1.0625rem] font-bold text-ink dark:text-light">Daily bonus wheel</h2>
         <Pill tone={left > 0 ? 'navy' : 'muted'}>{left > 0 ? `${left} spin${left === 1 ? '' : 's'} left today` : 'Spent — back tomorrow'}</Pill>
       </header>
-      <p className="mt-1 text-[0.9375rem] text-ink-500 dark:text-light/60">
-        The prize is drawn when you tap, by the academy, not by this page. One spin a day; a
-        {' '}{GAME.wheel.bonusSpinStreakDays}-day streak earns a second one.
+      <p className="mt-1 text-[0.9375rem] text-ink-600 dark:text-light/70">
+        Tap <strong>Spin the wheel</strong> once every day for free bonus XP or a Streak Shield. Keep a
+        {' '}{GAME.wheel.bonusSpinStreakDays}-day learning streak and you get <strong>2 free spins a day</strong>!
       </p>
 
       <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
@@ -126,17 +126,20 @@ export function SpinWheel({ spin, onChanged }: { spin?: SpinInfo | null; onChang
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Button onClick={onSpin} disabled={left <= 0 || busy} loading={busy}>
-          {busy ? 'Drawing…' : left > 0 ? 'Spin the wheel' : 'No spins left today'}
+          {busy ? 'Spinning…' : left > 0 ? 'Spin the wheel' : 'No spins left today'}
         </Button>
         {/* The outcome is text, not just an animation: a screen reader and a learner with
             reduced motion get the same prize, in the same words. */}
-        <p className="text-[0.9375rem] font-medium text-ink dark:text-light" aria-live="polite">
-          {result?.spun && won ? `You won ${won.label}${won.freeze ? ` and a streak shield (+${won.freeze} freeze)` : ''}.`
-            : result?.reason === 'spent' ? 'That is today spent. Finish a level and the wheel refills tomorrow.'
-            : result?.reason === 'offline' ? 'You are offline — nothing was drawn, so no spin was used.'
-            : left > 0 ? '' : 'Come back tomorrow for the next spin.'}
+        <p className="text-[0.9375rem] font-semibold text-ink dark:text-light" aria-live="polite">
+          {result?.spun && won ? `You won ${won.label}${won.freeze ? ` and a streak shield (+${won.freeze} freeze)` : ''}!`
+            : result?.reason === 'spent' ? 'All spins used for today — finish a level to keep your streak and spin again tomorrow!'
+            : result?.reason === 'offline' ? 'You are offline — nothing was drawn, so your spin is still safe.'
+            : left > 0 ? '' : 'Come back tomorrow for your next free spin.'}
         </p>
       </div>
+      <p className="mt-3 border-t border-surface-line pt-2.5 text-[0.75rem] text-ink-500 dark:border-surface-dark-line dark:text-light/55">
+        Sponsored reward bonus · Free daily XP powered by <a href="/courses" className="font-bold text-navy underline-offset-2 hover:underline dark:text-sky">CEA Partner Ads</a>
+      </p>
     </section>
   )
 }

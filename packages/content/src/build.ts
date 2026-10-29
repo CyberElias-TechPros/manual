@@ -20,7 +20,7 @@ import { fileURLToPath } from 'node:url'
 import { normalizeCourse, parseSessionFile, countWords } from './parse.js'
 import { buildChecklist, buildCodeBlanks, buildExercises, buildFlashcards, buildQuiz, buildScenarios, buildTroubleshooting } from './interactives.js'
 import { lintSession, summarise } from './lint.js'
-import { applyPlainPass, glossaryFor, longSentenceShare, plainPassIssues, sessionSource } from './plain.js'
+import { applyPlainPass, glossaryFor, longSentenceShare, plainPass, plainPassIssues, sessionSource } from './plain.js'
 import type { Block, CatalogueIndex, Course, LintIssue, Section, Session } from './schema.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -229,8 +229,9 @@ export function buildAll(outDir = OUT_DIR) {
     // Catalogue projections (see Course.tagline/description/outcomes in schema.ts).
     const exitSession = sessions.find(s => s.isCapstone) || sessions[sessions.length - 1]
     const problem = String(course.problem || '').replace(/\s+/g, ' ').trim()
-    course.tagline = problem ? clip(problem.split(/(?<=[.!?])\s/)[0] || problem, 190) : undefined
-    course.description = problem || undefined
+    const friendly = plainPass().courses[slug]
+    course.tagline = friendly?.tagline || (problem ? clip(problem.split(/(?<=[.!?])\s/)[0] || problem, 190) : undefined)
+    course.description = friendly?.summary ? (problem ? `${friendly.summary}\n\n${problem}` : friendly.summary) : (problem || undefined)
     course.level = sessions[0]?.difficulty
     course.outcomes = (exitSession?.outcomes ?? []).slice(0, 6)
     course.firstSessionFree = true

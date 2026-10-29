@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AdSlot, Button, Label, Naira, Pill, SessionMap, Skeleton, cx, announceAward, mutate, request, useApi, useSession } from '@cea/ui'
-import { PAYMENT } from '@cea/config'
+import { PAYMENT, XP, isFreeAccess } from '@cea/config'
 
 type Access = { enrolled: boolean; paymentStatus: string | null; expiresAt: string | null; state: string }
 type Row = { number: number; title: string; module?: string; minutes?: number; isFree?: boolean; isCapstone?: boolean; words?: number; quizCount?: number; state: any }
@@ -44,6 +44,36 @@ export function CourseAccessPanel({ slug, feeNgn, freeTitle }: { slug: string; f
   const info = access.data?.access
 
   useEffect(() => { setError(null) }, [slug])
+
+  const freeNow = isFreeAccess()
+
+  if (freeNow) {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-card border-2 border-navy/20 bg-surface p-5 dark:border-sky/30 dark:bg-surface-dark">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <span className="text-2xl font-bold text-success">Free right now</span>
+            <span className="text-[0.875rem] text-ink-400 line-through dark:text-light/45"><Naira amount={feeNgn ?? null} /></span>
+          </div>
+          <p className="mt-1.5 text-[0.875rem] leading-relaxed text-ink-600 dark:text-light/75">
+            Payments are paused — <strong>every single level is unlocked free</strong>. Earn up to{' '}
+            <strong className="text-[#8a5b0d] dark:text-gold">+{XP.lessonRead + XP.exerciseSubmit + XP.quizPass + XP.quizPerfectBonus + XP.sessionComplete} XP</strong> per level and claim your certificate at the end!
+          </p>
+          <div className="mt-5 space-y-3">
+            <Link href={`/learn/${slug}/1`} className="flex min-h-[48px] items-center justify-center rounded-card bg-navy px-5 text-[0.9375rem] font-bold text-white transition-colors hover:bg-[#152c4d]">
+              {user ? 'Start / Continue Level 1 →' : 'Start Level 1 Free →'}
+            </Link>
+            {!user && (
+              <Link href="/auth/register" className="flex min-h-[44px] items-center justify-center rounded-card border border-surface-line-strong px-4 text-[0.875rem] font-bold text-navy hover:bg-surface-muted dark:border-surface-dark-line-strong dark:text-sky dark:hover:bg-surface-dark-muted">
+                Create free account (saves XP &amp; streak)
+              </Link>
+            )}
+          </div>
+        </div>
+        <AdSlot placement="course-hero" variant="card" />
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-card border border-surface-line bg-surface p-5 dark:border-surface-dark-line dark:bg-surface-dark">

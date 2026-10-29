@@ -290,28 +290,52 @@ const AD_FRAME: Record<AdVariant, string> = {
  */
 const HOUSE_PROMOS = [
   {
-    href: '/courses', kicker: 'Free while payments are paused',
-    title: 'Start any of the 16 courses today',
-    body: 'Every level is open right now — read a level, take the check, bank the XP.',
-    cta: 'Browse the catalogue',
+    href: '/courses', kicker: 'Sponsored · Free access',
+    title: 'All 16 courses & 141 levels are open for free right now',
+    body: 'Payments are paused. Pick any skill, finish a level today, earn XP and work toward your certificate.',
+    cta: 'Pick a free course',
   },
   {
-    href: '/leaderboard', kicker: 'This week at the academy',
-    title: 'Climb the leaderboard',
-    body: 'XP from reading, knowledge checks and practice tasks. Rookie to Legend, every rank is earned.',
-    cta: 'See the board',
+    href: '/dashboard', kicker: 'Daily reward · Sponsored',
+    title: 'Spin the Daily Bonus Wheel for extra XP & Streak Shields',
+    body: 'Log in every day for 1 free spin — and unlock 2 spins a day once your streak hits 3 days!',
+    cta: 'Open your dashboard',
   },
   {
-    href: '/courses/microsoft-office', kicker: 'Most started',
-    title: 'Microsoft Office, level by level',
-    body: 'Word, Excel and PowerPoint — from a blank screen to a document you would send a client.',
-    cta: 'Open the course',
+    href: '/leaderboard', kicker: 'Weekly XP race',
+    title: 'Climb from Rookie to Legend on this week’s leaderboard',
+    body: 'Every section read, quiz passed, combo streak and finished level adds XP to your weekly score.',
+    cta: 'Check the standings',
   },
   {
-    href: `mailto:${'hello@cea.ng'}?subject=${encodeURIComponent('Sponsor slot on CEA Learn')}`, kicker: 'Sponsored · your ad here',
-    title: 'Reach learners finishing a skill this month',
-    body: 'Naira-rate placement in front of a Nigerian audience that is studying, not scrolling.',
-    cta: 'hello@cea.ng',
+    href: '/courses/typing-computer-basics', kicker: 'Featured beginner track',
+    title: 'Brand new to computers? Start with Typing & Computer Basics',
+    body: 'Written in simple everyday English — learn mouse, keyboard, folders and safe browsing from zero.',
+    cta: 'Start Level 1 free',
+  },
+  {
+    href: '/courses/microsoft-office', kicker: 'Most popular job skill',
+    title: 'Master Word, Excel & PowerPoint step by step',
+    body: 'Build clean letters, budgets with real formulas, and slide decks employers ask for.',
+    cta: 'Open Microsoft Office',
+  },
+  {
+    href: '/courses/cybersecurity', kicker: 'Stay safe online · Featured',
+    title: 'Spot bank-app scams, phishing links & protect accounts',
+    body: 'Practical cybersecurity explained in plain English — protect phones, POS terminals and company data.',
+    cta: 'Start Cybersecurity',
+  },
+  {
+    href: '/certificates', kicker: 'Verified achievement',
+    title: 'Finish every level & claim your printable A4 certificate',
+    body: 'Every certificate carries a public verification code employers and clients can check online.',
+    cta: 'See how certificates work',
+  },
+  {
+    href: `mailto:${'hello@cea.ng'}?subject=${encodeURIComponent('Sponsor slot on CEA Learn')}`, kicker: 'Sponsored · Partner with CEA',
+    title: 'Advertise your brand, data plan or laptop shop here',
+    body: 'Affordable Naira placements reaching motivated Nigerian learners building digital skills every day.',
+    cta: 'Book this ad slot',
   },
 ]
 
@@ -461,8 +485,11 @@ export function TopBar({ items }: { items: { href: string; label: string; icon?:
             </>
           ) : (
             <>
-              <a className="text-[0.9375rem] font-medium text-navy underline-offset-4 hover:underline dark:text-light" href="/auth/login">Sign in</a>
-              <a className="rounded-card bg-navy px-4 py-2 text-[0.9375rem] font-medium text-white transition-colors hover:bg-[#152c4d]" href="/auth/register">Create a free account</a>
+              <a href="/courses" className="hidden items-center gap-1.5 rounded-pill border border-gold/40 bg-gold/10 px-2.5 py-1 text-[0.75rem] font-bold text-[#8a5b0d] sm:inline-flex dark:text-gold" title="Earn XP, badges and streaks for free">
+                <span aria-hidden>★</span> 0 XP · All levels free
+              </a>
+              <a className="text-[0.9375rem] font-semibold text-navy underline-offset-4 hover:underline dark:text-light" href="/auth/login">Sign in</a>
+              <a className="rounded-card bg-navy px-4 py-2 text-[0.9375rem] font-semibold text-white transition-colors hover:bg-[#152c4d]" href="/auth/register">Join free</a>
             </>
           )}
         </div>
@@ -643,7 +670,7 @@ export function OfflineBanner() {
   )
 }
 
-export type AwardToast = { id: number; xp: number; label: string; badge?: string; rankUp?: string; combo?: number }
+export type AwardToast = { id: number; xp: number; label: string; badge?: string; badgeDesc?: string; rankUp?: string; combo?: number }
 let toastSeq = 1
 const listeners = new Set<(t: AwardToast) => void>()
 export function announceAward(award: any, label = '') {
@@ -651,21 +678,61 @@ export function announceAward(award: any, label = '') {
   if (!award || award.awarded === false || !award.xp) return
   // `rankUp` is the API's answer ("this learner crossed a rank threshold"), never a client's guess
   // at one — the payload carries it because the award is the only place the old total is known.
-  const t: AwardToast = { id: toastSeq++, xp: award.xp, label, badge: award.badges?.[0]?.name, rankUp: award.rankUp?.name, combo: award.meta?.run }
+  const t: AwardToast = {
+    id: toastSeq++, xp: award.xp, label,
+    badge: award.badges?.[0]?.name, badgeDesc: award.badges?.[0]?.description,
+    rankUp: award.rankUp?.name, combo: award.meta?.run,
+  }
   listeners.forEach(fn => fn(t))
 }
 export function XpToaster() {
   const [toasts, setToasts] = useState<AwardToast[]>([])
+  const [overlay, setOverlay] = useState<AwardToast | null>(null)
   useEffect(() => {
     const fn = (t: AwardToast) => {
       setToasts(list => [...list, t])
-      setTimeout(() => setToasts(list => list.filter(x => x.id !== t.id)), 2600)
+      if (t.rankUp || t.badge) setOverlay(t)
+      setTimeout(() => setToasts(list => list.filter(x => x.id !== t.id)), 3200)
     }
     listeners.add(fn)
     return () => { listeners.delete(fn) }
   }, [])
+  useEffect(() => {
+    if (!overlay) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOverlay(null) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [overlay])
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-16 z-50 flex flex-col items-center gap-1.5 px-3 lg:bottom-6" aria-live="polite">
+    <>
+      {overlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-deep/70 p-4 backdrop-blur-xs" role="dialog" aria-modal="true" aria-labelledby="celebration-title">
+          <div className="w-full max-w-sm animate-slide-up rounded-card border-2 border-gold bg-surface p-6 text-center shadow-elev dark:bg-surface-dark">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold/20 text-gold">
+              <svg aria-hidden viewBox="0 0 24 24" className="h-8 w-8 animate-badge-pop" fill="currentColor">
+                <path d="M12 2l2.9 6.1 6.6.9-4.8 4.7 1.2 6.7L12 17.3 6.1 20.4l1.2-6.7L2.5 9l6.6-.9z" />
+              </svg>
+            </div>
+            <p className="mt-3 text-[0.75rem] font-bold uppercase text-[#8a5b0d] dark:text-gold">
+              {overlay.rankUp ? 'Rank Up Unlocked!' : 'New Badge Earned!'}
+            </p>
+            <h2 id="celebration-title" className="mt-1 text-2xl font-bold text-ink dark:text-light">
+              {overlay.rankUp ? `You reached ${overlay.rankUp}!` : overlay.badge}
+            </h2>
+            <p className="mt-2 text-[0.9375rem] text-ink-600 dark:text-light/75">
+              {overlay.badgeDesc || `You earned +${overlay.xp} XP and climbed to a higher academy rank. Keep your streak going!`}
+            </p>
+            <p className="mt-3 text-lg font-bold text-[#8a5b0d] dark:text-gold">+{overlay.xp} XP banked</p>
+            <button
+              type="button" onClick={() => setOverlay(null)}
+              className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded-card bg-navy px-5 text-[0.9375rem] font-bold text-white hover:bg-[#152c4d]"
+            >
+              Awesome — keep going!
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="pointer-events-none fixed inset-x-0 bottom-16 z-50 flex flex-col items-center gap-1.5 px-3 lg:bottom-6" aria-live="polite">
       {toasts.map(t => (
         <div key={t.id} className={cx('animate-slide-up rounded-card px-4 py-2.5 text-[0.9375rem] text-white shadow-elev',
           t.rankUp ? 'bg-[#8a5b0d] ring-2 ring-gold dark:bg-[#3a2b06]' : 'bg-navy dark:bg-[#16263f]')}>
@@ -683,7 +750,8 @@ export function XpToaster() {
           ) : null}
         </div>
       ))}
-    </div>
+      </div>
+    </>
   )
 }
 

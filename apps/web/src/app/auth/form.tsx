@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, ProgressBar, cx, guestIdOf, request, useSession } from '@cea/ui'
+import { AdSlot, Button, Card, ProgressBar, cx, guestIdOf, request, useSession } from '@cea/ui'
 
 type Mode = 'login' | 'register' | 'forgot' | 'reset'
 
@@ -164,12 +164,13 @@ export function AuthForm({ mode, next, course, token, intro }: { mode: Mode; nex
       </Card>
 
       {mode === 'register' && (
-        <ul className="mt-1 space-y-1.5 text-[0.875rem] leading-relaxed text-ink-500 dark:text-light/55">
-          <li>No card needed — level 1 of every course is open the second your account exists.</li>
-          <li>Progress saves offline and syncs later, so a dark room with no signal is still a study session.</li>
+        <ul className="mt-1 space-y-1.5 text-[0.875rem] leading-relaxed text-ink-600 dark:text-light/75">
+          <li>100% free right now — all 141 levels, XP, daily streaks, badges and the Daily Bonus Wheel unlock immediately!</li>
+          <li>Your progress saves offline and syncs automatically when your data comes back.</li>
         </ul>
       )}
-      <p className="text-center text-[0.8125rem] text-ink-500 dark:text-light/50">
+      <AdSlot placement="auth-side" variant="card" />
+      <p className="text-center text-[0.8125rem] text-ink-500 dark:text-light/55">
         By continuing you accept the <Link href="/terms" className="underline-offset-2 hover:underline">terms</Link> and the <Link href="/privacy" className="underline-offset-2 hover:underline">privacy notice</Link>.
       </p>
     </div>

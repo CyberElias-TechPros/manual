@@ -19,7 +19,7 @@ export function Inlines({ parts }: { parts: Inline[] }) {
     <>
       {parts.map((p, i) => {
         switch (p.t) {
-          case 'strong': return <strong key={i} className="font-semibold text-ink dark:text-light">{p.v}</strong>
+          case 'strong': return <strong key={i} className="font-bold text-ink dark:text-light">{p.v}</strong>
           case 'code': return <code key={i} className="rounded bg-surface-muted px-1 py-0.5 font-mono text-[0.88em] text-ink-800 dark:bg-surface-dark-muted dark:text-light/90">{p.v}</code>
           case 'link': return <a key={i} href={p.href} className="text-blue underline decoration-[1px] underline-offset-2 hover:text-navy dark:text-sky" rel="noopener noreferrer">{p.v}</a>
           default: return <span key={i}>{p.v}</span>
@@ -43,7 +43,7 @@ export function BlockView({ block }: { block: Block }) {
       const Tag = (`h${Math.min(4, block.depth + 1)}`) as 'h2' | 'h3' | 'h4' | 'h5'
       return (
         <Tag className={cx(
-          'font-semibold text-ink dark:text-light',
+          'font-bold text-ink dark:text-light',
           block.depth <= 2 ? 'mt-9 mb-2 text-lg' : 'mt-6 mb-1.5 text-base',
         )}>
           <Inlines parts={block.inline} />
@@ -104,7 +104,7 @@ export function BlockView({ block }: { block: Block }) {
 }
 
 export function BlockList({ blocks, className }: { blocks: Block[]; className?: string }) {
-  return <div className={cx('max-w-reading text-base leading-prose text-ink-700 dark:text-light/85', className)}>{blocks.map((b, i) => <BlockView key={i} block={b} />)}</div>
+  return <div className={cx('max-w-reading font-medium text-base leading-prose text-ink-800 dark:text-light/95', className)}>{blocks.map((b, i) => <BlockView key={i} block={b} />)}</div>
 }
 
 /**

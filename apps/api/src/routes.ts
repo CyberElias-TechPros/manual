@@ -437,7 +437,7 @@ export function learnRoutes() {
         return { ...lock, completed: !!p?.completed_at, stars: starsFor(p?.quiz_best_pct), quizBest: p?.quiz_best_pct ?? null, lastSeen: p?.last_seen_at ?? null, exerciseSubmitted: !!p?.exercise_submitted_at }
       })(),
     }))
-    return json(c, { ok: true, course: bundle.course, access: { ...info, state: info.enrolled ? 'unlocked' : 'locked' }, sessions })
+    return json(c, { ok: true, course: bundle.course, access: { ...info, state: lockState({ isFree: false, enrolled: info.enrolled, paymentStatus: info.paymentStatus, expiresAt: info.expiresAt }).state }, sessions })
   })
 
   /** 4.5 — the lesson payload. Gated by 7.5, and never contains answer keys. */
@@ -827,7 +827,7 @@ export function learnRoutes() {
       ? new Set((await q.all(c.env, 'SELECT course FROM enrollments WHERE user_id=? AND status=?', u.id, 'active')).map((x: Row) => x.course))
       : new Set<string>()
     const allowed = index.courses.map((cc: Row) => cc.slug)
-    const previewOnly = (slugName: string) => !enrols.has(slugName)
+    const previewOnly = (slugName: string) => ACCESS.mode !== 'free' && !enrols.has(slugName)
     const hits: Row[] = []
     for (const slug of allowed) {
       const idx = await c.env.CONTENT.search(slug)
@@ -844,7 +844,7 @@ export function learnRoutes() {
       }
     }
     hits.sort((a, b) => b.score - a.score)
-    return json(c, { ok: true, query, hits: hits.slice(0, 24), scope: enrols.size, note: enrols.size ? undefined : 'Enrol in a course to search all of its levels; right now this covers the free first level of each course.' })
+    return json(c, { ok: true, query, hits: hits.slice(0, 24), scope: enrols.size, note: ACCESS.mode === 'free' || enrols.size ? undefined : 'Enrol in a course to search all of its levels; right now this covers the free first level of each course.' })
   })
 
   // ---- 4.10 notes & bookmarks ----

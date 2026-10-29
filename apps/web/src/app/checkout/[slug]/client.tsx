@@ -1,8 +1,8 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Button, Card, Label, Pill, ProgressBar, StatBlock, cx, mutate, request, useApi, useSession } from '@cea/ui'
-import { PAYMENT, formatNgn } from '@cea/config'
+import { AdSlot, Button, Card, Label, Pill, ProgressBar, StatBlock, cx, mutate, request, useApi, useSession } from '@cea/ui'
+import { PAYMENT, formatNgn, isFreeAccess } from '@cea/config'
 
 type Options = {
   feeNgn: number
@@ -43,6 +43,32 @@ export function CheckoutClient({ course, reference }: { course: any; reference: 
       <Label>Checkout</Label>
       <h1 className="mt-1.5 text-2xl font-semibold tracking-snugish text-ink dark:text-light">{course.displayTitle || course.name}</h1>
     </header>
+  )
+
+  if (isFreeAccess()) return (
+    <div className="mx-auto max-w-reading pb-8">
+      {head}
+      <Card variant="ring" className="mt-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <Pill tone="success">No payment needed right now</Pill>
+          <span className="text-[0.875rem] text-ink-400 line-through dark:text-light/45">{formatNgn(course.feeNgn)}</span>
+        </div>
+        <h2 className="mt-3 text-xl font-bold text-ink dark:text-light">Every level of this course is open for free!</h2>
+        <p className="mt-2 text-base leading-relaxed text-ink-700 dark:text-light/85">
+          Payments are paused right now, so you do not need to send a bank transfer or upload a receipt. Jump straight into
+          Level 1, read in simple English, earn XP &amp; badges, and work toward your certificate.
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-4">
+          <Link href={`/learn/${course.slug}/1`} className="inline-flex min-h-[48px] items-center rounded-card bg-navy px-6 text-[0.9375rem] font-bold text-white hover:bg-[#152c4d]">
+            Start Level 1 Free →
+          </Link>
+          <Link href={`/courses/${course.slug}`} className="text-[0.9375rem] font-bold text-navy underline-offset-4 hover:underline dark:text-sky">
+            View course levels
+          </Link>
+        </div>
+      </Card>
+      <AdSlot placement="checkout-note" variant="card" />
+    </div>
   )
 
   if (opts.loading) return (

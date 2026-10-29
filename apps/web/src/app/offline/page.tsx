@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { linkClass } from '@cea/ui'
+import { AdSlot, linkClass } from '@cea/ui'
 export const metadata: Metadata = { title: 'You are offline', robots: { index: false } }
 
 /**
@@ -25,13 +25,14 @@ export default function OfflinePage() {
         </div>
         <div className="py-3">
           <dt className="text-[0.8125rem] text-ink-500 dark:text-light/55">Waits for a signal</dt>
-          <dd className="mt-0.5 text-[0.9375rem] text-ink-700 dark:text-light/80">Uploading a payment receipt, the first time you open a new level, certificates.</dd>
+          <dd className="mt-0.5 text-[0.9375rem] text-ink-700 dark:text-light/85">Spinning the Daily Bonus Wheel, opening a brand-new level for the first time, and issuing certificates.</dd>
         </div>
         <div className="py-3">
           <dt className="text-[0.8125rem] text-ink-500 dark:text-light/55">Before the network gets thin</dt>
           <dd className="mt-0.5 text-[0.9375rem] text-ink-700 dark:text-light/80">Open the next level once — that is all it takes to keep it on this device.</dd>
         </div>
       </dl>
+      <div className="max-w-reading"><AdSlot placement="offline" variant="card" /></div>
       <p className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
         <Link href="/courses" className={linkClass}>Open the catalogue</Link>
         <Link href="/settings" className={linkClass}>Data-saver settings</Link>

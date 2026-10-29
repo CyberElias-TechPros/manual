@@ -60,7 +60,7 @@ means no mutation, which is why the smoke test asserts that before it asserts an
 | group | mount | routes |
 | --- | --- | --- |
 | auth | `/api/auth` | `register` `login` `logout` `forgot` `reset` `upgrade` `guest` `me` `PATCH me` `DELETE me` `GET me/export` `POST revoke` |
-| learning | `/api` | `GET courses[/:slug[/:n]]` (402 when locked) · `POST learn/{open,section,quiz,exercise,scenario,flashcards,checklist,complete,blank}` · `GET learn/due` · `GET/POST/DELETE notes[/:id]` · `GET/POST/DELETE bookmarks[/:id]` · `GET search` · `GET leaderboard` |
+| learning | `/api` | `GET courses[/:slug[/:n]]` (200 while `ACCESS.mode='free'`, 402 when paid & locked) · `POST learn/{open,section,quiz,exercise,scenario,flashcards,checklist,complete,blank}` · `POST gamify/spin` · `GET learn/due` · `GET/POST/DELETE notes[/:id]` · `GET/POST/DELETE bookmarks[/:id]` · `GET search` · `GET leaderboard` · `GET summary` |
 | money | `/api` | `GET payments/options` `POST payments/intent` `POST payments/proof` `GET payments` `DELETE payments/:id` `POST codes/redeem` `GET uploads/:key` |
 | certificates | `/api` | `GET certificates` `POST certificates/issue` `GET certificates/verify` |
 | admin | `/api/admin` | `GET overview` `GET summary` `GET users` `POST users/:id/{ban,unban,xp,reset-password}` `GET payments` `POST payments/{:id/approve,:id/reject}` `GET payments.csv` `GET/POST settings` `POST access-codes` `POST grant` `GET audit` `POST nudges/run` `POST ads/event` `POST feedback` |

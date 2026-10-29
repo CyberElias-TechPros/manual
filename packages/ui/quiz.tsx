@@ -146,8 +146,8 @@ export function QuizRunner({
       {!last && !String(answers[q.id] ?? '').trim() && (
         <p className="mt-2 text-right text-[0.8125rem] text-ink-500 dark:text-light/55">Answer this one to move on — a blank counts as wrong.</p>
       )}
-      <p className="mt-3 text-[0.8125rem] text-ink-500 dark:text-light/55">
-        Answer in your own words where the question asks for it. The academy grades meaning, not spelling.
+      <p className="mt-3 text-[0.8125rem] text-ink-600 dark:text-light/70">
+        <strong>Beginner tip:</strong> Take your time — there is no timer, and you can retry as often as you want. Answer in simple everyday words (we grade meaning, not spelling), and get <strong>{COMBO_TRIGGER} right in a row</strong> for a Combo XP bonus!
       </p>
     </Card>
   )
