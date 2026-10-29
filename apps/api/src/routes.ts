@@ -451,13 +451,16 @@ export function learnRoutes() {
     const u = c.get('user')
     await assertAccess(c.env, u, slug, { number: session.number, isFree: session.isFree })
     const p = u ? await q.one(c.env, 'SELECT * FROM progress WHERE user_id=? AND course=? AND session_number=?', u.id, slug, n) : null
+    const resumeObj = p ? safeJson<Record<string, any> | null>(p.resume_json, null) : null
     return json(c, {
       ok: true, course, session,
       progress: p ? {
         openedAt: p.opened_at, lastSeenAt: p.last_seen_at, completedAt: p.completed_at,
-        sectionsSeen: safeJson<string[]>(p.sections_seen, []), resume: safeJson(p.resume_json, null),
+        sectionsSeen: safeJson<string[]>(p.sections_seen, []), resume: resumeObj,
+        microChecksDone: Array.isArray(resumeObj?.microChecksDone) ? resumeObj.microChecksDone : [],
+        microCheckRun: Number(resumeObj?.mcRun || 0),
         quizBest: p.quiz_best_pct, quizAttempts: p.quiz_attempts, exerciseSubmitted: !!p.exercise_submitted_at,
-        checklist: safeJson(p.checklist_json, []), scenario: safeJson(p.scenario_json, null), timeSpentSec: p.time_spent_sec,
+        checklist: safeJson<string[]>(p.checklist_json, []), scenario: safeJson(p.scenario_json, null), timeSpentSec: p.time_spent_sec,
       } : null,
       xpRules: XP,
     })
@@ -485,11 +488,21 @@ export function learnRoutes() {
     const bundle = await c.env.CONTENT.course(slug)
     const lesson = bundle?.sessions.find((ss: any) => ss.number === n)
     const section = resolveSection(str(b.section), lesson)
+    const extraSections = Array.isArray(b.sections) ? (b.sections as unknown[]).map(x => resolveSection(str(x), lesson)).filter(Boolean) : []
     const seen = new Set<string>(safeJson<string[]>(p0.sections_seen, []))
     if (section) seen.add(section)
+    for (const s of extraSections) seen.add(s)
+    const prevResume = safeJson<Record<string, any>>(p0.resume_json, {})
     const time = Number(p0.time_spent_sec || 0) + clamp(num(b.deltaSec ?? b.seconds), 0, 300)
+    const nextResume = {
+      ...prevResume,
+      section: section || prevResume.section || '',
+      anchor: str(b.anchor),
+      cardIndex: b.cardIndex !== undefined ? clamp(num(b.cardIndex), 0, 500) : prevResume.cardIndex,
+      pct: clamp(num(b.pct), 0, 100),
+    }
     await q.run(c.env, 'UPDATE progress SET sections_seen = ?, furthest_section = ?, last_seen_at = ?, time_spent_sec = ?, resume_json = ? WHERE user_id=? AND course=? AND session_number=?',
-      JSON.stringify([...seen]), section || p0.furthest_section, now(), time, JSON.stringify({ section, anchor: str(b.anchor), pct: clamp(num(b.pct), 0, 100) }),
+      JSON.stringify([...seen]), section || extraSections[extraSections.length - 1] || p0.furthest_section, now(), time, JSON.stringify(nextResume),
       u.id, slug, n)
 
     // 4.3 defines "+10 for reading a session" but never says when a session counts
@@ -504,6 +517,125 @@ export function learnRoutes() {
       await q.run(c.env, 'UPDATE progress SET read_awarded_at = ? WHERE user_id=? AND course=? AND session_number=?', now(), u.id, slug, n)
     }
     return json(c, { ok: true, sectionsRead: seen.size, sectionsRequired: required, award: readAward })
+  })
+
+  /**
+   * Bite-sized Quick Check grading & XP — graded strictly against server-side `.content/keys/`
+   * so the client never sees `correctId` until after choosing the right option, and XP / combo
+   * bonuses remain 100% server-minted and idempotent per `checkId`.
+   */
+  a.post('/learn/micro-check', async (c: Ctx) => {
+    const u = c.get('user')
+    const b = await body(c)
+    const slug = str(b.course)
+    const n = num(b.session)
+    const checkId = str(b.checkId).trim()
+    const choiceId = str(b.choiceId).trim()
+    if (!checkId || !choiceId) throw bad(422, 'Pick an answer first.', 'bad_input')
+
+    const { course, session } = await loadSession(c.env, slug, n)
+    await assertAccess(c.env, u, slug, { number: session.number, isFree: session.isFree })
+    const card = (session.cards ?? []).find((cd: any) => cd.check?.id === checkId)
+    const key = (await c.env.CONTENT.keys(slug))?.[session.id]?.microChecks?.[checkId]
+    if (!card?.check || !key) throw bad(404, 'No such Quick Check in this level.', 'bad_check')
+
+    // Signed-out previewers on free levels still get real server-graded feedback, without minting XP until signed in.
+    if (!u) {
+      if (choiceId !== key.correctId) {
+        return json(c, {
+          ok: true,
+          correct: false,
+          hint: card.check.hint || 'Re-read the "In simple words" takeaway right above and try another choice!',
+          run: 0,
+          guestPreview: true,
+        })
+      }
+      return json(c, {
+        ok: true,
+        correct: true,
+        correctId: key.correctId,
+        explanation: key.explanation,
+        run: 1,
+        firstTry: true,
+        microChecksDone: [checkId],
+        award: null,
+        combo: null,
+        guestPreview: true,
+      })
+    }
+    if (u.banned) throw bad(403, 'This account was suspended by the academy. Contact hello@cea.ng.', 'banned')
+
+    await upsertProgress(c.env, u.id, slug, n, { opened_at: now(), last_seen_at: now() })
+    const p0 = await q.one(c.env, 'SELECT resume_json FROM progress WHERE user_id=? AND course=? AND session_number=?', u.id, slug, n)
+    const prevResume = safeJson<Record<string, any>>(p0?.resume_json, {})
+    const doneSet = new Set<string>(Array.isArray(prevResume.microChecksDone) ? prevResume.microChecksDone : [])
+    const missedSet = new Set<string>(Array.isArray(prevResume.mcMissed) ? prevResume.mcMissed : [])
+    const prevRun = Number(prevResume.mcRun || 0)
+
+    if (choiceId !== key.correctId) {
+      missedSet.add(checkId)
+      const nextResume = {
+        ...prevResume,
+        microChecksDone: [...doneSet],
+        mcMissed: [...missedSet],
+        mcRun: 0,
+      }
+      await q.run(c.env, 'UPDATE progress SET resume_json = ?, last_seen_at = ? WHERE user_id=? AND course=? AND session_number=?',
+        JSON.stringify(nextResume), now(), u.id, slug, n)
+      return json(c, {
+        ok: true,
+        correct: false,
+        hint: card.check.hint || 'Re-read the "In simple words" takeaway right above and try another choice!',
+        run: 0,
+      })
+    }
+
+    const alreadyDone = doneSet.has(checkId)
+    const firstTry = !alreadyDone && !missedSet.has(checkId)
+    doneSet.add(checkId)
+    const nextRun = alreadyDone ? prevRun : (firstTry ? prevRun + 1 : 1)
+    const nextResume = {
+      ...prevResume,
+      microChecksDone: [...doneSet],
+      mcMissed: [...missedSet],
+      mcRun: nextRun,
+    }
+    await q.run(c.env, 'UPDATE progress SET resume_json = ?, last_seen_at = ? WHERE user_id=? AND course=? AND session_number=?',
+      JSON.stringify(nextResume), now(), u.id, slug, n)
+
+    const awardRes = await award(c.env, {
+      userId: u.id,
+      kind: 'micro_check',
+      key: `${slug}/${sessionSlug(n)}/mc/${checkId}`,
+      course: slug,
+      sessionNumber: n,
+      meta: { checkId },
+    }, { course })
+
+    let comboRes = null
+    if (!alreadyDone && firstTry && nextRun >= GAME.combo.trigger && nextRun % GAME.combo.trigger === 0) {
+      comboRes = await award(c.env, {
+        userId: u.id,
+        kind: 'combo',
+        points: XP.comboStreak,
+        key: `${slug}/${sessionSlug(n)}/mc-combo/${checkId}`,
+        course: slug,
+        sessionNumber: n,
+        meta: { run: nextRun, checkId },
+      }, { course })
+    }
+
+    return json(c, {
+      ok: true,
+      correct: true,
+      correctId: key.correctId,
+      explanation: key.explanation,
+      run: nextRun,
+      firstTry,
+      microChecksDone: [...doneSet],
+      award: awardRes,
+      combo: comboRes ? { run: nextRun, award: comboRes } : null,
+    })
   })
 
   /** 6.1 + 5.9 — the client sends answers, the server decides the score. */

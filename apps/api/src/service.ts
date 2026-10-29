@@ -174,7 +174,7 @@ export async function courseCompletionCounts(env: CeaEnv, userId: string, catalo
 
 export interface AwardInput {
   userId: string
-  kind: 'lesson_read' | 'quiz_pass' | 'exercise_submit' | 'session_complete' | 'streak' | 'badge' | 'quest' | 'certificate' | 'admin_adjust' | 'spin' | 'combo' | 'first_level'
+  kind: 'lesson_read' | 'quiz_pass' | 'exercise_submit' | 'session_complete' | 'streak' | 'badge' | 'quest' | 'certificate' | 'admin_adjust' | 'spin' | 'combo' | 'first_level' | 'micro_check'
   /** stable idempotency key, e.g. `wd/session-03/complete` */
   key: string
   course?: string

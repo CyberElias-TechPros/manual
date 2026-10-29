@@ -755,14 +755,23 @@ export function XpToaster() {
   )
 }
 
-/** Marks a section read (4.3) — fire-and-forget, queued when offline. */
+/** Marks one or more sections read (4.3) — fire-and-forget, queued when offline. */
 export function useSectionRead(course: string, session: number) {
   const sent = useRef(new Set<string>())
-  return useCallback((letter: string, seconds = 0) => {
-    if (!letter || sent.current.has(letter)) return
-    sent.current.add(letter)
-    void mutate('/api/learn/section', { course, session, section: letter, deltaSec: seconds })
+  return useCallback((letter: string, seconds = 0, extraLetters?: string[], cardIndex?: number) => {
+    const all = [letter, ...(extraLetters ?? [])].filter(Boolean)
+    const unsent = all.filter(l => !sent.current.has(l))
+    if (!unsent.length && cardIndex === undefined) return
+    unsent.forEach(l => sent.current.add(l))
+    void mutate('/api/learn/section', {
+      course,
+      session,
+      section: letter || unsent[0] || '',
+      sections: unsent,
+      cardIndex,
+      deltaSec: seconds,
+    })
       .then((r: any) => announceAward(r?.award, 'level read'))
-      .catch(() => { sent.current.delete(letter) })
+      .catch(() => { unsent.forEach(l => sent.current.delete(l)) })
   }, [course, session])
 }

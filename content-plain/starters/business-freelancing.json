@@ -1,0 +1,56 @@
+{
+  "course": "business-freelancing",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What a real business is — no glass office required!",
+      "takeaway": "A business is any consistent exchange of real value for money — every business has 4 parts: Customer, Problem, Solution, and Price!",
+      "body": "You do **not** need a rented plaza shop, a bank loan, and a fancy logo before you are a real business!\n\nEvery genuine business — from a street recharge-card vendor to a Lagos software freelancer — has **four core parts**:\n1. **Customer:** A specific person who needs help.\n2. **Problem:** The headache, need, or desire they want solved.\n3. **Solution (Deliverable):** What you clearly deliver to solve it.\n4. **Price:** What they pay so the exchange is sustainable and profitable!"
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Hobby vs. Business — and the 3 ways to earn",
+      "takeaway": "A hobby is done for fun with casual/guessed money; a business prices intentionally, keeps records, and delivers reliably via Freelancing, Service, or Product.",
+      "body": "**Hobby vs. Business:**\nBaking cakes occasionally for friends while guessing prices and keeping zero records is still a **paid hobby**. Tracking costs, setting profitable prices, and keeping customer/money records turns it into a **business**!\n\n**Three clear routes to earn:**\n1. **Freelancing:** Selling your skilled project work directly to clients (e.g. designing a brand flyer or building a website for a client).\n2. **Service Business:** Performing repeatable hands-on service (e.g. a tailor sewing a dress, salon styling, home AC servicing).\n3. **Product Business:** Making or stocking physical/digital items sold per unit (e.g. bottled zobo, boxed pastries, phone chargers).",
+      "check": {
+        "prompt": "What are the FOUR essential parts of every business?",
+        "choices": [
+          { "id": "a", "text": "A rented shop, a bank loan, a fancy logo, and complimentary cards" },
+          { "id": "b", "text": "Customer, Problem, Solution (deliverable), and Price" },
+          { "id": "c", "text": "Instagram, TikTok, Twitter, and LinkedIn" },
+          { "id": "d", "text": "A suit, a briefcase, a generator, and a signboard" }
+        ],
+        "correctId": "b",
+        "hint": "Who buys (1), what pain they have (2), what you deliver (3), and what they pay (4)!",
+        "explanation": "Spot on! If you have a real Customer, Problem, Solution, and profitable Price, you have a working business — before spending ₦1 on rent."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Name your exact customer — never say 'everybody'!",
+      "takeaway": "Instead of 'everybody with a phone', define a clear buyer like 'busy market traders and office workers near Rumuola whose cracked Android screen stops their WhatsApp orders'.",
+      "body": "When you know **specifically** who you serve, you immediately know:\n- **Where** to find them\n- **What words** make them trust you\n- **What turnaround speed** they will gladly pay for!\n\nCompare:\n- Weak: *'Everybody is my customer.'*\n- Strong: *'Small boutique owners in Port Harcourt who need clean next-day product flyers for WhatsApp Status.'*"
+    },
+    {
+      "letter": "K",
+      "kicker": "Starting lean & smart",
+      "title": "Two habits before taking 10 more orders: Costing + Simple Records!",
+      "takeaway": "Stop guessing prices! Calculate exact ingredient/data/transport costs + your time margin, and record every inflow and expense from Day 1.",
+      "body": "If your friend bakes great cakes yet **guesses her price** and **writes nothing down**, she might work 12 hours and quietly **lose money** once gas, eggs, butter, and delivery are counted!\n\nBefore scaling up, do two simple things:\n1. **Calculate true cost + profit margin** so every order pays for materials, fuel/data, AND your labour.\n2. **Keep a simple money & order log** (date, customer, item, cost, amount paid) in a notebook or spreadsheet!",
+      "check": {
+        "prompt": "True or False: 'I cannot start or call myself a freelancer/business until I take a loan, rent an office, and pay for a logo.'",
+        "choices": [
+          { "id": "a", "text": "True — offices and loans come before your first customer" },
+          { "id": "b", "text": "False — start lean by solving a real problem for a paying customer, pricing above cost, and keeping clean records!" }
+        ],
+        "correctId": "b",
+        "hint": "Paying customers fund logos and offices — never let overhead debt come before your first real sales!",
+        "explanation": "100% right — False! Starting lean with paying clients, clear pricing, and honest records is the safest way to build a thriving business."
+      }
+    }
+  ]
+}

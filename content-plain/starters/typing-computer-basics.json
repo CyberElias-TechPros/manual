@@ -1,0 +1,110 @@
+{
+  "course": "typing-computer-basics",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "Meet the computer — a helper, not a mystery",
+      "takeaway": "A computer is simply a smart tool that takes instructions from you, processes them, and shows you the result.",
+      "body": "If you have ever used an ATM, a POS machine, or an Android phone, you have already used a computer!\n\nEvery computer does three simple jobs over and over:\n- **Input:** You type or click to tell it what you want.\n- **Processing:** Its inner brain works on your request.\n- **Output:** It shows the answer on the screen or plays sound."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Desktop vs. Laptop — same brain, different body",
+      "takeaway": "A desktop stays on one table with separate parts; a laptop folds all those parts into one portable book with a battery.",
+      "body": "You will meet two main styles of personal computer:\n- **Desktop computer:** Stays on a desk. The screen, keyboard, mouse, and main box sit separately and need constant power (or a UPS/inverter).\n- **Laptop computer:** Folds shut like a notebook. Screen, keyboard, trackpad, speakers, and a rechargeable battery are all built into one light body you can carry in a bag.",
+      "check": {
+        "prompt": "Why can a laptop keep working for hours when NEPA takes light, while a basic desktop turns off immediately?",
+        "choices": [
+          { "id": "a", "text": "A laptop does not use electricity at all" },
+          { "id": "b", "text": "A laptop has a built-in rechargeable battery inside its body" },
+          { "id": "c", "text": "A desktop has no processor inside it" },
+          { "id": "d", "text": "Laptops only work when connected to Wi-Fi" }
+        ],
+        "correctId": "b",
+        "hint": "Think about what powers your phone when it is unplugged from the wall.",
+        "explanation": "Exactly! A laptop packs a built-in rechargeable battery alongside its screen and keyboard, while a desktop relies on wall power or an external UPS/inverter."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "The 5 main parts you can see and touch",
+      "takeaway": "Monitor shows pictures, Keyboard types words, Mouse points and clicks, System Unit holds the brain, and Speakers play sound.",
+      "body": "On a desktop setup, five everyday parts work as a team:\n- **Monitor:** The TV-like screen that shows your work.\n- **System Unit (the box):** The main case holding the **CPU** — the computer's **brain**!\n- **Keyboard:** Keys for typing letters, numbers, and shortcuts.\n- **Mouse:** Moves the arrow on screen so you can point, click, and scroll.\n- **Speakers / Headphones:** Let you hear voices, alerts, and videos."
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 3",
+      "title": "Inside the System Unit — the real 'brain'",
+      "takeaway": "People sometimes call the whole box 'the CPU', but the true CPU is the tiny brain chip inside the System Unit.",
+      "body": "In many Nigerian offices and cybercafés, people point at the big metal box on the desk and say *'turn on the CPU'*.\n\nNow you know the friendly truth:\n- The big box is the **System Unit**.\n- Inside that box sits the **CPU (Central Processing Unit)** — the computer's **brain** that calculates, thinks, and runs every app you open.",
+      "check": {
+        "prompt": "Which part of the computer acts as its 'brain' that carries out instructions?",
+        "choices": [
+          { "id": "a", "text": "The Monitor" },
+          { "id": "b", "text": "The Mouse" },
+          { "id": "c", "text": "The CPU inside the System Unit" },
+          { "id": "d", "text": "The Speakers" }
+        ],
+        "correctId": "c",
+        "hint": "Monitor shows pictures and Mouse clicks — which part inside the box does the thinking?",
+        "explanation": "Spot on! The CPU (Central Processing Unit) inside the System Unit is the computer's brain."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 4",
+      "title": "Exploring the Windows Desktop",
+      "takeaway": "After signing in, you land on the Desktop — your home screen with app icons, the Taskbar at the bottom, and the Start button.",
+      "body": "Once the computer turns on and you sign in, you see the **Windows Desktop**. Think of it like the top of a neat office table:\n- **Icons:** Small pictures you double-click to open apps or folders.\n- **Taskbar:** The long strip along the very bottom showing open apps and the clock.\n- **Start Button:** The Windows logo at the bottom-left (or bottom-centre) where you open programs or shut down safely."
+    },
+    {
+      "letter": "G",
+      "kicker": "Step-by-step walkthrough",
+      "title": "How to turn ON and shut DOWN safely",
+      "takeaway": "Always shut down through Start → Power → Shut down — never pull the wall plug while the computer is running!",
+      "body": "Turning **ON** is one press of the physical **Power button** (a circle with a small line `⏻`).\n\nTurning **OFF** the right way protects your files:\n1. Save any open work.\n2. Click the **Start** button on screen.\n3. Click **Power (⏻)** → **Shut down**.\n4. Wait until the screen and lights go completely off.\n\n**Warning:** Pulling the plug from the wall while Windows is running can corrupt your files and damage the drive!",
+      "check": {
+        "prompt": "What is the safest, correct way to turn off a Windows computer when you finish working?",
+        "choices": [
+          { "id": "a", "text": "Pull the power cable straight out of the wall socket" },
+          { "id": "b", "text": "Switch off only the monitor screen and walk away" },
+          { "id": "c", "text": "Click Start → Power → Shut down and wait for it to power off" },
+          { "id": "d", "text": "Hold down the spacebar for ten seconds" }
+        ],
+        "correctId": "c",
+        "hint": "Windows needs a few seconds to close open files neatly before power stops.",
+        "explanation": "Correct! Using Start → Power → Shut down lets Windows save system state cleanly so no files get damaged."
+      }
+    },
+    {
+      "letter": "H",
+      "kicker": "Hands-on practice",
+      "title": "Using the mouse without tension",
+      "takeaway": "Left-click selects, double-click opens, right-click shows a helpful menu, and the wheel scrolls up and down.",
+      "body": "Rest your hand gently on the mouse — no need to grip tightly!\n- **Single left-click:** Selects an item or presses a button.\n- **Double left-click (two quick taps):** Opens an icon or folder on the Desktop.\n- **Right-click:** Opens a small menu of options for whatever you pointed at.\n- **Scroll wheel:** Rolls pages up and down smoothly."
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Pressed Power and nothing happened? Check the basics first!",
+      "takeaway": "Before panicking, check wall power/switch, cable plugs at both ends, and the monitor's own power button.",
+      "body": "If a friend says *'I pressed the power button and nothing happened'*, check the simplest things first:\n1. **Wall socket & stabilizer/UPS:** Is the wall switch ON and is there power (or battery charge on a laptop)?\n2. **Power cable:** Is the cord pushed firmly into both the wall and the back of the System Unit?\n3. **Monitor power:** Sometimes the computer IS on, and only the monitor screen is switched off!",
+      "check": {
+        "prompt": "Your friend presses a desktop's power button and nothing lights up at all. What should you check FIRST?",
+        "choices": [
+          { "id": "a", "text": "Buy a brand-new motherboard immediately" },
+          { "id": "b", "text": "Check that the wall socket switch is ON and the power cable is firmly plugged in" },
+          { "id": "c", "text": "Reinstall Microsoft Windows" },
+          { "id": "d", "text": "Replace the keyboard and mouse" }
+        ],
+        "correctId": "b",
+        "hint": "Always check electricity and cables before assuming anything inside is broken.",
+        "explanation": "Yes! Nine times out of ten, a dead desktop simply has a switched-off wall socket, loose power cord, or turned-off UPS."
+      }
+    }
+  ]
+}

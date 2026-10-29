@@ -1,0 +1,70 @@
+{
+  "course": "content-creation",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "Content creation vs. random 'posting'",
+      "takeaway": "Random posting talks about yourself; real content creation intentionally gives useful value (education, help, or joy) to a specific audience.",
+      "body": "Anyone can upload a blurry selfie saying *'Happy Tuesday guys'* — that is just **posting**.\n\n**Content creation** is making videos, carousels, or articles that **solve a problem, answer a question, or entertain a clear group of people** so strangers trust you, follow you, and buy from you!"
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Picking a Niche — why 'my audience is everybody' fails!",
+      "takeaway": "When you speak to 'everybody', nobody feels you are speaking to THEM — a focused niche makes the right people follow immediately.",
+      "body": "Compare two creators:\n- **Too vague:** *'Lifestyle, comedy, crypto, football, and food'* → Visitors are confused and scroll past.\n- **Clear Niche:** *'Affordable ₦2,000–₦5,000 healthy meals for busy Nigerian students & young workers'* → Instant follow!\n\nBuild a simple **Audience Avatar** naming three concrete things:\n1. **Who** they are (age/life situation)\n2. **What goal/need** they want\n3. **What obstacle** stops them right now (*'young people who like nice things'* is way too vague!).",
+      "check": {
+        "prompt": "Why does saying 'My content is for everybody' hurt a new creator?",
+        "choices": [
+          { "id": "a", "text": "Because platforms ban accounts with big audiences" },
+          { "id": "b", "text": "Because generic content feels relevant to nobody in particular, so viewers scroll past and algorithms don't know who to show you to" },
+          { "id": "c", "text": "Because phones run out of storage" },
+          { "id": "d", "text": "Because niches are only for banks" }
+        ],
+        "correctId": "b",
+        "hint": "People hit Follow when they think 'Whoa, this page was made specifically for people like me!'",
+        "explanation": "Exactly! A clear niche tells both human viewers and the platform algorithm exactly who needs your videos."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Winning the first 3 seconds: The C-P-C Hook Pattern!",
+      "takeaway": "A great opening hook combines C = Curiosity, P = Problem (or Promise), and C = Clarity in the very first line!",
+      "body": "On TikTok, Reels, and YouTube, viewers decide whether to swipe away in **2–3 seconds**. Saying *'Fashion video, watch it'* has zero curiosity and zero value!\n\nUse the **C-P-C Hook Formula**:\n- **C — Curiosity:** Spark an open question in their mind.\n- **P — Problem or Promise:** Name the pain they feel or the win they will get.\n- **C — Clarity:** Make the topic unmistakable right away.\n\n*Strong C-P-C example:*\n> *\"If buying lunch finishes your salary by the 10th (**Problem**), this ₦1,500 meal-prep plate (**Clarity**) will save your month (**Promise + Curiosity**).\"*",
+      "check": {
+        "prompt": "What do the three letters in the C-P-C Hook Pattern stand for?",
+        "choices": [
+          { "id": "a", "text": "Camera, Microphone, Computer" },
+          { "id": "b", "text": "Curiosity, Problem (or Promise), and Clarity" },
+          { "id": "c", "text": "Copy, Paste, Crop" },
+          { "id": "d", "text": "Caption, Profile, Comment" }
+        ],
+        "correctId": "b",
+        "hint": "Make them curious (C), touch their pain or goal (P), and be clear what the video is about (C)!",
+        "explanation": "Boom! Curiosity + Problem/Promise + Clarity stops the scroll without resorting to misleading clickbait."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "Core idea · 3",
+      "title": "Content Pillars — never wake up asking 'What do I post today?'",
+      "takeaway": "Choose 3–4 repeatable Content Pillars (recurring sub-topics inside your niche) so brainstorming ideas takes 5 minutes a week.",
+      "body": "**Content pillars** are 3 to 4 repeatable buckets inside your niche. For example, a Port Harcourt baker's 3 pillars might be:\n1. **Quick baking tips** (educational)\n2. **Behind-the-scenes cake decorating** (satisfying proof)\n3. **Pricing & cake ordering mistakes to avoid** (buyer trust)\n\nRotating through 3 pillars keeps your page focused **and** gives you endless post ideas!",
+      "check": {
+        "prompt": "Why is the hook 'Fashion video, watch it' weak, and how does C-P-C fix it?",
+        "choices": [
+          { "id": "a", "text": "It is too long; make it just 'Video'" },
+          { "id": "b", "text": "It sparks zero curiosity and names no viewer problem or benefit — e.g. 'Stop ironing native wear wrong: 3 tricks to stay crisp all Sunday' fixes both!" },
+          { "id": "c", "text": "Hooks should never mention fashion" },
+          { "id": "d", "text": "Viewers only read hashtags, not hooks" }
+        ],
+        "correctId": "b",
+        "hint": "Give the viewer a clear reason *why* watching the next 30 seconds helps them!",
+        "explanation": "100% right! Naming a specific problem/benefit with curiosity and clarity turns passive scrollers into eager viewers."
+      }
+    }
+  ]
+}

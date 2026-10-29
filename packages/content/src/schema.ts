@@ -119,6 +119,34 @@ export interface Scenario {
 
 export interface Flashcard { id: string; front: string; back: string }
 
+export interface MicroCheck {
+  id: string
+  prompt: string
+  choices: Choice[]
+  /** Learner-safe nudge shown on a wrong tap — never reveals the answer letter. */
+  hint?: string
+  /** Stripped to null in learner bundle; stored in keys/ and revealed after server verification. */
+  correctId: string | null
+  /** Stripped to '' in learner bundle; stored in keys/ and returned when answered right. */
+  explanation: string
+}
+
+export interface LessonCard {
+  id: string
+  sectionLetter: string
+  /** All manual section letters credited when this card is read (ensures 100% progress on starter decks). */
+  creditLetters?: string[]
+  sectionKind: SectionKind
+  kicker: string
+  title: string
+  /** One-sentence plain-English summary shown in a highlighted strip at the top of the card. */
+  takeaway: string
+  blocks: Block[]
+  terms?: { term: string; plain: string }[]
+  wordCount: number
+  check?: MicroCheck
+}
+
 export interface Session {
   id: string
   course: string
@@ -146,6 +174,10 @@ export interface Session {
   glossary?: { term: string; plain: string }[]
   /** True when a hand-rewritten level in `content-plain/` replaced the extracted markdown. */
   plainOverridden?: boolean
+  /** True when a hand-authored Duolingo/Mimo-style starter card deck in `content-plain/starters/` is active. */
+  starterRewritten?: boolean
+  /** Bite-sized ~100-word reading cards with 1-line takeaways and inline Quick Checks (+XP). */
+  cards?: LessonCard[]
   /** Share of this level's prose sentences that run over 30 words — a rewrite signal, not a failure. */
   hardSentences?: number
   /** 6.3 — code-completion blanks generated from this session's own snippets */
@@ -199,7 +231,7 @@ export interface Course {
 export interface CatalogueIndex {
   version: number
   generatedAt: string
-  totals: { courses: number; sessions: number; questions: number; exercises: number; scenarios: number; words: number }
+  totals: { courses: number; sessions: number; questions: number; exercises: number; scenarios: number; words: number; cards?: number; microChecks?: number }
   courses: Course[]
 }
 

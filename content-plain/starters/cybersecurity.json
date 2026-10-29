@@ -1,0 +1,96 @@
+{
+  "course": "cybersecurity",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What cybersecurity really means in everyday life",
+      "takeaway": "Cybersecurity means protecting your phone, computer, bank accounts, and customer records from thieves and damage.",
+      "body": "Today, a small shop owner's bank app, WhatsApp Business, POS alerts, and customer list all live on a phone or laptop.\n\n**Cybersecurity** is not just for big banks — it is every practical habit and tool that keeps **your money, private codes, and business data safe** from the wrong hands."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Your strongest shield: Stop — Think — Check",
+      "takeaway": "Scammers rely on panic and urgency. Before clicking, paying, or sharing any code: Stop, Think, and Check through a second channel!",
+      "body": "The #1 security tool costs **₦0** — it is the **Stop – Think – Check** habit:\n1. **STOP:** Pause whenever a message creates sudden fear, greed, or urgency (*'Account blocked in 10 mins!'* or *'Send ₦100,000 urgently!'*).\n2. **THINK:** Would my real bank ever ask for my PIN/OTP? Why is 'my uncle' texting from a strange number?\n3. **CHECK:** Verify outside that chat — call your uncle on his **old saved number** or visit the bank branch directly!",
+      "check": {
+        "prompt": "You get a WhatsApp message from an unknown number claiming to be your uncle urgently asking for ₦100,000. What should you do FIRST?",
+        "choices": [
+          { "id": "a", "text": "Transfer the money immediately so he is not stranded" },
+          { "id": "b", "text": "Stop, do NOT send money yet, and call your uncle directly on his real saved phone number to verify" },
+          { "id": "c", "text": "Send your BVN and ATM PIN so he can withdraw it himself" },
+          { "id": "d", "text": "Forward the message to ten friends" }
+        ],
+        "correctId": "b",
+        "hint": "Apply Stop – Think – Check using a trusted phone number you already had before today.",
+        "explanation": "Exactly right! Calling his known number outside the suspicious chat exposes impersonation scams in 30 seconds."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Meet the Malware Family (bad software)",
+      "takeaway": "Malware is harmful software — especially Ransomware (locks files for money), Spyware (steals passwords), and Trojans (fake apps).",
+      "body": "**Malware** (*malicious software*) comes in a few common types:\n- **Ransomware:** Locks (encrypts) all your business files and demands a ransom payment to unlock them.\n- **Trojan:** Pretends to be a free cracked app or game, then sneaks bad code inside.\n- **Spyware:** Hides quietly to record your passwords, PINs, and messages.\n- **Virus / Worm:** Copies itself across files, flash drives, or networks."
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 3",
+      "title": "Phishing — fake bank SMS and links",
+      "takeaway": "No real Nigerian bank will EVER ask you to click a link and enter your PIN, OTP, or password to 'update your BVN'.",
+      "body": "Look at this classic scam SMS:\n> *'Dear Customer, your BVN is restricted. Click bit.ly/bank-fix now and enter your ATM PIN to avoid blockage.'*\n\n**100% UNSAFE!** That is **phishing** — a fake message designed to trick you into handing over your secret keys. Real banks never ask for your **PIN**, **OTP**, or **password** over SMS, calls, or links.",
+      "check": {
+        "prompt": "Which type of malware locks all your files and demands money before you can open them again?",
+        "choices": [
+          { "id": "a", "text": "Spreadsheet" },
+          { "id": "b", "text": "Ransomware" },
+          { "id": "c", "text": "Firewall" },
+          { "id": "d", "text": "Browser cache" }
+        ],
+        "correctId": "b",
+        "hint": "Think of the word 'ransom' — holding your files hostage for payment!",
+        "explanation": "Spot on! Ransomware scrambles your files and demands payment — which is why offline/cloud backups are essential."
+      }
+    },
+    {
+      "letter": "G",
+      "kicker": "Core idea · 4",
+      "title": "Four security words made super simple",
+      "takeaway": "Threat = possible danger, Vulnerability = an unlocked weakness, Exploit = how an attacker uses that weakness, Risk = chance × damage.",
+      "body": "Think of locking up your shop at night:\n- **Threat:** Anything that *could* cause harm (a thief or scammer).\n- **Vulnerability:** A **weakness** that lets harm happen (an unlocked back window or `123456` password).\n- **Exploit:** The actual trick/tool used to break in through that weakness.\n- **Risk:** How likely it is to happen, and how badly it would hurt if it did.",
+      "check": {
+        "prompt": "In security terms, what do we call a WEAKNESS (like a weak password or unpatched app) that lets harm happen?",
+        "choices": [
+          { "id": "a", "text": "A backup" },
+          { "id": "b", "text": "A vulnerability" },
+          { "id": "c", "text": "An antivirus" },
+          { "id": "d", "text": "Two-factor authentication" }
+        ],
+        "correctId": "b",
+        "hint": "Like leaving a shop window unlatched — it is the weak spot an attacker looks for.",
+        "explanation": "Correct! A vulnerability is a weakness; fixing weaknesses (strong passwords, updates, 2FA) lowers your risk dramatically."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "Quick defence checklist",
+      "title": "Three habits you can turn on today",
+      "takeaway": "Turn on 2-step verification (2FA) on WhatsApp & email, never share OTPs, and keep software updated.",
+      "body": "Before finishing Level 1, protect your real life in 3 minutes:\n1. Turn on **Two-Step Verification PIN** inside WhatsApp (`Settings → Account → Two-step verification`).\n2. Never read an **OTP** code aloud to anyone on the phone.\n3. Download apps only from the official Play Store / App Store — never 'cracked' links.",
+      "check": {
+        "prompt": "Why is an SMS saying 'Click here and enter your PIN to update your BVN' definitely a scam?",
+        "choices": [
+          { "id": "a", "text": "Because real banks never ask customers for their PIN or OTP via links, SMS, or phone calls" },
+          { "id": "b", "text": "Because BVN numbers have 50 digits" },
+          { "id": "c", "text": "Because SMS messages only arrive on Sundays" },
+          { "id": "d", "text": "Because banks do not use computers" }
+        ],
+        "correctId": "a",
+        "hint": "Your PIN and OTP are secret keys — bank staff never need them to maintain your account.",
+        "explanation": "100% right! Any message asking for your PIN, password, or OTP through a link is phishing — delete it immediately."
+      }
+    }
+  ]
+}

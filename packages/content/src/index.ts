@@ -13,6 +13,7 @@ import type { CatalogueIndex, Course, Session } from './schema.js'
 export * from './schema.js'
 export { normalizeCourse, parseSessionFile, mdToBlocks, parseInline, tidyTitle } from './parse.js'
 export { buildQuiz, buildExercises, buildScenarios, buildFlashcards, buildTroubleshooting, buildChecklist, buildCodeBlanks, norm } from './interactives.js'
+export { buildLessonCards, splitLongBlocks } from './cards.js'
 export { lintSession, summarise } from './lint.js'
 export { buildAll, buildCourse, CONTENT_DIR, ASSETS_DIR, OUT_DIR, REPO } from './build.js'
 

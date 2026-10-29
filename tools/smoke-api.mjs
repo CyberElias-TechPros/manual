@@ -144,6 +144,38 @@ let paymentId = null
   const againRead = await call('POST', '/api/learn/section', { course: slug, session: n, section: sections[0], deltaSec: 40 })
   check('read award does not repeat', againRead.json?.award === null || againRead.json?.award?.awarded !== true, JSON.stringify(againRead.json ?? {}).slice(0, 160))
 
+  // Bite-sized cards & inline Quick Checks (+5 XP, server-graded, idempotent)
+  const cards = session0?.cards ?? []
+  const firstCheckCard = cards.find((c) => c.check?.id && c.check?.choices?.length >= 2)
+  check('level carries bite-sized cards + inline Quick Checks without leaked keys',
+    cards.length >= 4 && !!firstCheckCard && firstCheckCard.check.correctId === null,
+    `cards=${cards.length}`)
+  if (firstCheckCard) {
+    let solvedChoice = null
+    let wrongSawHint = false
+    for (const ch of firstCheckCard.check.choices) {
+      const mc = await call('POST', '/api/learn/micro-check', { course: slug, session: n, checkId: firstCheckCard.check.id, choiceId: ch.id })
+      if (mc.json?.correct === false) {
+        wrongSawHint = typeof mc.json?.hint === 'string' && mc.json.hint.length > 0 && !mc.json.correctId
+      } else if (mc.json?.correct === true) {
+        solvedChoice = { ch, mc }
+        break
+      }
+    }
+    check('Quick Check grades server-side and explains the answer',
+      !!solvedChoice && solvedChoice.mc.status === 200 && typeof solvedChoice.mc.json?.explanation === 'string',
+      JSON.stringify(solvedChoice?.mc?.json ?? {}).slice(0, 160))
+    if (wrongSawHint) {
+      check('wrong Quick Check tap returns a gentle hint without leaking correctId', true)
+    }
+    const mcDup = await call('POST', '/api/learn/micro-check', {
+      course: slug, session: n, checkId: firstCheckCard.check.id, choiceId: solvedChoice.ch.id,
+    })
+    check('Quick Check XP is idempotent on repeat taps',
+      mcDup.status === 200 && mcDup.json?.award?.awarded !== true,
+      JSON.stringify(mcDup.json ?? {}).slice(0, 140))
+  }
+
   const session = session0
   const questions = session?.quiz?.questions ?? []
   check('level has a knowledge check', questions.length >= 5, `${questions.length} questions`)

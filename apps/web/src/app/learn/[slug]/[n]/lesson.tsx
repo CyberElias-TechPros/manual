@@ -21,11 +21,11 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import Link from 'next/link'
 import {
   AdSlot, BlockList, Button, Checklist, CodeBlanks, DiagramView, ExerciseBox,
-  FlashcardDeck, Label, LevelGlossary, LockNote, Pill, ProgressBar, QuizRunner, ScenarioRunner, SectionRail,
+  FlashcardDeck, Label, LevelGlossary, LockNote, MicroDeck, Pill, ProgressBar, QuizRunner, ScenarioRunner, SectionRail,
   Stars, Troubleshooting, announceAward, cx, mutate, request, useApi,
   useSectionRead, useSession,
 } from '@cea/ui'
-import type { QuizResult } from '@cea/ui'
+import type { LessonCardUI, MicroCheckAttemptState, QuizResult } from '@cea/ui'
 import { LevelFeedback } from './level-feedback'
 import { XP, formatNgn } from '@cea/config'
 
@@ -34,7 +34,8 @@ type Stage = { id: string; label: string; intent: string; sections: Section[] }
 type Level = {
   id: string; number: number; of: number; title: string; module?: string; durationMinutes?: number
   difficulty?: string; prerequisiteKnowledge?: string; connectionToPrevious?: string
-  isFree: boolean; isCapstone: boolean; diagram?: any; sections: Section[]; outcomes: string[]
+  isFree: boolean; isCapstone: boolean; diagram?: any; sections: Section[]; cards?: LessonCardUI[]; starterRewritten?: boolean
+  outcomes: string[]
   quiz: { title: string; questions: any[]; passPercent: number; source: string }
   exercises: any[]; scenarios: any[]; flashcards: any[]; checklist: string[]
   troubleshooting: any[]; codeBlanks?: any[]; estWords: number
@@ -48,7 +49,8 @@ type Payload = {
   access?: { state: string; enrolled: boolean }
   progress?: null | {
     openedAt?: string; lastSeenAt?: string | null; completedAt?: string | null; sectionsSeen?: string[]
-    resume?: any; quizBest?: number | null; quizAttempts?: number; exerciseSubmitted?: boolean
+    resume?: any; microChecksDone?: string[]; microCheckRun?: number
+    quizBest?: number | null; quizAttempts?: number; exerciseSubmitted?: boolean
     checklist?: { label: string; done: boolean }[]; scenario?: { chosen?: string; correctId?: string | null } | null
     timeSpentSec?: number
   }
@@ -82,11 +84,11 @@ const STAGE_XP: Record<string, number> = {
 /** What each activity kind is called in the queue, and why it is there. */
 const ACTIVITY: Record<string, { id: string; label: string; intent: string; order: number }> = {
   exercise: { id: 'practise', label: 'Practise', order: 1, intent: `Try one practical task yourself (+${XP.exerciseSubmit} XP). You see the checklist first and the example answer right after.` },
-  knowledge_check: { id: 'check', label: 'Check', order: 2, intent: `Friendly quiz check (+${XP.quizPass} XP, +${XP.quizPerfectBonus} XP for 100%). No timer, unlimited retries, and simple everyday words count!` },
+  knowledge_check: { id: 'check', label: 'Boss Quiz', order: 2, intent: `End-of-level Boss Quiz (+${XP.quizPass} XP, +${XP.quizPerfectBonus} XP for 100%). No timer, unlimited retries, and simple everyday words count!` },
   case_study: { id: 'case', label: 'Case study', order: 3, intent: `Pick what you would do in a real-life situation (+${XP.exerciseSubmit} XP).` },
   reflection: { id: 'review', label: 'Review', order: 4, intent: 'Flip through the quick flashcards so the key ideas stick in your head.' },
 }
-const READ_STAGE = { id: 'read', label: 'Read', intent: `Read one short part at a time (+${XP.lessonRead} XP). Every tricky word is explained in plain English — no need to memorise!` }
+const READ_STAGE = { id: 'read', label: 'Cards', intent: `One bite-sized card at a time (+${XP.lessonRead} XP for reading + ${XP.microCheck} XP on every ⚡ Quick Check!).` }
 const FINISH_STAGE = { id: 'finish', label: 'Finish', intent: `Tick off what you tried, claim your +${XP.sessionComplete} XP level bonus, and unlock the next level!` }
 
 /** Turn the level's sections into an ordered queue of stages: one idea per screen. */
@@ -143,34 +145,44 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
   const [stageId, setStageId] = useState<string>('read')
   const [sub, setSub] = useState(0)
   const [placed, setPlaced] = useState(false)
+  const [mcDone, setMcDone] = useState<Set<string>>(() => new Set())
+  const [mcStates, setMcStates] = useState<Record<string, MicroCheckAttemptState>>({})
+  const [mcRun, setMcRun] = useState(0)
   const startedAt = useRef(Date.now())
   const seen = useRef(new Set<string>())
 
   const lesson = data?.session ?? seed?.session
+  const cards = useMemo(() => lesson?.cards ?? [], [lesson])
+  const hasCards = cards.length > 0
   const stages = useMemo(() => buildStages(lesson), [lesson])
   const stageIndex = Math.max(0, stages.findIndex(s => s.id === stageId))
   const stage = stages[stageIndex] ?? stages[0]
   const readSections = useMemo(() => stages.find(s => s.id === 'read')?.sections ?? [], [stages])
+  const readStepTotal = hasCards ? cards.length : Math.max(1, readSections.length)
   const stepping = stage?.id === 'read' && flow === 'step'
-  const stepsIn = (s: Stage) => (s.id === 'read' && flow === 'step' ? Math.max(1, s.sections.length) : 1)
-  const totalSteps = useMemo(() => stages.reduce((sum, s) => sum + stepsIn(s), 0), [stages, flow])
+  const stepsIn = (s: Stage) => (s.id === 'read' && flow === 'step' ? readStepTotal : 1)
+  const totalSteps = useMemo(() => stages.reduce((sum, s) => sum + stepsIn(s), 0), [stages, flow, readStepTotal])
   const linearStep = useMemo(
-    () => stages.slice(0, stageIndex).reduce((sum, s) => sum + stepsIn(s), 0) + (stepping ? Math.min(sub + 1, Math.max(1, readSections.length)) : 1),
+    () => stages.slice(0, stageIndex).reduce((sum, s) => sum + stepsIn(s), 0) + (stepping ? Math.min(sub + 1, readStepTotal) : 1),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [stages, stageIndex, sub, flow, stepping, readSections.length],
+    [stages, stageIndex, sub, flow, stepping, readStepTotal],
   )
 
-  const currentRead = stepping ? readSections[Math.min(sub, readSections.length - 1)] : undefined
-  const doMarkRead = useCallback((letter: string) => {
-    if (!letter || seen.current.has(letter)) return
-    seen.current.add(letter)
+  const currentCard = stepping && hasCards ? cards[Math.min(sub, cards.length - 1)] : undefined
+  const currentRead = stepping && !hasCards ? readSections[Math.min(sub, readSections.length - 1)] : undefined
+  const metaLetters = useMemo(
+    () => (lesson?.sections ?? []).filter(ms => META_SECTION_KINDS.has(ms.kind) && ms.letter).map(ms => ms.letter),
+    [lesson],
+  )
+
+  const doMarkRead = useCallback((letter: string, extraLetters: string[] = [], cardIdx?: number) => {
+    const all = [letter, ...extraLetters].filter(Boolean)
+    const fresh = all.filter(l => !seen.current.has(l))
+    if (!fresh.length && cardIdx === undefined) return
+    fresh.forEach(l => seen.current.add(l))
     setReadCount(seen.current.size)
-    markRead(letter, 45)
-    // Auto-credit hidden trainer metadata sections (A/B/C) on the API so the 60% section threshold is met naturally
-    for (const ms of lesson?.sections ?? []) {
-      if (META_SECTION_KINDS.has(ms.kind) && ms.letter) markRead(ms.letter, 5)
-    }
-  }, [markRead, lesson])
+    markRead(letter || fresh[0] || '', hasCards ? 25 : 45, [...extraLetters, ...metaLetters], cardIdx)
+  }, [markRead, hasCards, metaLetters])
 
   // 4.6 — one heartbeat for the whole level; the API caps what a minute of it is worth.
   useEffect(() => {
@@ -184,27 +196,46 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
   }, [data, user, slug, n])
 
   useEffect(() => {
-    if (!data?.progress?.timeSpentSec) return
-    startedAt.current = Date.now() - Math.min(4000, Number(data.progress.timeSpentSec)) * 1000
+    if (!data?.progress) return
+    if (data.progress.timeSpentSec) {
+      startedAt.current = Date.now() - Math.min(4000, Number(data.progress.timeSpentSec)) * 1000
+    }
+    if (Array.isArray(data.progress.microChecksDone) && data.progress.microChecksDone.length) {
+      setMcDone(new Set(data.progress.microChecksDone))
+    }
+    if (typeof data.progress.microCheckRun === 'number') {
+      setMcRun(data.progress.microCheckRun)
+    }
   }, [data])
 
-  // Where does this learner land? A stage in the URL wins. Otherwise: the first section they have
-  // not read, and if they have read it all and passed the check — the last stage.
+  // Where does this learner land? A stage in the URL wins. Otherwise: resume cardIndex or first unread card/section.
   useEffect(() => {
     if (placed || !stages.length) return
     const fromUrl = readLocation()
     if (fromUrl && stages.some(s => s.id === fromUrl.s)) {
       setStageId(fromUrl.s)
-      if (fromUrl.s === 'read') setSub(Math.min(fromUrl.i, Math.max(0, readSections.length - 1)))
-    } else {
-      const before = new Set(data?.progress?.sectionsSeen ?? [])
+      if (fromUrl.s === 'read') setSub(Math.min(fromUrl.i, Math.max(0, readStepTotal - 1)))
+    } else if (data) {
+      const before = new Set(data.progress?.sectionsSeen ?? [])
       before.forEach(l => seen.current.add(l))
       if (before.size) setReadCount(before.size)
-      const firstUnread = readSections.findIndex(s => !before.has(s.letter))
-      if (firstUnread > 0) setSub(firstUnread)
-      else if (firstUnread === -1 && (data?.progress?.completedAt || data?.progress?.quizAttempts)) setStageId('finish')
+      const savedIdx = typeof data.progress?.resume?.cardIndex === 'number' ? data.progress.resume.cardIndex : -1
+      if (hasCards) {
+        if (before.size >= readSections.length && (data.progress?.completedAt || data.progress?.quizAttempts)) {
+          setStageId('finish')
+        } else if (savedIdx > 0 && savedIdx < cards.length) {
+          setSub(savedIdx)
+        } else {
+          const firstUnreadCard = cards.findIndex(c => !before.has(c.sectionLetter))
+          if (firstUnreadCard > 0) setSub(firstUnreadCard)
+        }
+      } else {
+        const firstUnread = readSections.findIndex(s => !before.has(s.letter))
+        if (firstUnread > 0) setSub(firstUnread)
+        else if (firstUnread === -1 && (data.progress?.completedAt || data.progress?.quizAttempts)) setStageId('finish')
+      }
     }
-    setPlaced(true)
+    if (data || seed) setPlaced(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stages.length, data])
 
@@ -217,16 +248,21 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
   }, [stageId, sub, stepping, placed])
 
   /*
-   * Reading is measured, not clicked (gap fix: the roadmap said "+10 for reading a session" without
-   * defining a read). A section counts when it has been the on-screen one for 1.4 s in step mode, or
-   * the majority-visible one for 1.2 s while scrolling; the API then decides whether that is enough
-   * of the level to award anything.
+   * Reading is measured, not clicked: a bite-sized card counts after 0.9 s on screen (crediting its
+   * underlying manual letters), or a legacy section after 1.4 s.
    */
   useEffect(() => {
+    if (currentCard) {
+      const t = window.setTimeout(
+        () => doMarkRead(currentCard.sectionLetter, currentCard.creditLetters ?? [], sub),
+        900,
+      )
+      return () => window.clearTimeout(t)
+    }
     if (!currentRead?.blocks?.length) return
     const t = window.setTimeout(() => doMarkRead(currentRead.letter), 1400)
     return () => window.clearTimeout(t)
-  }, [currentRead, doMarkRead])
+  }, [currentCard, currentRead, sub, doMarkRead])
 
   useEffect(() => {
     if (flow !== 'all' || !lesson) return
@@ -258,6 +294,64 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
     )
   }
   if (!lesson || !stage) return null
+
+  async function answerMicroCheck(checkId: string, choiceId: string) {
+    setMcStates(prev => ({ ...prev, [checkId]: { ...prev[checkId], selectedId: choiceId, busy: true } }))
+    try {
+      const r = await request<{
+        ok: boolean
+        correct: boolean
+        correctId?: string
+        explanation?: string
+        hint?: string
+        run?: number
+        guestPreview?: boolean
+        microChecksDone?: string[]
+        award?: any
+        combo?: { run: number; award: any } | null
+      }>('/api/learn/micro-check', {
+        method: 'POST',
+        body: { course: slug, session: n, checkId, choiceId },
+      })
+      if (!r.correct) {
+        setMcRun(0)
+        setMcStates(prev => ({
+          ...prev,
+          [checkId]: { selectedId: choiceId, correct: false, hint: r.hint, busy: false },
+        }))
+        return
+      }
+      setMcRun(r.run ?? 1)
+      if (Array.isArray(r.microChecksDone)) {
+        setMcDone(new Set(r.microChecksDone))
+      } else {
+        setMcDone(prev => new Set([...prev, checkId]))
+      }
+      setMcStates(prev => ({
+        ...prev,
+        [checkId]: {
+          selectedId: choiceId,
+          correct: true,
+          correctId: r.correctId,
+          explanation: r.explanation,
+          busy: false,
+          guestPreview: r.guestPreview,
+          xpEarned: r.award?.xp ?? 0,
+          comboXp: r.combo?.award?.xp ?? 0,
+        },
+      }))
+      if (r.award?.awarded) {
+        announceAward(r.award, 'quick check')
+        void refresh()
+      }
+      if (r.combo?.award?.awarded) {
+        announceAward(r.combo.award, `${r.combo.run} Quick Checks in a row`)
+      }
+    } catch (e: any) {
+      setMcStates(prev => ({ ...prev, [checkId]: { ...prev[checkId], busy: false } }))
+      setBanner({ tone: 'bad', text: e?.message || 'Could not check that answer right now.' })
+    }
+  }
 
   async function submitQuiz(answers: Record<string, string>, elapsedSec: number): Promise<QuizResult> {
     const r = await request<{ result: QuizResult; award: any; best: number; combo?: { run: number } | null }>('/api/learn/quiz', {
@@ -336,16 +430,19 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
 
   function step(delta: 1 | -1) {
     if (stepping) {
+      if (delta === 1 && currentCard) {
+        doMarkRead(currentCard.sectionLetter, currentCard.creditLetters ?? [], sub)
+      }
       const nextSub = sub + delta
-      if (nextSub >= 0 && nextSub < Math.max(1, readSections.length)) {
+      if (nextSub >= 0 && nextSub < readStepTotal) {
         setSub(nextSub)
-        window.scrollTo({ top: 0, behavior: 'auto' })
+        if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
         return
       }
     }
     const target = stages[Math.min(stages.length - 1, Math.max(0, stageIndex + delta))]
     if (!target || target.id === stage.id) return
-    go(target.id, delta < 0 && target.id === 'read' && flow === 'step' ? Math.max(0, readSections.length - 1) : 0)
+    go(target.id, delta < 0 && target.id === 'read' && flow === 'step' ? Math.max(0, readStepTotal - 1) : 0)
   }
 
   const done = new Set<string>()
@@ -401,17 +498,41 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
         )}
 
         {/* not a <main> — the layout owns that landmark and the skip link targets it */}
-        <div key={`${stage.id}-${stepping ? sub : 'x'}`} className="mt-9 max-w-reading animate-fade-in">
+        <div key={`${stage.id}-${stepping ? sub : 'x'}`} className="mt-8 max-w-reading animate-fade-in">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <h2 className="text-xl font-bold text-ink dark:text-light">
-              {stepping ? friendlyTitle(currentRead) : stage.label}
+              {stepping ? (hasCards ? 'Bite-sized lesson cards' : friendlyTitle(currentRead)) : stage.label}
             </h2>
-            {stepping && readSections.length > 1 && <Label>Section {Math.min(sub + 1, readSections.length)} of {readSections.length}</Label>}
+            {stepping && readStepTotal > 1 && (
+              <Label>{hasCards ? `Card ${Math.min(sub + 1, readStepTotal)} of ${readStepTotal}` : `Section ${Math.min(sub + 1, readStepTotal)} of ${readStepTotal}`}</Label>
+            )}
           </div>
-          <p className="mt-1.5 text-[0.9375rem] text-ink-500 dark:text-light/55">{stepping ? READ_STAGE.intent : stage.intent}</p>
+          <p className="mt-1.5 text-[0.9375rem] text-ink-600 dark:text-light/70">{stepping ? READ_STAGE.intent : stage.intent}</p>
 
           {stage.id === 'read' ? (
-            <ReadStage lesson={lesson} sections={readSections} sub={sub} flow={flow} dataSaver={!!user?.prefs?.dataSaver} />
+            stepping && hasCards ? (
+              <MicroDeck
+                cards={cards}
+                index={sub}
+                onPickCard={idx => {
+                  if (currentCard) doMarkRead(currentCard.sectionLetter, currentCard.creditLetters ?? [], sub)
+                  setSub(idx)
+                  if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
+                }}
+                outcomes={lesson.outcomes}
+                connectionToPrevious={lesson.connectionToPrevious}
+                starterRewritten={lesson.starterRewritten}
+                diagram={lesson.diagram}
+                dataSaver={!!user?.prefs?.dataSaver}
+                lessonTitle={lesson.title}
+                doneCheckIds={mcDone}
+                checkStates={mcStates}
+                streakRun={mcRun}
+                onAnswerCheck={answerMicroCheck}
+              />
+            ) : (
+              <ReadStage lesson={lesson} sections={readSections} sub={sub} flow={flow} dataSaver={!!user?.prefs?.dataSaver} />
+            )
           ) : stage.id === 'finish' ? (
             <FinishStage
               lesson={lesson} checklist={checklist} onChecklist={toggleChecklist}
@@ -441,18 +562,26 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
           <div className="mt-10 flex max-w-reading flex-wrap items-center justify-between gap-4 border-t border-surface-line pt-5 dark:border-surface-dark-line">
             <button
               type="button" onClick={() => step(-1)} disabled={linearStep <= 1}
-              className="min-h-[44px] text-[0.9375rem] font-medium text-ink-600 underline-offset-4 hover:text-ink hover:underline disabled:invisible dark:text-light/60 dark:hover:text-light"
+              className="min-h-[44px] text-[0.9375rem] font-bold text-ink-700 underline-offset-4 hover:text-ink hover:underline disabled:invisible dark:text-light/75 dark:hover:text-light"
             >← Previous</button>
-            <div className="flex items-center gap-5">
-              <button
-                type="button" onClick={() => setFlow(f => (f === 'step' ? 'all' : 'step'))}
-                className="text-[0.8125rem] text-ink-500 underline-offset-2 hover:text-ink hover:underline dark:text-light/55"
-                title="Read this level as one page instead of one section at a time"
-              >
-                {flow === 'step' ? 'Read all at once' : 'One section at a time'}
-              </button>
+            <div className="flex flex-wrap items-center gap-4">
+              {stage.id === 'read' && (
+                <button
+                  type="button" onClick={() => setFlow(f => (f === 'step' ? 'all' : 'step'))}
+                  className="text-[0.8125rem] font-semibold text-ink-600 underline-offset-2 hover:text-ink hover:underline dark:text-light/70"
+                  title="Switch between bite-sized cards and full manual notes"
+                >
+                  {flow === 'step' ? 'Full manual view' : 'Bite-sized cards'}
+                </button>
+              )}
               <Button onClick={() => step(1)}>
-                {stepping && sub + 1 < Math.max(1, readSections.length) ? 'Next section' : stage.id === 'read' ? 'Continue to the practice' : 'Continue'}
+                {stepping && sub + 1 < readStepTotal
+                  ? (currentCard?.check && !mcDone.has(currentCard.check.id) && !mcStates[currentCard.check.id]?.correct
+                    ? 'Skip check · Next card →'
+                    : 'Next card →')
+                  : stage.id === 'read'
+                    ? 'Continue to practice →'
+                    : 'Continue →'}
               </Button>
             </div>
           </div>
@@ -490,7 +619,7 @@ export function LessonView({ slug, n, seed }: { slug: string; n: number; seed?: 
                     >
                       <span aria-hidden className={cx('h-1.5 w-1.5 shrink-0 rounded-full', isDone ? 'bg-success' : isNow ? 'bg-navy dark:bg-sky' : 'bg-ink-200 dark:bg-surface-dark-line-strong')} />
                       {s.label}
-                      {s.id === 'read' && readSections.length > 1 && <span className="ml-auto tabular-nums text-ink-300 dark:text-light/35">{Math.min(sub + 1, readSections.length)}/{readSections.length}</span>}
+                      {s.id === 'read' && readStepTotal > 1 && <span className="ml-auto tabular-nums text-ink-400 dark:text-light/45">{Math.min(sub + 1, readStepTotal)}/{readStepTotal}</span>}
                     </button>
                   </li>
                 )

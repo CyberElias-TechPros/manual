@@ -17,7 +17,7 @@ const cmd = args[0] || 'build'
 
 function printReport(r: ReturnType<typeof buildAll>) {
   const s = r.summary
-  console.log(`content: ${r.totals.courses} courses · ${r.totals.sessions} sessions · ${r.totals.questions} questions · ` +
+  console.log(`content: ${r.totals.courses} courses · ${r.totals.sessions} sessions · ${r.totals.cards ?? 0} cards · ${r.totals.microChecks ?? 0} quick-checks · ${r.totals.questions} questions · ` +
     `${r.totals.exercises} exercises · ${r.totals.scenarios} scenarios · ${(r.totals.words / 1000).toFixed(0)}k words`)
   console.log(`bundle: ${r.bundleKb} kB of learner JSON (course-split, lazy loaded)`)
   console.log(`lint: ${s.critical} critical · ${s.warn} warn · ${s.info} info`)

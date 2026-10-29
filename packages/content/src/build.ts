@@ -19,6 +19,7 @@ import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { normalizeCourse, parseSessionFile, countWords } from './parse.js'
 import { buildChecklist, buildCodeBlanks, buildExercises, buildFlashcards, buildQuiz, buildScenarios, buildTroubleshooting } from './interactives.js'
+import { buildLessonCards, splitLongBlocks } from './cards.js'
 import { lintSession, summarise } from './lint.js'
 import { applyPlainPass, glossaryFor, longSentenceShare, plainPass, plainPassIssues, sessionSource } from './plain.js'
 import type { Block, CatalogueIndex, Course, LintIssue, Section, Session } from './schema.js'
@@ -73,10 +74,15 @@ export function buildCourse(slug: string, opts: { strict?: boolean } = {}) {
     const md = plain.md
     const raw = parseSessionFile(md, plain.source)
     const front = raw.front
-    const sections: Section[] = raw.sections.map(s => ({
-      letter: s.letter, kind: s.kind, title: s.title, blocks: s.blocks,
-      wordCount: countWords({ blocks: s.blocks }), raw: s.raw,
-    }))
+    const sections: Section[] = raw.sections.map(s => {
+      const airyBlocks = ['opening', 'prereq_review', 'lecture', 'demo', 'guided_practical', 'troubleshooting'].includes(s.kind)
+        ? splitLongBlocks(s.blocks)
+        : s.blocks
+      return {
+        letter: s.letter, kind: s.kind, title: s.title, blocks: airyBlocks,
+        wordCount: countWords({ blocks: airyBlocks }), raw: s.raw,
+      }
+    })
     const sessionId = `${slug}/session-${String(front.number).padStart(2, '0')}`
     const { quiz, answerKey } = buildQuiz(sections.find(s => s.kind === 'knowledge_check') || emptySection(), sessionId)
     const exercises = buildExercises(sections, sessionId)
@@ -100,6 +106,17 @@ export function buildCourse(slug: string, opts: { strict?: boolean } = {}) {
     })()
 
     const estWords = sections.reduce((n, s) => n + (INSTRUCTOR_ONLY.has(s.kind) ? 0 : s.wordCount), 0)
+    const flashcards = buildFlashcards(sections, sessionId)
+    const troubleshooting = buildTroubleshooting(sections)
+    const { cards: rawCards, starterRewritten } = buildLessonCards({
+      slug, number: front.number, sessionId, sections, flashcards, troubleshooting,
+    })
+    const microChecksKey = Object.fromEntries(
+      rawCards.filter(c => c.check).map(c => [c.check!.id, { correctId: c.check!.correctId, explanation: c.check!.explanation }]),
+    )
+    const learnerCards = rawCards.map(c => (c.check
+      ? { ...c, check: { ...c.check, correctId: null, explanation: '' } }
+      : c))
     const session: Session = {
       id: sessionId, course: slug, number: front.number, of: front.of || files.length,
       title: front.title, module: front.module, durationMinutes: front.duration_minutes,
@@ -110,20 +127,23 @@ export function buildCourse(slug: string, opts: { strict?: boolean } = {}) {
       diagram, sections: sections.map(stripInstructor), outcomes, quiz,
       exercises,
       scenarios: buildScenarios(sections, sessionId),
-      flashcards: buildFlashcards(sections, sessionId),
+      flashcards,
       checklist: buildChecklist(exercises, sections.find(s => s.kind === 'reflection')),
-      troubleshooting: buildTroubleshooting(sections),
+      troubleshooting,
       codeBlanks: buildCodeBlanks(lectureBlocks, sessionId),
       estWords,
       // The words a beginner is not expected to already know, in one line each, from the shared table.
       glossary: glossaryFor(md),
       plainOverridden: plain.overridden,
+      starterRewritten,
+      cards: learnerCards,
       hardSentences: longSentenceShare(md),
       source: { file: `content/${slug}/${file}`, pdf: courseJson.pdfs?.teaching_manual },
     } as Session
 
     keys[sessionId] = {
       quiz: answerKey,
+      microChecks: microChecksKey,
       exercises: Object.fromEntries(exercises.map(e => [e.id, { modelAnswer: e.modelAnswer, code: e.code, rubric: e.rubric }])),
       scenarios: Object.fromEntries((session.scenarios || []).map(sx => [sx.id, { correctId: sx.correctId, resolution: sx.resolution }])),
       codeBlanks: Object.fromEntries((session.codeBlanks || []).map(cb => [cb.id, { blanks: cb.blanks.map(x => ({ answer: x.answer, accepts: x.accepts })) }])),
@@ -253,6 +273,8 @@ export function buildAll(outDir = OUT_DIR) {
     exercises: allSessions.flat().reduce((n, s) => n + s.exercises.length, 0),
     scenarios: allSessions.flat().reduce((n, s) => n + s.scenarios.length, 0),
     words: allSessions.flat().reduce((n, s) => n + s.estWords, 0),
+    cards: allSessions.flat().reduce((n, s) => n + (s.cards?.length ?? 0), 0),
+    microChecks: allSessions.flat().reduce((n, s) => n + (s.cards?.filter(c => c.check).length ?? 0), 0),
   }
   const index: CatalogueIndex = { version: 1, generatedAt: new Date().toISOString(), totals, courses }
   writeFileSync(join(outDir, 'index.json'), JSON.stringify(index, null, 0))

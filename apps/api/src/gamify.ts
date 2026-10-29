@@ -18,10 +18,10 @@ export interface XpInput {
 export type XpKind =
   | 'lesson_read' | 'quiz_pass' | 'quiz_perfect' | 'exercise_submit' | 'session_complete'
   | 'streak_day' | 'streak_week' | 'badge' | 'quest' | 'admin_adjust' | 'certificate'
-  // added with the "gamified everywhere" decision (2026-10-29) — all three are server-awarded, so a
-  // modified bundle still cannot mint XP: the wheel is rolled from (user, day), the combo is counted
-  // from the graded answers on the server, and the show-up bonus is keyed to the day.
-  | 'spin' | 'combo' | 'first_level'
+  // added with the "gamified everywhere" + bite-sized micro-check upgrades (2026-10-29) — all four
+  // are server-awarded, so a modified bundle still cannot mint XP: the wheel is rolled from (user, day),
+  // combos and inline Quick Checks are graded against server keys, and show-up is keyed to the day.
+  | 'spin' | 'combo' | 'first_level' | 'micro_check'
 
 /** 5.1 — the single XP table. */
 export function xpFor(
@@ -41,6 +41,7 @@ export function xpFor(
     combo: XP.comboStreak,
     first_level: XP.firstLevelToday,
     quest: XP.questComplete,
+    micro_check: XP.microCheck,
     admin_adjust: 0,
     certificate: 100,
   }

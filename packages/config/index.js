@@ -58,8 +58,10 @@ export const XP = {
   comboStreak: 5,
   firstLevelToday: 15,
   questComplete: 30,
-  /** 5.9 anti-cheat — raised with more ways to earn, still a hard ceiling per day. */
-  dailyCap: 600,
+  /** Bite-sized inline Quick Check reward — graded & keyed strictly server-side per checkId. */
+  microCheck: 5,
+  /** 5.9 anti-cheat — raised with inline Quick Checks + combos, still a hard ceiling per day. */
+  dailyCap: 800,
   /** 5.9 — minimum seconds between a session-open and a completion award. */
   minCompletionSeconds: 45,
   quizPassPercent: 60,
