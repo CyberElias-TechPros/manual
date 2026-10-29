@@ -28,7 +28,7 @@ const OPTION_RE = /(?:^|[\s(])([a-h])\s*[).]\s+/g
 /** Some manuals put every question on one line (they were paragraphs in the PDF),
  * so boundaries may appear mid-line. We only accept a strictly ascending run of
  * Q1,Q2,Q3… which keeps "Q3" inside prose from splitting a question. */
-function splitNumbered(text: string, marker: 'Q' | 'A'): Map<number, string> {
+function splitNumbered(text: string, marker: 'Q' | 'A' | ''): Map<number, string> {
   const out = new Map<number, string>()
   const re = new RegExp(`(?:^|[\\n\\s])${marker}(\\d{1,2})\\s*[.)]\\s+`, 'g')
   const hits: { n: number; start: number; end: number }[] = []
@@ -103,7 +103,15 @@ const looksLikeCode = (s: string) =>
 /** 2.3 — Knowledge Check -> Quiz. Answer key never reaches the browser. */
 export function buildQuiz(section: Section, sessionId: string, passPercent = 60) {
   const raw = section.raw || ''
-  const keyIdx = raw.search(/^\s*(INSTRUCTOR )?ANSWER KEY/im)
+  let keyIdx = raw.search(/^\s*(INSTRUCTOR )?ANSWER KEY/im)
+  // Some manuals print no key heading at all — the answers simply follow the questions, labelled
+  // "A1." to "A6." (Video Editing 3, and the Cybersecurity viva once its heading is recognised). The
+  // first A-label is the boundary in that shape; without it the whole block stays "learner text" and
+  // every question reads as unkeyed.
+  if (keyIdx < 0) {
+    const first = /(?:^|\n)\s*A1\s*[.)]/.exec(raw)
+    if (first) keyIdx = first.index
+  }
   const learnerPart = keyIdx > 0 ? raw.slice(0, keyIdx) : raw
   const keyPart = keyIdx > 0 ? raw.slice(keyIdx) : ''
   let qs = splitNumbered(learnerPart.replace(/^\(Learner version[^\n]*\n/i, ''), 'Q')
@@ -115,11 +123,34 @@ export function buildQuiz(section: Section, sessionId: string, passPercent = 60)
     const alt = splitInlineAnswers(raw.replace(/^\s*Questions\s*$/gim, '').replace(/^\(Learner version[^\n]*\n/i, ''))
     if (alt.questions.size > qs.size) { qs = alt.questions; as = alt.answers }
   }
+  // A key block that repeats the questions' own numbering ("Answer Key … 1. Select the text") instead
+  // of labelling each answer "A1." is the third layout in this corpus — Microsoft Office 9, Typing 6,
+  // Data Entry 6, Graphic Design 12, Computer Repairs 12, Video Editing 3. The parser only looked for
+  // A-prefixes, so those levels' 60-odd questions have been sitting unkeyed (the learner gets "a tutor
+  // reads it" for every one) while the answers were in the file the whole time.
+  if (keyPart && as.size === 0) {
+    const bare = splitNumbered(keyPart, '')
+    const wanted = [...qs.keys()]
+    const overlap = wanted.filter(n => bare.has(n)).length
+    if (wanted.length && overlap >= Math.max(3, Math.floor(wanted.length * 0.6))) as = bare
+  }
+
   const questions: Question[] = []
 
   for (const [n, body] of qs) {
-    const answer = (as.get(n) || '').replace(/^[\s(]*ANSWER[:)]?\s*/i, '').trim()
-    const { tag, rest, type: taggedType } = tagOf(body.trim())
+    // Third layout in the corpus — the capstone vivas (Cybersecurity 9, Typing 6, MS Office 9): the
+    // model answer is interleaved with its question instead of collected in a key block below, so the
+    // answer has to be lifted out of the prompt or the question reads as unkeyed forever.
+    // the label carries a qualifier as often as not — "Model answer (key honesty question):", "Model answer (honest):"
+    const inline = /(?:\n|(?<=\s))(?:Model|Suggested|Expected|Sample|Reference)\s+answer(?:\s*\([^)]*\))?\s*:\s*/i.exec(body)
+    // Only when the key block itself is silent about this question — some manuals drop a single
+    // "Model answer (honest):" note into the question instead of the key (Web Design 12's project
+    // review), which otherwise reads as unkeyed forever and buries the prompt under the answer.
+    const needsInline = inline && !(as.get(n) || '').trim()
+    const inlineAnswer = needsInline ? body.slice(inline.index + inline[0].length).trim() : ''
+    const bodyText = needsInline ? body.slice(0, inline.index).trim() : body
+    const answer = ((as.get(n) || '').replace(/^[\s(]*ANSWER[:)]?\s*/i, '').trim()) || inlineAnswer
+    const { tag, rest, type: taggedType } = tagOf(bodyText.trim())
     let text = rest
     let type: Question['type'] = taggedType || 'short_answer'
     let choices: { id: string; text: string }[] | undefined
