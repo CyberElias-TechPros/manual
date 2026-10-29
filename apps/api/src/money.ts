@@ -267,7 +267,7 @@ export function adminRoutes() {
   a.get('/overview', async (c: Ctx) => {
     const since = (days: number) => new Date(Date.now() - days * 864e5).toISOString()
     const one = async (sql: string, ...p: unknown[]) => Number((await q.one(c.env, sql, ...p))?.v ?? 0)
-    const [signups7, signups30, active7, active30, revenueAll, revenueMonth, pendingCount, approvedCount, rejectedCount, attempts, paidLearners] = await Promise.all([
+    const [signups7, signups30, active7, active30, revenueAll, revenueMonth, pendingCount, approvedCount, rejectedCount, attempts, paidLearners, newFeedback] = await Promise.all([
       one('SELECT COUNT(*) v FROM users WHERE created_at >= ? AND is_guest = 0', since(7)),
       one('SELECT COUNT(*) v FROM users WHERE created_at >= ? AND is_guest = 0', since(30)),
       one('SELECT COUNT(DISTINCT user_id) v FROM xp_events WHERE created_at >= ?', since(7)),
@@ -279,6 +279,7 @@ export function adminRoutes() {
       one("SELECT COUNT(*) v FROM payments WHERE status = 'rejected'"),
       one('SELECT COUNT(*) v FROM quiz_attempts'),
       one("SELECT COUNT(DISTINCT user_id) v FROM payments WHERE status = 'approved'"),
+      one("SELECT COUNT(*) v FROM feedback WHERE status = 'new'"),
     ])
     const passRate = await q.one(c.env, 'SELECT AVG(score_pct) avg_pct, SUM(passed) passed, COUNT(*) total FROM quiz_attempts')
     const enrollRows = await q.all(c.env, 'SELECT course, COUNT(*) v FROM enrollments WHERE status = ? GROUP BY course ORDER BY v DESC', 'active')
@@ -294,6 +295,7 @@ export function adminRoutes() {
         avgQuizPct: Math.round(Number(passRate?.avg_pct || 0)), passRatePct: passRate?.total ? Math.round((Number(passRate.passed) / Number(passRate.total)) * 100) : 0,
         atRiskStreaks: atRisk, adImpressions: Number(adStats?.impressions || 0), adClicks: Number(adStats?.clicks || 0), adBlocked: Number(adStats?.blocked || 0),
         paymentConversion: signups30 ? Math.round((paidLearners / signups30) * 100) : 0,
+        newFeedback,
       },
       enrolmentsByCourse: enrollRows.map(r => ({ course: r.course, count: Number(r.v) })),
       funnel,
@@ -532,7 +534,50 @@ export function adminRoutes() {
     return json(c, { ok: true, audit: rows, emails })
   })
 
-  /** 5.8 + 11.5 — streak nudges and weekly digest. Point a Cloudflare Cron Trigger at this. */
+  /** 11.2 + GAP-ANALYSIS §2.3 — learner clarity feedback and written exercise submissions for tutors. */
+  a.get('/feedback', async (c: Ctx) => {
+    const status = str(c.req.query('status'), 'all')
+    const limit = Math.min(200, Math.max(1, num(c.req.query('limit'), 80)))
+    const where = status === 'all' ? '' : 'WHERE f.status = ?'
+    const args = status === 'all' ? [] : [status]
+    const items = await q.all(c.env, `SELECT f.*, u.email, u.name FROM feedback f LEFT JOIN users u ON u.id = f.user_id ${where} ORDER BY f.created_at DESC LIMIT ${limit}`, ...args)
+    const submissions = await q.all(c.env, `SELECT es.*, u.email, u.name FROM exercise_submissions es LEFT JOIN users u ON u.id = es.user_id ORDER BY coalesce(es.updated_at, es.created_at) DESC LIMIT 60`)
+    return json(c, {
+      ok: true,
+      feedback: items.map(r => ({
+        id: r.id, body: r.body, page: r.page, status: r.status || 'new', createdAt: r.created_at,
+        user: r.user_id ? { id: r.user_id, name: r.name, email: r.email } : null,
+      })),
+      submissions: submissions.map(s => ({
+        id: s.id, course: s.course, sessionNumber: Number(s.session_number), exerciseId: s.exercise_id,
+        kind: s.kind, text: s.text, selfScore: s.self_score != null ? Number(s.self_score) : null,
+        createdAt: s.updated_at || s.created_at,
+        user: { id: s.user_id, name: s.name, email: s.email },
+      })),
+    })
+  })
+
+  a.patch('/feedback/:id', async (c: Ctx) => {
+    const actor = c.get('user')?.id || 'admin-key'
+    const b = await body(c)
+    const next = str(b.status, 'resolved')
+    if (!['new', 'read', 'resolved'].includes(next)) throw bad(422, 'Unknown feedback status.', 'bad_status')
+    const row = await q.one(c.env, 'SELECT id FROM feedback WHERE id = ?', c.req.param('id'))
+    if (!row) throw bad(404, 'Feedback entry not found.', 'not_found')
+    await q.run(c.env, 'UPDATE feedback SET status = ? WHERE id = ?', next, row.id)
+    await q.run(c.env, 'INSERT INTO audit_log (id,actor_id,action,target,meta,created_at) VALUES (?,?,?,?,?,?)',
+      id(), actor, 'feedback.status', row.id, JSON.stringify({ status: next }), now())
+    return json(c, { ok: true, id: row.id, status: next })
+  })
+
+  /** GAP-ANALYSIS §3.3 — purge stored payment proof blobs past PAYMENT.retentionGraceDays (90d) while keeping the ledger row. */
+  a.post('/retention/run', async (c: Ctx) => {
+    const actor = c.get('user')?.id || 'cron'
+    const purged = await purgeExpiredReceipts(c.env, actor)
+    return json(c, { ok: true, purged, retentionDays: PAYMENT.retentionGraceDays })
+  })
+
+  /** 5.8 + 11.5 — streak nudges, weekly digest, and 90-day receipt purge. Point a Cloudflare Cron Trigger at this. */
   a.post('/nudges/run', async (c: Ctx) => {
     const b = await body(c)
     // the cron calls this with a query string (no JSON body), admins call it with a body
@@ -564,10 +609,27 @@ export function adminRoutes() {
         sent++
       }
     }
-    return json(c, { ok: true, sent, kind })
+    const purgedReceipts = kind === 'both' ? await purgeExpiredReceipts(c.env, c.get('user')?.id || 'cron') : 0
+    return json(c, { ok: true, sent, purgedReceipts, kind })
   })
 
   return a
+}
+
+async function purgeExpiredReceipts(env: CeaEnv, actorId: string): Promise<number> {
+  const cutoff = new Date(Date.now() - (PAYMENT.retentionGraceDays || 90) * 864e5).toISOString()
+  const rows = await q.all(env, `SELECT id, proof_key FROM payments WHERE status IN ('approved','rejected') AND proof_key IS NOT NULL AND coalesce(reviewed_at, created_at) < ? LIMIT 200`, cutoff)
+  let purged = 0
+  for (const r of rows) {
+    await env.STORAGE.delete(String(r.proof_key)).catch(() => {})
+    await q.run(env, 'UPDATE payments SET proof_key = NULL, proof_mime = NULL, proof_size = NULL WHERE id = ?', r.id)
+    purged++
+  }
+  if (purged > 0) {
+    await q.run(env, 'INSERT INTO audit_log (id,actor_id,action,target,meta,created_at) VALUES (?,?,?,?,?,?)',
+      id(), actorId, 'retention.receipts_purged', 'payments', JSON.stringify({ purged, cutoff }), now())
+  }
+  return purged
 }
 
 async function setSetting(env: CeaEnv, actorId: string, key: string, value: unknown) {

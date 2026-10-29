@@ -41,8 +41,11 @@ export function middleware(app: Hono<any, any, any>) {
   })
 
   // 3.8 CSRF: double-submit cookie. The cookie is readable by JS, the header is not forged cross-site.
+  // Server-to-server admin/cron calls carrying the secret `x-cea-admin-key` bypass cookie CSRF.
   app.use('/api/*', async (c, next) => {
     if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(c.req.method)) {
+      const adminKey = c.req.header('x-cea-admin-key')
+      if (adminKey && c.env.SECRETS.admin && adminKey === c.env.SECRETS.admin) return next()
       const cookieVal = readCookie(c.req.header('cookie') ?? null, CSRF_COOKIE)
       const header = c.req.header('x-cea-csrf')
       if (!cookieVal || !header || header !== cookieVal) {
@@ -895,14 +898,16 @@ export function learnRoutes() {
     return json(c, { ok: true, thanks: true })
   })
 
-  /** 8.8 — ad telemetry. Never counts a view for a learner inside a quiz flow. */
+  /** 8.8 — ad telemetry. Checked against ADS.policy so config and API never drift. */
   a.post('/ads/event', async (c: Ctx) => {
     const u = c.get('user')
     const b = await body(c)
     const kind = str(b.kind)
     const placement = str(b.placement)
     if (!['impression', 'click', 'blocked'].includes(kind)) throw bad(422, 'Unknown ad event.', 'bad_event')
-    if (placement.includes('quiz')) throw bad(422, 'Ads are not allowed inside the quiz flow.', 'policy')
+    if ((ADS.policy.forbidden as readonly string[]).includes(placement) || !(ADS.policy.allowedPlacements as readonly string[]).includes(placement)) {
+      throw bad(422, 'This ad placement is not permitted by policy.', 'policy')
+    }
     await q.run(c.env, 'INSERT INTO ad_events (id,kind,placement,network,user_id,course,session_number,created_at) VALUES (?,?,?,?,?,?,?,?)',
       id(), kind, placement.slice(0, 60), str(b.network).slice(0, 20) || 'adsense', u?.id ?? null, str(b.course).slice(0, 40) || null, num(b.session) || null, now())
     return json(c, { ok: true })

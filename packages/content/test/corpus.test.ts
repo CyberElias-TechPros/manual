@@ -26,16 +26,15 @@ describe('the 16-course corpus', () => {
     expect(result.totals.words).toBeGreaterThan(800_000)
   })
 
-  it('passes the lint gate: nothing critical, only the known source gaps as warnings', () => {
+  it('passes the lint gate with zero criticals and zero missing answer keys', () => {
     expect(result.summary.critical).toBe(0)
-    // every remaining warning is `answer-missing`: the source PDF has no answer key. The
-    // app scores those questions as "a tutor reads it" rather than inventing an answer.
-    expect(Object.keys(result.summary.byCode).sort()).toEqual(expect.arrayContaining(['answer-missing']))
+    expect(result.summary.warn).toBe(0)
+    expect(result.summary.byCode['answer-missing'] ?? 0).toBe(0)
     // `plain-unused` is the plain-English pass telling a writer which table entries this corpus never
     // meets. It is advice (info), not a defect: an entry costs nothing at read time, because a level
     // only shows the terms it actually uses (11.x).
     for (const code of Object.keys(result.summary.byCode)) {
-      expect(['answer-missing', 'naira-format', 'diagram-missing', 'quiz-thin', 'plain-unused']).toContain(code)
+      expect(['naira-format', 'diagram-missing', 'quiz-thin', 'plain-unused']).toContain(code)
     }
   })
 

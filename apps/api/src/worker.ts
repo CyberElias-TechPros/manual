@@ -144,14 +144,14 @@ const app = createApp()
 
 export default {
   fetch: (request: Request, env: Env, ctx: any) => app.fetch(request, toEnv(env), ctx),
-  /** 5.7 streak warnings + weekly digest; wrangler `[triggers] cron`. */
+  /** 5.7 streak warnings + weekly digest + 3.3 receipt retention; wrangler `[triggers] cron`. */
   async scheduled(_event: { cron: string }, env: Env, ctx: any) {
     const url = new URL(env.CRON_PATH || '/api/admin/nudges/run?kind=both', env.PUBLIC_URL || 'https://cea.ng')
-    const headers: Record<string, string> = {}
+    const headers: Record<string, string> = { cookie: 'cea_csrf=cron', 'x-cea-csrf': 'cron' }
     if (env.ADMIN_KEY) headers['x-cea-admin-key'] = env.ADMIN_KEY
     // The cron only needs the work done, not the response — but a thrown error must
     // still surface in the Workers log, hence the explicit await inside waitUntil.
-    ctx.waitUntil(Promise.resolve(app.fetch(new Request(url.toString(), { headers }), toEnv(env), ctx)).then(async (res: Response) => {
+    ctx.waitUntil(Promise.resolve(app.fetch(new Request(url.toString(), { method: 'POST', headers }), toEnv(env), ctx)).then(async (res: Response) => {
       if (res.status >= 400) console.error('[cron] nudges failed', res.status, (await res.text()).slice(0, 300))
     }))
   },

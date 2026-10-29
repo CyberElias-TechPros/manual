@@ -12,7 +12,7 @@
  *
  * It is imported only by server code — never by the Worker bundle.
  */
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, statSync, createReadStream } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, statSync, createReadStream, unlinkSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import type { CeaEnv, MailMessage, SqlDb, Stmt } from './lib.js'
@@ -86,7 +86,7 @@ function fsStorage(root: string, publicBase: string) {
       const buf = readFileSync(p)
       return { body: new Uint8Array(buf), contentType: mimeOf(key) }
     },
-    async delete(key: string) { const p = this.path(key); if (existsSync(p)) writeFileSync(p, '') },
+    async delete(key: string) { const p = this.path(key); if (existsSync(p)) unlinkSync(p) },
     async url(key: string) { return `${publicBase}${key}` },
     async list(prefix = '') {
       const dir = join(root, 'uploads')

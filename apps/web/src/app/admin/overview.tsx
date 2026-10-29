@@ -9,6 +9,7 @@ type K = {
   approvedCount: number; rejectedCount: number; paidLearners: number; quizAttempts: number
   avgQuizPct: number; passRatePct: number; atRiskStreaks: number
   adImpressions: number; adClicks: number; adBlocked: number; paymentConversion: number
+  newFeedback?: number
 }
 
 /** 11.1/11.2 — the numbers the academy actually runs on: signups, approvals, revenue, pass rate. */
@@ -31,6 +32,7 @@ export function OverviewClient() {
           <Link href="/admin/payments" className={pill(k.pendingApprovals > 0, k.pendingApprovals ? 'bg-warn/15 text-warn' : '')}>Approvals {k.pendingApprovals > 0 ? `(${k.pendingApprovals})` : ''}</Link>
           <Link href="/admin/users" className={pill(false)}>Learners</Link>
           <Link href="/admin/content" className={pill(false)}>Content</Link>
+          <Link href="/admin/feedback" className={pill(!!k.newFeedback, k.newFeedback ? 'bg-warn/15 text-warn' : '')}>Feedback {k.newFeedback ? `(${k.newFeedback})` : ''}</Link>
           <Link href="/admin/settings" className={pill(false)}>Fees &amp; codes</Link>
         </div>
       </header>

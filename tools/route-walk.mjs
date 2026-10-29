@@ -60,7 +60,7 @@ const GATED = [
   ['/settings', [200, 307], ''],
   ['/search?q=excel', 200, ''],
 ]
-const ADMIN = [['/admin', 200, ''], ['/admin/payments', 200, ''], ['/admin/users', 200, ''], ['/admin/content', 200, ''], ['/admin/settings', 200, '']]
+const ADMIN = [['/admin', 200, ''], ['/admin/payments', 200, ''], ['/admin/users', 200, ''], ['/admin/content', 200, ''], ['/admin/feedback', 200, ''], ['/admin/settings', 200, '']]
 
 const NO_LEAK = [/"correctId":"[a-z]/, /"modelAnswer":"[^"]{3,}/, /"rubric":\[[^\]]*"marks":[1-9]/, /"answer":"[A-H]\)/]
 

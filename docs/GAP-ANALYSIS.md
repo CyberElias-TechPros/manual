@@ -52,7 +52,7 @@ slow readers. Shipped rule, in `apps/api/src/routes.ts` + `packages/ui/shell.tsx
 `RATE_LIMITS` in `@cea/config` (README 3.7 asked for "rate limiting", never gave figures):
 register 5/h/IP, login 8/15 min per email **and** per IP, forgot-password 5/30 min,
 quiz 20/5 min, exercise 30/5 min, notes 60/5 min, uploads 12/20 min, payments 10/30 min.
-`XP.dailyCap = 300` (a full day of honest study is ~4 levels ≈ 280 XP),
+`XP.dailyCap = 600` (accommodating daily study + wheel/combo/first-level bonuses),
 `XP.minCompletionSeconds = 45`, and a quiz submitted in under 3 s with >2 questions is
 rejected as `too_fast`. `devHeadroom` multiplies the windows in `development` so the test
 suite exercises the same code without tripping it.
@@ -63,16 +63,17 @@ suite exercises the same code without tripping it.
 (`0.55 × keyword coverage + 0.45 × figure match`, ≥0.75 = correct, 0.5–0.75 = "a tutor can
 confirm", floor 0.4 for ≥12 on-topic tokens). The self-score in the UI is a **reflection**
 control, not the mark: XP never depends on what the learner awarded themselves.
-`OPEN`: there is no tutor inbox — a "needs a human mark" flag has nowhere to go yet. It is
-recorded in `exercise_submissions` and visible in `/admin/users` per learner; a queue is a
-Phase 12 item.
+Written exercise submissions are recorded in `exercise_submissions` and surfaced alongside
+learner clarity notes in `/admin/feedback` (and per-learner in `/admin/users`); an SLA-driven
+tutor grading workflow remains a v2 item.
 
 ### 2.4 Search scope for a locked course
 README 4.11 says "search inside enrolled courses" and "search the free preview" without
-saying what a locked learner sees. Shipped: results are drawn **only** from level 1 of any
-course the learner is not enrolled in (title + text of that level), and hits in
-non-enrolled courses carry `locked: true` with no snippet — so search never becomes a way to
-read a paid level for free, and still gives a browser something to click.
+saying what a locked learner sees. While `ACCESS.mode = 'free'` (the 2026-10-29 default),
+`/api/search` searches all 141 levels across all 16 courses. When `CEA_ACCESS_MODE=paid` is
+set, results are drawn **only** from level 1 of any course the learner is not enrolled in
+(title + text of that level), and hits in non-enrolled courses carry `locked: true` with no
+snippet — so search never becomes a way to read a paid level for free.
 
 ### 2.5 Who can be an admin, and how the first one appears
 `POST /api/auth/register` hard-codes `role='learner'` (there is no "make me staff" hole), and
@@ -89,28 +90,23 @@ curious learner can start before committing. `register` accepts a `guestId` and
 Guests are excluded from leaderboards, cannot receive email, and their certificates are not
 issued (they cannot prove who they are).
 
-### 2.7 Two questions in the entire corpus have no answer key
+### 2.7 All 991 questions across the 16-course corpus now carry their source answer key
 
-The lint once reported `answer-missing` for 10 levels / 94 questions. Most of that was **our
+The lint once reported `answer-missing` for 10 levels / 94 questions. 92 of those were **our
 extractor, not the manuals**: `tools/pdf-extract/extract.py` rejected any section heading whose
 title held a dash or a curly quote, so a heading like
 `M. KNOWLEDGE CHECK — VIVA QUESTION LIST WITH MODEL ANSWERS` was silently dropped and the key
-under it was filed as lesson prose (the level still *had* questions, they just had no answers — the
-symptom is a warning, not a missing section, which is why it hid for so long). `buildQuiz` then
-knew only two of the three key layouts this corpus uses. It now handles all three: an
-`ANSWER KEY` block labelled `A1.`, a key block that repeats the questions' own `1.` numbering, and
-answers interleaved under each question as `Model answer (honest):`. After re-extracting all 16
-courses: **989 of 991 questions carry a key from the source document**.
+under it was filed as lesson prose. `buildQuiz` now handles all three key layouts this corpus uses:
+an `ANSWER KEY` block labelled `A1.`, a key block that repeats the questions' own `1.` numbering, and
+answers interleaved under each question as `Model answer (honest):`.
 
-What is left is two lines in the PDFs themselves — `web-design/session-10` q1 (the answer is
-printed on the same line as the key's heading, so there is no boundary to cut on) and
-`web-development/session-07` q3 (the key prints `Q3.` where it means `A3.`, so that answer is glued
-to the end of q2). Inventing answers for them was rejected on principle. Instead scoring
-**excludes** unkeyed questions from the denominator and shows *"Unscored — your course manual has
-no answer key for this one, so a tutor reads it"* (`apps/api/src/scoring.ts`): a learner can never
-be failed by a hole in the source document, and the app never grades on a guess.
-`OPEN`: retype those two lines in the manuals (or keep them tutor-marked) and `pnpm content:build`
-absorbs the fix.
+The final two edge cases were also closed in the parser without touching the extracted markdown:
+`web-design/session-10` q1 (`A1. :hover` had lost its space after `A1.` because `scrubMojibake`
+collapsed spaces before CSS pseudo-class colons) and `web-development/session-07` q3 (where the
+`INSTRUCTOR ANSWER KEY` printed `Q3.` sequentially between `A2.` and `A4.`). Result: **991 of 991
+questions carry their source-manual answer key (`answer-missing = 0`, `warn = 0`)**, while
+`scoring.ts` still safely excludes any future unkeyed question from the denominator rather than
+guessing.
 
 **The trap that fix opened, and why the corpus is not re-extracted wholesale.** Widening the title
 class promotes section headings that were previously swallowed — in five more levels, correctly. But
@@ -170,8 +166,9 @@ email and is recorded in the audit log by hand.
 (`PAYMENT.retentionGraceDays`), certificates keep their code+name in the verification register
 indefinitely (an employer must be able to check a five-year-old document), and data
 portability is a button (`GET /api/auth/me/export` → one JSON file, no ticket).
-`OPEN`: the 90-day receipt deletion is a **manual** step today; a cron is specified in
-`docs/DEPLOYMENT.md` §6 but not written.
+`CODE`: `POST /api/admin/retention/run` (also called automatically by the Worker's scheduled
+cron via `POST /api/admin/nudges/run?kind=both`) deletes stored receipt blobs older than
+`PAYMENT.retentionGraceDays` and nulls `proof_key` while keeping the accounting row intact.
 
 ### 3.4 Certificates were a "v2 backlog" item, but the courses promise one
 Every manual says a certificate is issued on completion; the README postponed certificates.
@@ -202,8 +199,8 @@ averages (Distinction ≥90 / Merit ≥80 / Pass), an A4 printable sheet
   consent message is expected to cover EU traffic. `OPEN`: confirm with the AdSense account
   owner before launch (a real compliance task, not a code task).
 * What happens when no ad fills: since 2026-10-29 the box is never empty. An unapproved network renders
-  `HouseAd` — one of four promo cards, chosen by a hash of the placement name so SSR and the first
-  client render agree and nothing repaints under a thumb — because 24 empty grey boxes would look
+  `HouseAd` — one of eight promo cards, chosen by a hash of the placement name so SSR and the first
+  client render agree and nothing repaints under a thumb — because 26 empty grey boxes would look
   broken rather than monetised. `NEXT_PUBLIC_ADS_FILL=off` restores "collapse to nothing"; the
   `blocked` counter in `/api/ads/event` still lets `/admin` see rejections.
 * Data Saver is the one switch that still turns all of it off, and `adsAllowed` is what `/admin`
@@ -227,7 +224,7 @@ every level is open, start today free." — so the number reads as a deferred pr
 ### 4.1 One route table, two runtimes
 The API is a Hono app (`apps/api/src/app.ts`) mounted twice: a Cloudflare Worker
 (`worker.ts` → D1/KV/R2) and Next's `app/api/[[...path]]/route.ts` (node-env → node:sqlite,
-fs storage, mail-to-disk). `tools/smoke-api.mjs` runs the **same 53 assertions against both**,
+fs storage, mail-to-disk). `tools/smoke-api.mjs` runs the **same 64 assertions against both**,
 which is what keeps "dev mirrors prod" from becoming a slogan.
 
 ### 4.2 Secrets in a repo that must also run offline
@@ -282,8 +279,8 @@ level · a diagram and a case study everywhere · every course priced); `apps/we
 (6 assertions on the bundle reader, including that exactly one level per course is free);
 `tools/leak-audit.mjs` (no answer-bearing field in any learner file, and no path by which
 `keys/` could be served); the corpus lint gate with `--fail-on-critical`; and
-`tools/smoke-api.mjs` (59 black-box assertions: auth, CSRF, locks, XP, idempotency, quotas,
-uploads, payments, certificates, admin, the wheel and the combo — and the gating half reads
+`tools/smoke-api.mjs` (64 black-box assertions: auth, CSRF, locks, XP, idempotency, quotas,
+uploads, payments, certificates, admin, the wheel, combos, ad policy, feedback inbox, and receipt retention — and the gating half reads
 `ACCESS.mode`, so the same suite proves "402 when paid" and "200 while payments are paused") run
 against both runtimes; `tools/ad-budget.mjs` (every slot names a real placement, nothing on both
 policy lists, no view over the ceiling); `tools/route-walk.mjs` (36

@@ -276,6 +276,11 @@ let paymentId = null
 
   const code = await call('POST', '/api/codes/redeem', { code: 'NOPE-NOPE-NOPE' })
   check('a fake access code is refused', code.status === 422 || code.status === 404, String(code.status))
+
+  const adOk = await call('POST', '/api/ads/event', { kind: 'impression', placement: 'after-question', network: 'house', course: slug, session: 1 })
+  check('ad telemetry accepts allowed quiz placement', adOk.status === 200, JSON.stringify(adOk.json ?? {}).slice(0, 120))
+  const adBad = await call('POST', '/api/ads/event', { kind: 'impression', placement: 'unknown-rogue-slot', network: 'house' })
+  check('ad telemetry rejects unlisted placement', adBad.status === 422, String(adBad.status))
 }
 
 // 6. admin control room -------------------------------------------------------
@@ -304,6 +309,15 @@ let paymentId = null
     await call('POST', '/api/auth/login', { email: adminEmail, password: adminPassword })
     const csv = await call('GET', '/api/admin/payments.csv?status=approved')
     check('reconciliation CSV', csv.status === 200 && /reference/i.test(csv.text), csv.text.slice(0, 80))
+    const fbList = await call('GET', '/api/admin/feedback')
+    const fbItem = (fbList.json?.feedback ?? [])[0]
+    check('admin feedback inbox lists learner feedback and exercise submissions', fbList.status === 200 && Array.isArray(fbList.json?.feedback) && Array.isArray(fbList.json?.submissions), JSON.stringify(fbList.json ?? {}).slice(0, 140))
+    if (fbItem?.id) {
+      const fbPatch = await call('PATCH', `/api/admin/feedback/${fbItem.id}`, { status: 'resolved' })
+      check('admin marks feedback resolved', fbPatch.status === 200 && fbPatch.json?.status === 'resolved', JSON.stringify(fbPatch.json ?? {}).slice(0, 120))
+    }
+    const ret = await call('POST', '/api/admin/retention/run', {})
+    check('admin receipt retention purge runs cleanly', ret.status === 200 && typeof ret.json?.purged === 'number', JSON.stringify(ret.json ?? {}).slice(0, 120))
   }
 }
 

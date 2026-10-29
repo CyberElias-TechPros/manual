@@ -234,7 +234,7 @@ export function scrubMojibake(text: string): string {
   out = out.replace(/[\u00c2\u00c3\u00e2][\u0080-\u009f\u0152\u017d\u0192\u02c6\u02dc\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u2122]{1,2}/g, '')
   out = out.replace(/[\u00c2\u00c3\u00e2](?=$|[\s,.;:)\]])/gm, '')
   out = out.replace(/[\u0080-\u009f]/g, ch => C1_MAP[ch.charCodeAt(0)] ?? '')
-  return out.replace(/[ \t]{2,}/g, ' ').replace(/ +([,.;:)\n])/g, '$1')
+  return out.replace(/[ \t]{2,}/g, ' ').replace(/ +([,.;:)](?=$|[\s\n])|\n)/g, '$1')
 }
 
 /**

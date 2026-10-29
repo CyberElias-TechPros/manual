@@ -30,7 +30,7 @@ plain-English pass, corpus invariants, the bonus wheel, the streak calendar, the
 `pnpm typecheck` = 4 projects; `next build`; `tools/route-walk.mjs` = 36 routes fetched and asserted
 (status, a page-defining phrase, no answer-key pattern in the HTML, a size ceiling);
 `tools/a11y-scan.mjs` = 31 rendered pages scanned for names, landmarks, headings, labels, ids;
-`tools/assert-bundle-size.mjs` = the corpus may not shrink; `node tools/smoke-api.mjs` = 53
+`tools/assert-bundle-size.mjs` = the corpus may not shrink; `node tools/smoke-api.mjs` = 64
 black-box HTTP assertions run against both runtimes.
 
 ---
@@ -44,7 +44,7 @@ black-box HTTP assertions run against both runtimes.
 | 0.3 | Worker API on Hono + D1 + `/api/health` | ✅ | `apps/api/src/{worker,app,routes}.ts`; health returns `{ok:true,db:"up"}` in both runtimes |
 | 0.4 | repo, `.gitignore`, branch model, conventional commits | 🟡 | repo + `.gitignore` (bundle/`var`/generated assets excluded); no `main`/`dev` split enforced and commits are not linted — one-person repo, revisit at handover |
 | 0.5 | secrets in Vercel + `wrangler secret` | 🔶 | no secret is committed; `JWT_SECRET` refuses dev defaults in production; **the real values are not set** (needs the accounts) → `DEPLOYMENT.md` §2 |
-| 0.6 | CI: lint+typecheck+build on PR, main deploys | ✅ (work) / ⚠️ (observed) | `.github/workflows/ci.yml` — content build, corpus gate, typecheck, tests+leak audit, `next build`, 53-assertion smoke, size floor; deploy jobs skip until `CEA_DEPLOY_ENABLED` |
+| 0.6 | CI: lint+typecheck+build on PR, main deploys | ✅ (work) / ⚠️ (observed) | `.github/workflows/ci.yml` — content build, corpus gate, typecheck, tests+leak audit, `next build`, 64-assertion smoke, size floor; deploy jobs skip until `CEA_DEPLOY_ENABLED` |
 | 0.7 | `learn.cea.ng` → Vercel, API → Worker, HTTPS | ⏳ | DNS + project creation belong to the academy; runbook written (`DEPLOYMENT.md` §3–5) |
 | 0.8 | Sentry + structured logs | 🔶 | every API response carries a structured log line (`log()` in `routes.ts`) and `/api/admin/audit`; no Sentry tenant |
 | **GATE 0** | both apps deploy green; test error visible | 🔶 | both run locally green; deployment ⏳ |
@@ -54,9 +54,9 @@ black-box HTTP assertions run against both runtimes.
 | item | status | note |
 |---|---|---|
 | 1.1 brand tokens → Tailwind | ✅ | `packages/config/tailwind-preset.cjs` — the Calm Focus set: navy is the only action colour, gold only for earned things, an `ink-900→50` neutral ramp, `canvas` surface, `maxWidth{reading 42rem, measure 34rem, course 68rem, wide 82rem}`, one elevation step, five one-shot keyframes. Roles and numbers are written down in `docs/DESIGN.md` |
-| 1.2 typography scale | ✅ | the ramp is defined once in the preset (17px/1.7 body, 42rem measure ≈ 66 characters; `xs`→`4xl` documented in `docs/DESIGN.md`), system fonts only, `text-balance`/`text-pretty`, and `.cea-prose` gives the long documents the same rhythm as a lesson. No uppercase `tracking-widest` kickers anywhere in the learner flow |
-| 1.3 `packages/ui` component lib | ✅ | `primitives` (Button, Card `plain/ring/focus/outline`, Label, Pill, SectionHead, ProgressBar, StatBlock, StreakFlame, RankChip, Stars, LockNote, Spinner, Skeleton, XpFloat, Naira + `linkClass`), `blocks` (BlockList/BlockView/DiagramView/SectionRail/Prose), `interactives`, `quiz`, `catalog` (CourseRow/CourseRows), `session-map`, `shell`. **No Modal/Tabs/Accordion/Input** on purpose: disclosure is native `<details>`, dialogs are native `<dialog>`, form controls are page-local — one less dependency and no JS for a fold, which is what 10.x actually wants. **`Chip` was deleted from the kit**, not restyled — every page now says `Label` (metadata) or `Pill` (a state), and the old name is gone so a badge-on-everything reflex cannot come back through an import |
-| 1.4 gamification visuals | ✅ | XP bar (1px rail), streak (static flame; "at risk today" in words), rank emblem, stars per level, map node states, `XpFloat`. Kept out of the reading: the global bar carries one quiet streak line, the nav carries no counters, and the numbers live on `/dashboard` + `/profile`. **No confetti library** — the completion moment is the float + one toast, on purpose (10.2 budget) |
+| 1.2 typography scale | ✅ | the ramp is defined once in the preset (17px/1.7 body, 42rem measure ≈ 66 characters; `xs`→`4xl` documented in `docs/DESIGN.md`, with the shifted bolder 500–900 weight scale and darkened `ink` ramp from 2026-10-29), system fonts only, `text-balance`/`text-pretty`, and `.cea-prose` gives the long documents the same rhythm as a lesson. No uppercase `tracking-widest` kickers anywhere in the learner flow |
+| 1.3 `packages/ui` component lib | ✅ | `primitives` (Button, Card `plain/ring/focus/outline`, Label, Pill, SectionHead, ProgressBar, StatBlock, StreakFlame, RankChip, Stars, LockNote, Spinner, Skeleton, XpFloat, Naira + `linkClass`), `blocks` (BlockList/BlockView/DiagramView/SectionRail/Prose), `interactives`, `quiz`, `catalog` (CourseRow/CourseRows), `session-map`, `game` (`SpinWheel`, `StreakCalendar`), `glossary` (`LevelGlossary`), `shell`. **No Tabs/Accordion/Input** on purpose: disclosure is native `<details>`, form controls are page-local — one less dependency and no JS for a fold, which is what 10.x actually wants. **`Chip` was deleted from the kit**, not restyled — every page now says `Label` (metadata) or `Pill` (a state), and the old name is gone so a badge-on-everything reflex cannot come back through an import |
+| 1.4 gamification visuals | ✅ | XP bar, streak flame, rank emblem, stars per level, map node XP bounties, `XpFloat`, `XpHud` in the global header on every screen, `SpinWheel` + 12-week `StreakCalendar`, and the keyboard-accessible Rank-Up / Badge-Unlocked celebration modal in `XpToaster`. **No confetti library** — zero external animation dependency (10.2 budget) |
 | 1.5 Lucide icons + empty-state illustrations | ✅ closed as a decision | No icon library, by design: the kit ships nine hand-written inline SVGs (brand mark, nav, flame, star, the map markers) and empty states are a sentence plus one link, which is what 10.2's budget and a 3G phone both prefer. `lucide-react` was declared in two `package.json` files and imported by neither — removed from both, so the reflex cannot come back through a stale dependency |
 | 1.6 breakpoints + dark mode | ✅ | `ThemeProvider` (class strategy, system default, persisted), Tailwind breakpoints, `dark:` on every component |
 | 1.7 motion presets, `prefers-reduced-motion` | ✅ | five keyframes, all one-shot (stage enter, verdict, xp-float, badge-pop, shake-x) plus `shimmer` only on skeletons; nothing loops. A blanket `@media (prefers-reduced-motion: reduce)` rule in `globals.css` neutralises the CSS transitions and the two `requestAnimationFrame` spots check the media query in JS. **Framer Motion not adopted** (≈45 KB against a 150 KB shared budget) |
@@ -73,7 +73,7 @@ black-box HTTP assertions run against both runtimes.
 | 2.5 case-study extraction | ✅ | 141 scenarios (one per level) with situation, facts, options, per-option feedback |
 | 2.6 diagram resolver, error on broken refs | 🟡 | 139/141 levels carry a PNG clipped from the manual (transcript + hotspots included); 2 levels have no figure in the PDF, so the build synthesises a flow diagram from the level's own procedure. Lint still fails a **missing file** reference |
 | 2.7 pre-render 48 Mermaid blocks | ❌ n/a | No mermaid exists in the source; §F is real code. Nothing to pre-render, nothing gained |
-| 2.8 content lint gate | ✅ | `lint.ts` (missing outcomes, quiz-thin, broken/dangling image refs, mojibake, naira format, unclosed fence, short lines, repeated heading…). Today: **0 critical · 1 warn · 1 info** — the whole report is the two questions whose answers are broken in the PDFs (GAP-ANALYSIS §2.7); `--fail-on-critical` in CI |
+| 2.8 content lint gate | ✅ | `lint.ts` (missing outcomes, quiz-thin, broken/dangling image refs, mojibake, naira format, unclosed fence, short lines, repeated heading…). Today: **0 critical · 0 warn · 1 info** — all 991 of 991 questions carry their source manual answer key (GAP-ANALYSIS §2.7); `--fail-on-critical` in CI |
 | 2.9 asset optimization via sharp/WebP | 🟡 refused | No image pipeline (native dep, no visual gain on line-art clips); diagrams are pre-sized PNGs and served from the same origin, cached forever. GAP-ANALYSIS §4.5 |
 | 2.10 per-course lazy-loaded JSON | ✅ | `.content/courses/<slug>.json`; home/catalogue read only `index.json`; `useApi` fetches a course on demand |
 | 2.11 level 1 free, rest locked | ✅ | `isFree: number===1` + `assertAccess` → HTTP 402; the web test asserts exactly one free level per course |
@@ -111,7 +111,7 @@ black-box HTTP assertions run against both runtimes.
 | 4.8 data-saver mode | ✅ | `useDataSaver` + setting; defers diagram images, kills ads, trims animation, text-first |
 | 4.9 PWA offline + background sync | 🔶 | installable manifest, SW shell + content cache, mutation queue replayed on `online`; **no periodic content revalidation** (GAP-ANALYSIS §2.9) |
 | 4.10 bookmarks + notes per section | ✅ | `POST /api/learn/{blank}`-adjacent note/bookmark endpoints, per-letter anchors, UI in the rail |
-| 4.11 search inside content | ✅ | per-course TF-IDF client index + `/search` (enrolled scope; free-level scope otherwise) |
+| 4.11 search inside content | ✅ | per-course TF-IDF client index + `/search` (full 141-level corpus while `ACCESS.mode = 'free'`; enrolled + free-level scope when `CEA_ACCESS_MODE=paid`) |
 | **GATE 4** | ✅ | offline read of a visited level + queued progress: manual check + smoke assertions |
 
 ## Phase 5 — gamification
@@ -175,7 +175,7 @@ black-box HTTP assertions run against both runtimes.
 | 8.6 AdSense policy audit | 🔶 | privacy + ToS pages, "Advertisement" labels, no ad-heavy pages; the manual audit itself is a launch task |
 | 8.7 privacy policy + ToS | ✅ | `/terms` and `/privacy` (refunds, retention, data-saver, ads, NDPR language) |
 | 8.8 revenue analytics | 🔶 | impression/blur/blocked counters via `/api/ads/event` + admin panel; no AdSense API import (needs credentials) |
-| 8.9 house fill (2026-10-29) | ✅ | with 24 placements, an unapproved network used to render 24 empty boxes. `HouseAd` now fills any slot with no live network — four promo cards (free catalogue, leaderboard, a course, "your ad here" for a sponsor) chosen by a hash of the placement name, so server and first client render agree and nothing repaints. Opt out with `NEXT_PUBLIC_ADS_FILL=off` |
+| 8.9 house fill (2026-10-29) | ✅ | with 26 placements, an unapproved network used to render empty boxes. `HouseAd` now fills any slot with no live network — eight promo cards (free catalogue, daily wheel, leaderboard, courses, sponsor callouts) chosen by a hash of the placement name, so server and first client render agree and nothing repaints. Opt out with `NEXT_PUBLIC_ADS_FILL=off` |
 | **GATE 8** | ⚠️ | needs a live domain + approved AdSense account |
 
 ## Phase 9 — performance & reliability
@@ -198,8 +198,8 @@ black-box HTTP assertions run against both runtimes.
 
 | item | status | note |
 |---|---|---|
-| 10.1 unit tests | ✅ | XP/streak/rank/gating/scoring are covered by the API smoke suite; parser + quiz extraction + corpus invariants by Vitest (`packages/content/test`, 17 tests) |
-| 10.2 API integration tests | ✅ | `tools/smoke-api.mjs` — 53 assertions: auth, CSRF, progress, quiz grading, gating (402), payment approval, uploads, certificates, admin, caps |
+| 10.1 unit tests | ✅ | XP/streak/rank/gating/scoring are covered by the API smoke suite; parser + quiz extraction + plain-English pass + corpus invariants + UI game/feedback components by Vitest (45 tests: `@cea/content` 29, `@cea/web` 16) |
+| 10.2 API integration tests | ✅ | `tools/smoke-api.mjs` — 64 assertions: auth, CSRF, progress, quiz grading, gating, payment approval, uploads, certificates, admin, wheel, combos, ad policy, feedback inbox, receipt retention |
 | 10.3 E2E (Playwright) | 🔶 | `tools/route-walk.mjs` fetches and asserts all 36 routes in CI (status, content marker, no answer-key pattern, size ceiling), `tools/a11y-scan.mjs` scans the same rendered HTML for names/landmarks/headings/labels, and the smoke suite drives the API end to end — what is missing is real *browser* interaction (hydration, offline queue, upload widget), which needs Playwright in the beta phase |
 | 10.4 device/browser matrix | ⏳ | needs real hardware; the layout is mobile-first at 360 px and the PWA path is exercised manually |
 | 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens; the sponsored bands are `<aside aria-label="Sponsored">` with named links, and the wheel prints its prize as text in a live region. Automated in CI by `node tools/a11y-scan.mjs` over 31 rendered pages while logged in as a learner (**0 findings**): accessible names, landmarks, heading order, form labels, duplicate ids, `aria-hidden` traps, `rel~="noopener"`, unique ids. Contrast ratio, focus order and computed style still need axe/Lighthouse against a deployed URL; drag ARIA n/a (6.2) |
@@ -214,7 +214,7 @@ black-box HTTP assertions run against both runtimes.
 | item | status |
 |---|---|
 | 11.1 beta with 10–20 learners | ⏳ needs a deployment |
-| 11.2 in-app feedback loop | 🟡 the Finish stage of every level asks one question — *Was level N clear?* — with three words to tap and an optional note, stored against the page it came from (`POST /api/feedback` → `feedback` table, asserted in the smoke suite). Once per course, never mid-task, and the note box only opens after a word is chosen. What is missing is the admin screen to read them: today the tutors run the SQL in DEPLOYMENT §6 |
+| 11.2 in-app feedback loop | ✅ | the Finish stage of every level asks one question — *Was level N clear?* — with three words to tap and an optional note, stored against the page it came from (`POST /api/feedback` → `feedback` table), and surfaced with status filters + written exercise submissions in `/admin/feedback` (`GET/PATCH /api/admin/feedback`, asserted in the smoke suite) |
 | 11.3 launch checklist | ✅ written — `DEPLOYMENT.md` §9 |
 | 11.4 public launch | ⏳ |
 | 11.5 re-engagement engine | ✅ streak-at-risk + weekly digest + "1 lesson from finishing" via the cron |
@@ -227,14 +227,12 @@ black-box HTTP assertions run against both runtimes.
 
 ---
 
-## What is left, in priority order (v1.1)
+## What is left, in priority order (external / launch tasks)
 
-1. **Deploy** — `DEPLOYMENT.md` §2–5, then set `CEA_DEPLOY_ENABLED` so CI's deploy jobs turn on.
-2. **Measure** — Lighthouse CI on the deployed URL against 9.1's numbers; replace "by construction".
-3. **Two answer-key lines in the source PDFs** — `web-design` level 10 q1 and `web-development` level 7 q3; retype them in the manual and `pnpm content:build` absorbs them (the other 92 unkeyed questions were ours and are fixed).
-4. **axe + Playwright pass** on a deployed URL — closes 10.5's contrast/focus-order half and 10.3's hydration half, and gates 11.1. The markup-level rules are automated already (`tools/a11y-scan.mjs`, in CI).
-5. **Receipt retention cron** (3.3 in GAP-ANALYSIS) and the tutor-mark queue for `needs a human` answers.
-6. **An admin view for `feedback`** (11.2) — the intake and the table exist now; the tutors still read them with SQL.
+1. **Deploy** — `DEPLOYMENT.md` §2–5 (Cloudflare D1/KV/R2 + Worker, Vercel project, `learn.cea.ng` DNS, `JWT_SECRET` + `RESEND_API_KEY`), then set `CEA_DEPLOY_ENABLED` so CI's deploy jobs turn on.
+2. **Measure** — Lighthouse CI on the deployed URL against 9.1's numbers; replace "by construction" with live 4G field numbers.
+3. **axe + Playwright pass** on a deployed URL — closes 10.5's contrast/focus-order half and 10.3's browser-hydration half, and gates 11.1. The markup-level rules are automated already (`tools/a11y-scan.mjs`, in CI).
+4. **AdSense property approval & verification** (GATE 8) — once live on `learn.cea.ng`, set `NEXT_PUBLIC_ADS=on` to switch slots from `HouseAd` promos to live network fill.
 
 ## v2 backlog (11.8, as the README frames it)
 

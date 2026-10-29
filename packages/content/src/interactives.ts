@@ -30,12 +30,21 @@ const OPTION_RE = /(?:^|[\s(])([a-h])\s*[).]\s+/g
  * Q1,Q2,Q3… which keeps "Q3" inside prose from splitting a question. */
 function splitNumbered(text: string, marker: 'Q' | 'A' | ''): Map<number, string> {
   const out = new Map<number, string>()
-  const re = new RegExp(`(?:^|[\\n\\s])${marker}(\\d{1,2})\\s*[.)]\\s+`, 'g')
+  const head = marker === 'A' ? '([AQ])' : `(${marker})`
+  const re = new RegExp(`(?:^|[\\n\\s])${head}(\\d{1,2})\\s*[.)]\\s+`, 'g')
   const hits: { n: number; start: number; end: number }[] = []
   let m: RegExpExecArray | null
   let expect = 1
   while ((m = re.exec(text))) {
-    const n = Number(m[1])
+    const kind = m[1]
+    const n = Number(m[2])
+    if (marker === 'A' && kind === 'Q') {
+      // Accept a typo'd "Q3." inside an ANSWER KEY block only when it continues an
+      // already-started A1/A2 run and no real "A3." appears later in the key.
+      if (expect <= 1 || n !== expect) continue
+      const realAhead = new RegExp(`(?:^|[\\n\\s])A${n}\\s*[.)]\\s+`).test(text.slice(m.index + m[0].length))
+      if (realAhead) continue
+    }
     if (n !== expect) {
       // tolerate a skipped number once, but never go backwards
       if (n !== expect + 1 || expect !== 1 && marker === 'Q') continue
