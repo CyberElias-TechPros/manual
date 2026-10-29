@@ -9,7 +9,7 @@
 @layer base {
   body {
     /* paper, not blue-grey: the reading surface must disappear */
-    @apply bg-canvas text-ink font-sans antialiased dark:bg-canvas-dark dark:text-light;
+    @apply bg-canvas font-sans font-medium text-ink antialiased dark:bg-canvas-dark dark:text-light;
     -webkit-text-size-adjust: 100%;
     font-feature-settings: 'kern' 1, 'liga' 1;
   }

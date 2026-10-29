@@ -49,8 +49,17 @@ export const XP = {
   streakDay: 5,
   streakWeekBonus: 50,
   badgeAward: 25,
-  /** 5.9 anti-cheat — a learner cannot farm more than this in a day. */
-  dailyCap: 300,
+  /**
+   * Added with the "gamified everywhere" decision (2026-10-29). Every one of these is awarded by
+   * the API, never by the client — the reason 5.9 exists is that a modified bundle must not be able
+   * to mint XP, so a spinner, a combo or a show-up bonus is a *server* number the UI only reports.
+   */
+  spinBonus: 15,
+  comboStreak: 5,
+  firstLevelToday: 15,
+  questComplete: 30,
+  /** 5.9 anti-cheat — raised with more ways to earn, still a hard ceiling per day. */
+  dailyCap: 600,
   /** 5.9 — minimum seconds between a session-open and a completion award. */
   minCompletionSeconds: 45,
   quizPassPercent: 60,
@@ -121,8 +130,26 @@ export const PAYMENT = {
   retentionGraceDays: 90,
 }
 
-/** 7.12 — access duration policy. */
-export const ACCESS = { mode: 'lifetime', monthsWhenTimed: 6 }
+/**
+ * 7.12 — access policy.
+ *
+ * The academy's call on 2026-10-29: **payments are paused, the whole catalogue is open**, and the
+ * price stays visible on the course card so the money story is still told. `mode: 'free'` is read
+ * in one place (`lockState`), so the checkout screens, `/api/payments`, the admin approval queue,
+ * the fee tables and their smoke tests all keep working untouched — `CEA_ACCESS_MODE=paid` flips
+ * the app back to paid gating without a rebuild of anything else. That is deliberate: "for now"
+ * should cost one environment variable, not a re-architecture.
+ */
+export const ACCESS = {
+  mode: process.env.CEA_ACCESS_MODE === 'paid' ? 'lifetime' : 'free',
+  monthsWhenTimed: 6,
+  /** Course cards still show the fee, with this line under it. */
+  showPrices: true,
+  priceNote: 'Payments are paused — every level is open, start today free.',
+}
+
+/** The one question every access check asks. */
+export const isFreeAccess = () => ACCESS.mode === 'free'
 
 /**
  * 3.7 — abuse thresholds. The README asked for rate limiting but never gave
@@ -141,17 +168,70 @@ export const RATE_LIMITS = {
   devHeadroom: 20,
 }
 
-/** 8.1 / 8.2 — ad networks. Ads are OFF until the site is AdSense-approved. */
+/**
+ * 8.1 / 8.2 — ad networks, and the monetisation surface.
+ *
+ * The academy's call on 2026-10-29: **ads carry the product** while payments are paused, so the
+ * old placement policy (8.3: nothing in the lesson body, nothing between a question and its verdict,
+ * at most two per view) is retired — see `policy.forbidden`, which is now empty *by decision* and is
+ * written down in docs/DESIGN.md so nobody "restores" it by accident. `maxPerView` is kept as a
+ * readability floor, not a moral one: past this many on one screen the page stops being a lesson.
+ *
+ * `enabled` still means "AdSense has approved this site". Until then a slot never renders an empty
+ * grey box: `fillEmpty` makes it show a house promo instead (another course, a free level, a study
+ * tip), which is also the inventory you would sell to a Nigerian sponsor first.
+ */
 export const ADS = {
   enabled: process.env.NEXT_PUBLIC_ADS === 'on',
+  fillEmpty: process.env.NEXT_PUBLIC_ADS_FILL !== 'off',
   adsense: { clientId: 'ca-pub-9117572925263537', slotCatalogue: '1000000001', slotCompletion: '1000000002' },
   ngAdverts: { script: 'https://ngadverts.com/ad/ads.js', slots: [13225, 13226] },
   /** 8.3 — placement policy, expressed as code so it cannot drift from the doc. */
   policy: {
-    allowedPlacements: ['catalogue-footer', 'course-after-syllabus', 'level-complete-side', 'leaderboard-side', 'dashboard-side'],
-    forbidden: ['inside-quiz', 'mid-paragraph', 'above-fold-on-mobile', 'lesson-body'],
-    maxPerView: 2,
+    allowedPlacements: [
+      'catalogue-footer', 'catalogue-inline', 'course-hero', 'course-after-syllabus', 'course-side',
+      'map-side', 'lesson-top', 'lesson-inline', 'lesson-between-stages', 'after-question',
+      'level-complete-side', 'level-complete-band', 'dashboard-side', 'dashboard-inline',
+      'leaderboard-side', 'profile-side', 'certificate-top', 'auth-side', 'search-results',
+      'checkout-note', 'offline', 'notfound', 'styleguide',
+    ],
+    /** 8.3 is retired by decision (2026-10-29). The floor that remains is `maxPerView` + data-saver. */
+    forbidden: [],
+    maxPerView: 6,
+    /** Learners who turn data-saver on still get no ads: it is their explicit choice, on a metered SIM. */
+    respectDataSaver: true,
   },
+}
+
+/**
+ * 5.x — the game furniture. Kept as data next to XP/RANKS for the same reason they are: the API, the
+ * UI and the tests must not disagree about what a reward is worth.
+ */
+export const GAME = {
+  /**
+   * The daily wheel. Rolled on the server from (user, day) — a client cannot pick its own prize, and
+   * a refresh cannot re-roll it. One free spin a day, plus one more once the streak is 3 days old.
+   */
+  wheel: {
+    spinsPerDay: 1,
+    bonusSpinStreakDays: 3,
+    segments: [
+      { id: 'small', label: '+10 XP', xp: 10, weight: 26 },
+      { id: 'common', label: '+20 XP', xp: 20, weight: 22 },
+      { id: 'good', label: '+40 XP', xp: 40, weight: 10 },
+      { id: 'shield', label: 'Streak shield', xp: 5, freeze: 1, weight: 12 },
+      { id: 'boost', label: 'Badge boost', xp: 25, weight: 6 },
+      { id: 'again', label: 'Try tomorrow', xp: 5, weight: 24 },
+    ],
+  },
+  /** Three correct in a row lights the combo. The bonus is paid at the end of the check, by the API. */
+  combo: { trigger: 3, xpPerCorrect: 2, max: 10 },
+  /** One "you showed up today" bonus per day, awarded with the first completed level. */
+  firstLevelToday: true,
+  /** Streak calendar on /profile and /dashboard: 12 weeks of squares, ~90 days of activity. */
+  streakCalendarWeeks: 12,
+  /** How many levels a day the quest line expects; the quest itself stays one per day (5.8). */
+  questTarget: 1,
 }
 
 /** Money formatting used everywhere (2.8 flags inconsistent ₦ formatting). */
@@ -169,4 +249,4 @@ export function rankForXp(xp) {
   return { current, next, pctIntoRank: pct, toNext: next ? Math.max(0, next.min - xp) : 0 }
 }
 
-export default { brand, XP, RANKS, STREAK, DEFAULT_FEES_NGN, PAYMENT, ACCESS, ADS }
+export default { brand, XP, RANKS, STREAK, DEFAULT_FEES_NGN, PAYMENT, ACCESS, ADS, GAME }

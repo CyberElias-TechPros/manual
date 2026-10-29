@@ -6,7 +6,7 @@
  * streak rollover, gating, badges) without a Worker runtime. The DB-touching
  * orchestration sits in `awards.ts`.
  */
-import { XP, RANKS, STREAK, brand } from '@cea/config'
+import { XP, RANKS, STREAK, GAME, ACCESS, brand } from '@cea/config'
 
 export interface XpInput {
   kind: XpKind
@@ -18,6 +18,10 @@ export interface XpInput {
 export type XpKind =
   | 'lesson_read' | 'quiz_pass' | 'quiz_perfect' | 'exercise_submit' | 'session_complete'
   | 'streak_day' | 'streak_week' | 'badge' | 'quest' | 'admin_adjust' | 'certificate'
+  // added with the "gamified everywhere" decision (2026-10-29) — all three are server-awarded, so a
+  // modified bundle still cannot mint XP: the wheel is rolled from (user, day), the combo is counted
+  // from the graded answers on the server, and the show-up bonus is keyed to the day.
+  | 'spin' | 'combo' | 'first_level'
 
 /** 5.1 — the single XP table. */
 export function xpFor(kind: XpKind, opts: { perfect?: boolean; capLeft?: number; reason?: string } = {}): number {
@@ -30,7 +34,10 @@ export function xpFor(kind: XpKind, opts: { perfect?: boolean; capLeft?: number;
     streak_day: XP.streakDay,
     streak_week: XP.streakWeekBonus,
     badge: XP.badgeAward,
-    quest: 30,
+    spin: XP.spinBonus,
+    combo: XP.comboStreak,
+    first_level: XP.firstLevelToday,
+    quest: XP.questComplete,
     admin_adjust: 0,
     certificate: 100,
   }
@@ -180,6 +187,31 @@ export function badgesEarned(ctx: AwardContext): BadgeDef[] {
 // 7.5 access gating (shared by the API and the UI so they can never disagree)
 // ---------------------------------------------------------------------------
 
+/**
+ * 5.x — the daily wheel. Deterministic on purpose: the outcome comes from (user, day, spin number),
+ * so a refresh cannot re-roll for a better prize and the client never chooses its own XP. The index
+ * is returned too, because the UI has to land the pointer on the segment the server actually picked.
+ */
+export function spinRoll(userId: string, day: string, spin = 0): { index: number; segment: (typeof GAME.wheel.segments)[number] } {
+  const segs = GAME.wheel.segments
+  const total = segs.reduce((n, s) => n + s.weight, 0)
+  let h = 0
+  const seed = `${userId}|${day}|spin|${spin}`
+  for (let i = 0; i < seed.length; i++) h = (h * 131 + seed.charCodeAt(i)) >>> 0
+  let pick = h % total
+  for (let i = 0; i < segs.length; i++) {
+    if (pick < segs[i].weight) return { index: i, segment: segs[i] }
+    pick -= segs[i].weight
+  }
+  return { index: 0, segment: segs[0] }
+}
+
+/** 5.x — a run of correct answers inside one check. Counted from graded answers, never self-reported. */
+export function comboBonus(correctRun: number): number {
+  if (correctRun < GAME.combo.trigger) return 0
+  return Math.min(GAME.combo.max, (correctRun - GAME.combo.trigger + 1) * GAME.combo.xpPerCorrect)
+}
+
 export type LockState = 'free' | 'unlocked' | 'locked' | 'pending' | 'expired'
 
 export function lockState(o: {
@@ -187,6 +219,11 @@ export function lockState(o: {
   expiresAt?: string | null; now?: Date
 }): { state: LockState; httpStatus: number } {
   const now = o.now ?? new Date()
+  // 7.12 — payments are paused (ACCESS.mode === 'free'): every level is open, so no learner is ever
+  // told "locked", and no route needs its own copy of that decision. `CEA_ACCESS_MODE=paid` puts the
+  // whole gate back exactly as written below; the checkout flow and the admin queue were never
+  // removed, which is the difference between "paused" and "gone".
+  if (ACCESS.mode === 'free') return { state: 'unlocked', httpStatus: 200 }
   if (o.enrolled && o.expiresAt && Date.parse(o.expiresAt) < now.getTime()) return { state: 'expired', httpStatus: 403 }
   if (o.enrolled) return { state: 'unlocked', httpStatus: 200 }
   if (o.isFree) return { state: 'free', httpStatus: 200 }

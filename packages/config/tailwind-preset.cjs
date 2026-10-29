@@ -29,9 +29,12 @@ const ink = {
   900: '#10203a',
   800: '#1c2b45',
   700: '#31415c',
-  600: '#4a5a75',
-  500: '#64748f',
-  400: '#84909f',
+  // -600 and -500 are the two greys this app uses for *body* copy (secondary text, prose, table
+  // rows). Both were a touch light for a phone in daylight; they move down the ramp while keeping
+  // their distance from -700/-800, so "this line is less important" is still visible.
+  600: '#3d4c66',
+  500: '#54637d',
+  400: '#7b8798',
   300: '#aab4c4',
   200: '#d3dae4',
   100: '#e8edf4',
@@ -48,6 +51,16 @@ module.exports = {
         'surface-dark': { DEFAULT: '#101c33', muted: '#17253f', line: '#22324f', 'line-strong': '#2c3f60' },
         canvas: '#fbfcfe',
         'canvas-dark': '#0b1526',
+      },
+      // "Not thin." The academy's call on 2026-10-29: a beginner reads this on a phone, often in
+      // sunlight, and the system stack's 400 weight disappears on a cheap LCD. Rather than sprinkle
+      // `font-bold` over 300 files (which only moves the problem), the weight *scale* is shifted up
+      // one step: `font-normal` is 500, `font-medium` is 600, `font-semibold` is 700, `font-bold` is
+      // 800. Every component, including the ones in packages/ui, gets heavier in one edit and stays
+      // internally consistent — hierarchy still reads, because the steps are still different.
+      fontWeight: {
+        thin: '500', extralight: '500', light: '500', normal: '500',
+        medium: '600', semibold: '700', bold: '800', extrabold: '800', black: '900',
       },
       fontFamily: {
         // system-first (1.2): zero font bytes over a metered 3G link beats a webfont

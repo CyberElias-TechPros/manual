@@ -174,7 +174,7 @@ export async function courseCompletionCounts(env: CeaEnv, userId: string, catalo
 
 export interface AwardInput {
   userId: string
-  kind: 'lesson_read' | 'quiz_pass' | 'exercise_submit' | 'session_complete' | 'streak' | 'badge' | 'quest' | 'certificate' | 'admin_adjust'
+  kind: 'lesson_read' | 'quiz_pass' | 'exercise_submit' | 'session_complete' | 'streak' | 'badge' | 'quest' | 'certificate' | 'admin_adjust' | 'spin' | 'combo' | 'first_level'
   /** stable idempotency key, e.g. `wd/session-03/complete` */
   key: string
   course?: string
@@ -192,6 +192,12 @@ export interface AwardResult {
   streak: { count: number; freezes: number; justExtended: boolean }
   badges: { key: string; name: string; description: string; icon: string; tier: string }[]
   unlocked?: { course: string; sessionNumber: number; title: string } | null
+  /**
+   * The rank the learner just reached, or null. The level-up overlay needs the *change*, and the
+   * only honest source for it is the server that moved the XP — the client cannot compute it from
+   * the XP it was handed without racing another tab's award.
+   */
+  rankUp?: { name: string; min: number; index: number } | null
   duplicate?: boolean
 }
 
@@ -216,7 +222,7 @@ export async function award(env: CeaEnv, input: AwardInput, context?: { course?:
       awarded: false, duplicate: true, xp: payload.xp ?? 0, totalXp: userRow.xp || 0,
       rank: rankFor(userRow.xp || 0),
       streak: { count: streakOf(userRow).count, freezes: streakOf(userRow).freezes, justExtended: false },
-      badges: payload.badges ?? [], unlocked: payload.unlocked ?? null,
+      badges: payload.badges ?? [], unlocked: payload.unlocked ?? null, rankUp: null,
     }
   }
 
@@ -293,7 +299,13 @@ export async function award(env: CeaEnv, input: AwardInput, context?: { course?:
   xp += newBadges.reduce((n, b) => n + b.xp, 0)
   if (newBadges.length) await q.run(env, 'UPDATE users SET xp = ? WHERE id = ?', xp, userId)
 
-  const payload = { xp: total, badges: newBadges, unlocked, totalXp: xp }
+  const rankBefore = rankFor(Number(userRow.xp || 0))
+  const rankAfter = rankFor(xp)
+  const rankUp = rankAfter.rankIndex > rankBefore.rankIndex
+    ? { name: rankAfter.current.name, min: rankAfter.current.min, index: rankAfter.rankIndex }
+    : null
+
+  const payload = { xp: total, badges: newBadges, unlocked, totalXp: xp, rankUp }
   await q.run(env, 'UPDATE awards SET payload = ? WHERE user_id = ? AND key = ?', JSON.stringify(payload), userId, key)
 
   if (userRow.leaderboard_opt_in && total > 0) {
@@ -307,7 +319,7 @@ export async function award(env: CeaEnv, input: AwardInput, context?: { course?:
   return {
     awarded: total > 0, xp: total, totalXp: xp, rank: rankFor(xp),
     streak: { count: next.count, freezes, justExtended: streakAdvanced },
-    badges: newBadges, unlocked,
+    badges: newBadges, unlocked, rankUp,
   }
 }
 
@@ -321,7 +333,7 @@ export function isoWeek(d: Date): string {
 }
 
 export { xpFor }
-export const accessPolicy = () => (ACCESS.mode === 'lifetime' ? null : new Date(Date.now() + ACCESS.monthsWhenTimed * 30 * 864e5).toISOString())
+export const accessPolicy = () => (ACCESS.mode === 'lifetime' || ACCESS.mode === 'free' ? null : new Date(Date.now() + ACCESS.monthsWhenTimed * 30 * 864e5).toISOString())
 
 export async function grant(env: CeaEnv, userId: string, course: string, source: 'payment' | 'grant' | 'code' | 'beta', opts: { by?: string; note?: string; paymentId?: string } = {}) {
   const existing = await q.one(env, 'SELECT id, status FROM enrollments WHERE user_id=? AND course=?', userId, course)
