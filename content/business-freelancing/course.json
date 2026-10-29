@@ -224,28 +224,20 @@
   "assessment": "focus",
   "tools": "A smartphone, free Google tools (Docs, Sheets, Drive, Forms), WhatsApp Business, free Canva, free",
   "audience": [
-    "This course is for absolute beginners. The typical learner is one or more of the following:",
-    "Aspiring freelancers with a skill \u2014 writing, design, barbing, hairdressing, sewing, phone repair, typing, cooking, tutoring,",
-    "photography \u2014 who have never charged for it properly.",
-    "Micro-business owners and traders \u2014 shop owners, market traders, POS operators, artisans \u2014 who run on instinct and",
-    "want structure: prices, quotes, records, registration.",
-    "Students and NYSC members who want a practical, income-earning start during or after school.",
-    "Unemployed or underemployed young people who need a real route from skill to first income, without capital for stock",
-    "or a shop.",
-    "Side-hustlers with a job who run an evening or weekend service and want to systematise it.",
-    "Family members who manage a family business's money and want clean records."
+    "This course is for absolute beginners. The typical learner is one or more of the following",
+    "Aspiring freelancers with a skill \u2014 writing, design, barbing, hairdressing, sewing, phone repair, typing, cooking, tutoring, photography \u2014 who have never charged for it properly",
+    "Micro-business owners and traders \u2014 shop owners, market traders, POS operators, artisans \u2014 who run on instinct and want structure: prices, quotes, records, registration",
+    "Students and NYSC members who want a practical, income-earning start during or after school",
+    "Unemployed or underemployed young people who need a real route from skill to first income, without capital for stock or a shop",
+    "Side-hustlers with a job who run an evening or weekend service and want to systematise it Family members who manage a family business's money and want clean records"
   ],
   "entry_requirements": [
-    "There is no formal academic entry requirement. To join and benefit fully, a learner needs:",
-    "A smartphone (Android or iPhone) able to run WhatsApp, a browser and Google apps.",
-    "Basic smartphone ability \u2014 typing, opening apps, taking a photo, recording a voice note. This is assumed, not taught.",
-    "A free Gmail account (or willingness to create one in S1) for Google Docs, Sheets, Drive, Forms and WhatsApp Business.",
-    "Willingness to speak, write and role-play in class. Selling and customer conversations are practised aloud. Learners who",
-    "prefer not to speak publicly may pair with a classmate and submit a written or recorded version; this must be declared to",
-    "the instructor at the start.",
-    "One real skill to offer \u2014 anything from sewing to typing to cooking to repairing. If a learner believes they have none, that",
-    "belief is addressed in S1; it is usually untrue.",
-    "Not required:"
+    "There is no formal academic entry requirement. To join and benefit fully, a learner needs",
+    "A smartphone (Android or iPhone) able to run WhatsApp, a browser and Google apps",
+    "Basic smartphone ability \u2014 typing, opening apps, taking a photo, recording a voice note. This is assumed, not taught",
+    "A free Gmail account (or willingness to create one in S1) for Google Docs, Sheets, Drive, Forms and WhatsApp Business",
+    "Willingness to speak, write and role-play in class. Selling and customer conversations are practised aloud. Learners who prefer not to speak publicly may pair with a classmate and submit a written or recorded version; this must be declared to the instructor at the start",
+    "One real skill to offer \u2014 anything from sewing to typing to cooking to repairing. If a learner believes they have none, that belief is addressed in S1; it is usually untrue"
   ],
   "weeks": 3,
   "session_length_minutes": 105,
@@ -254,5 +246,6 @@
   "pdfs": {
     "teaching_manual": "Business Freelancing_Teaching_Manual.pdf",
     "full_course": "Business Freelancing_Full_Course.pdf"
-  }
+  },
+  "problem": "Business & Freelancing is a practical, beginner-level short course that takes a learner from \"I have a skill but no customers, no price and no records\" to \"I can describe my offer, price it, find a customer, manage the job, invoice it and keep simple books.\""
 }

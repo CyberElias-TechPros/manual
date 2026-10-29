@@ -304,5 +304,6 @@
   "pdfs": {
     "teaching_manual": "Web Development_Teaching_Manual.pdf",
     "full_course": "Web Development_Full_Course.pdf"
-  }
+  },
+  "problem": "Many learners finish a basic web design class able to arrange content but unable to make a page respond to a user. They can build a beautiful poster but not a shop. This course closes that gap. By the end, the learner owns a deployed, interactive product they can show a client, a relative, or an employer \u2014 not a certificate with nothing behind it."
 }

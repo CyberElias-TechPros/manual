@@ -154,27 +154,21 @@
   "assessment": "focus",
   "tools": "A smartphone with a camera (primary), academy computers for editing, free Snapseed / Lightroom Mobile",
   "audience": [
-    "This course is designed for absolute beginners and near-beginners. The typical learner is one or more of the following:",
-    "Small-business owners and staff \u2014 food vendors, tailors, salons, barbers, traders \u2014 who need product and business",
-    "photographs but cannot pay an agency.",
-    "Aspiring freelance photographers who want a practical foundation and a first portfolio to show.",
-    "Content creators and social media managers whose still images are let down by poor light and framing.",
-    "Church, school and NGO media volunteers who photograph services, programmes and announcements.",
-    "NYSC corps members and students who want a practical, income-earning skill they can use immediately.",
-    "Event assistants who want to support a photographer at birthdays, weddings and naming ceremonies with confidence.",
-    "Parents and hobbyists who want sharp, clear photos of family, food and milestones.",
-    "What learners bring."
+    "This course is designed for absolute beginners and near-beginners. The typical learner is one or more of the following",
+    "Small-business owners and staff \u2014 food vendors, tailors, salons, barbers, traders \u2014 who need product and business photographs but cannot pay an agency",
+    "Aspiring freelance photographers who want a practical foundation and a first portfolio to show",
+    "Content creators and social media managers whose still images are let down by poor light and framing",
+    "Church, school and NGO media volunteers who photograph services, programmes and announcements",
+    "NYSC corps members and students who want a practical, income-earning skill they can use immediately",
+    "Event assistants who want to support a photographer at birthdays, weddings and naming ceremonies with confidence",
+    "Parents and hobbyists who want sharp, clear photos of family, food and milestones"
   ],
   "entry_requirements": [
-    "There is no formal academic entry requirement. To join and benefit fully, a learner needs:",
-    "Photography | Cyber Elias Academy",
-    "Cyber Elias Academy \u00b7 Photography \u00b7 Page 5 of 211",
-    "A smartphone with a working camera. Android or iPhone; any phone made in the last several years is capable of excellent",
-    "photographs.",
-    "Reasonable free storage (about 2\u20134 GB is comfortable for two weeks), or regular access to an academy computer for",
-    "editing and file handling.",
-    "Free Snapseed and/or Lightroom Mobile installed before S4 (the instructor helps in S1/S3 if needed). Either one is enough.",
-    "A free Canva account (email sign-up) for building the mini portfolio in S5/S6.",
+    "There is no formal academic entry requirement. To join and benefit fully, a learner needs",
+    "A smartphone with a working camera. Android or iPhone; any phone made in the last several years is capable of excellent photographs",
+    "Reasonable free storage (about 2\u20134 GB is comfortable for two weeks), or regular access to an academy computer for editing and file handling",
+    "Free Snapseed and/or Lightroom Mobile installed before S4 (the instructor helps in S1/S3 if needed). Either one is enough",
+    "A free Canva account (email sign-up) for building the mini portfolio in S5/S6",
     "Willingness to be photographed and to photograph classmates during practice, or to act as photographer/director"
   ],
   "weeks": 2,
@@ -185,5 +179,6 @@
   "pdfs": {
     "teaching_manual": "Photography_Teaching_Manual.pdf",
     "full_course": "Photography_Full_Course.pdf"
-  }
+  },
+  "problem": "Photography is a practical, beginner-level short course that turns a learner who only snaps pictures into someone who can see, shoot, edit and deliver photographs that are sharp, well-lit, well-composed and usable \u2014 for a small business, a church, an event, a personal brand or a first paying client. It is built around doing, not listening: from the first session, learners handle a camera, make lighting decisions, photograph real subjects and edit their own images in free software."
 }

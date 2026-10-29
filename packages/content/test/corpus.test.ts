@@ -36,6 +36,27 @@ describe('the 16-course corpus', () => {
     }
   })
 
+  it('gives every course a promise the catalogue can print', () => {
+    // The redesign put one sentence under every course title, so that sentence is now a contract:
+    // real prose from the manual, complete, and free of the PDF's page furniture.
+    const index = JSON.parse(readFileSync(join(OUT, 'index.json'), 'utf8'))
+    expect(index.courses).toHaveLength(16)
+    for (const c of index.courses) {
+      const problem = String(c.problem ?? '')
+      expect(problem.length, c.slug).toBeGreaterThan(80)
+      expect(problem, c.slug).toMatch(/[.!?\u201d\u2019"]$/)
+      const tagline = String(c.tagline ?? '')
+      expect(tagline.length, c.slug).toBeLessThanOrEqual(190)
+      expect(tagline, c.slug).toMatch(/[.!?\u201d\u2019"\u2026]$/)
+      const lists = [...(c.audience ?? []), ...(c.entryRequirements ?? [])]
+      expect(lists.length, c.slug).toBeGreaterThan(0)
+      for (const item of lists) {
+        expect(item, c.slug).not.toMatch(/\|\s*Cyber Elias Academy|Page \d+ of \d+/i)
+        expect(item, c.slug).not.toMatch(/(?:designed for|target learners|what learners bring|class profile)\s*[:.]?$/i)
+      }
+    }
+  })
+
   it('gives every level a question set, a diagram and a scenario', () => {
     for (const file of ['microsoft-office', 'web-development', 'social-media-management', 'typing-computer-basics']) {
       const bundle = JSON.parse(readFileSync(join(OUT, 'courses', `${file}.json`), 'utf8'))

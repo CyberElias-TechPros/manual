@@ -187,6 +187,19 @@ function seedSql(courses: Course[], sessions: Session[][]) {
   return out.join('\n') + '\n'
 }
 
+/**
+ * A one-line promise for the catalogue. Cutting at a hard character count is how a tagline ends up
+ * reading "…small businesses that are invisib", so a long first sentence is clipped back to the last
+ * whole word and marked with an ellipsis — the reader knows the sentence continues.
+ */
+export function clip(text: string, max: number): string {
+  const t = text.trim()
+  if (t.length <= max) return t
+  const cut = t.slice(0, max)
+  const at = Math.max(cut.lastIndexOf(' '), cut.lastIndexOf(';'), cut.lastIndexOf(','))
+  return `${(at > max * 0.6 ? cut.slice(0, at) : cut).replace(/[\s,;:]+$/, '')}\u2026`
+}
+
 export function buildAll(outDir = OUT_DIR) {
   const slugs = readdirSync(CONTENT_DIR).filter(d => statSync(join(CONTENT_DIR, d)).isDirectory() && existsSync(join(CONTENT_DIR, d, 'course.json')))
   const courses: Course[] = []
@@ -203,7 +216,7 @@ export function buildAll(outDir = OUT_DIR) {
     // Catalogue projections (see Course.tagline/description/outcomes in schema.ts).
     const exitSession = sessions.find(s => s.isCapstone) || sessions[sessions.length - 1]
     const problem = String(course.problem || '').replace(/\s+/g, ' ').trim()
-    course.tagline = problem ? (problem.split(/(?<=[.!?])\s/)[0] || problem).slice(0, 190) : undefined
+    course.tagline = problem ? clip(problem.split(/(?<=[.!?])\s/)[0] || problem, 190) : undefined
     course.description = problem || undefined
     course.level = sessions[0]?.difficulty
     course.outcomes = (exitSession?.outcomes ?? []).slice(0, 6)

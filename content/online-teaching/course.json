@@ -155,28 +155,23 @@
   "assessment": ", Feedback and Learner",
   "tools": "A smartphone or laptop, free Zoom or Google Meet, free Canva, free Google tools (Classroom, Docs,",
   "audience": [
-    "This course is designed for people who already have something to teach:",
-    "School teachers and lecturers now expected to run online or hybrid classes.",
-    "Private tutors and exam-prep instructors \u2014 JAMB, WAEC, NECO, IELTS, entrance \u2014 who want to reach beyond their",
-    "neighbourhood.",
-    "Skill instructors and artisans \u2014 tailors, hairdressers, makeup artists, phone repairers, cooks, bakers \u2014 who teach",
-    "apprentices and want a repeatable online version.",
-    "Church, mosque and NGO trainers, corporate trainers and HR staff, and NYSC members and graduates who want an",
-    "employable learning-and-facilitation skill.",
-    "Content creators and coaches who post videos but have never built a course with outcomes and assessment.",
-    "Beginners asked \u2014 often suddenly \u2014 to take a class online."
+    "School teachers and lecturers now expected to run online or hybrid classes",
+    "Private tutors and exam-prep instructors \u2014 JAMB, WAEC, NECO, IELTS, entrance \u2014 who want to reach beyond their neighbourhood",
+    "Skill instructors and artisans \u2014 tailors, hairdressers, makeup artists, phone repairers, cooks, bakers \u2014 who teach apprentices and want a repeatable online version",
+    "Church, mosque and NGO trainers, corporate trainers and HR staff, and NYSC members and graduates who want an employable learning-and-facilitation skill",
+    "Content creators and coaches who post videos but have never built a course with outcomes and assessment",
+    "Beginners asked \u2014 often suddenly \u2014 to take a class online"
   ],
   "entry_requirements": [
-    "There is no formal academic entry requirement. To join and benefit fully, a learner needs:",
-    "A smartphone or laptop (either is enough; both is ideal). Academy computers are available for anyone with neither.",
-    "Basic ability to use that device \u2014 opening an app, typing, taking a photo, browsing. Assumed, not taught.",
-    "A free email account (Gmail preferred) to create the free tool accounts.",
-    "A working microphone and speakers/earphones \u2014 the ones bundled with the device are fine.",
-    "Willingness to be recorded during practice, or to direct a classmate off-camera instead.",
-    "Something to teach. Every learner needs a real or fictional subject they genuinely know.",
-    "Willingness to follow the rules in Section 15 without exception.",
-    "Not required:",
-    "no laptop; no prior teaching qualification or classroom experience; no prior knowledge of Zoom, Classroom, Canva or OBS (all"
+    "There is no formal academic entry requirement. To join and benefit fully, a learner needs",
+    "A smartphone or laptop (either is enough; both is ideal). Academy computers are available for anyone with neither",
+    "Basic ability to use that device \u2014 opening an app, typing, taking a photo, browsing. Assumed, not taught",
+    "A free email account (Gmail preferred) to create the free tool accounts",
+    "A working microphone and speakers/earphones \u2014 the ones bundled with the device are fine",
+    "Willingness to be recorded during practice, or to direct a classmate off-camera instead",
+    "Something to teach. Every learner needs a real or fictional subject they genuinely know",
+    "Willingness to follow the rules in Section 15 without exception",
+    "Not required no laptop; no prior teaching qualification or classroom experience; no prior knowledge of Zoom, Classroom, Canva or OBS (all"
   ],
   "weeks": 2,
   "session_length_minutes": 105,
@@ -185,5 +180,6 @@
   "pdfs": {
     "teaching_manual": "Online Teaching_Teaching_Manual.pdf",
     "full_course": "Online Teaching_Full_Course.pdf"
-  }
+  },
+  "problem": "Online Teaching is a practical, beginner-level short course that turns a person who talks to a class into a person who can design, build and deliver a small course on the internet \u2014 using only a phone or laptop and free tools. It is built around doing, not listening. From the first session, learners choose a teaching mode, write outcomes, build slides, record short video lessons, run a live class on Zoom or Google Meet, and build a quiz in Google Forms. The course hangs on one honest promise: If you can teach it in a room, you can learn to teach it online \u2014 and you do not need to pay for a single subscription to do it."
 }

@@ -230,20 +230,18 @@
   "assessment": "focus: Practicals 1\u20133, Assignments 1\u20133, Session 1 knowledge check",
   "tools": "A smartphone; free Google tools (Analytics, Business Profile, Keyword Planner basics, Google Ads",
   "audience": [
-    "absolute beginners and for people already posting who were never taught the structure behind",
-    "it. Typical learners"
+    "absolute beginners and for people already posting who were never taught the structure behind it. Typical learners"
   ],
   "entry_requirements": [
-    "No formal academic entry requirement. To benefit fully, a learner needs:",
-    "A smartphone (Android or iPhone) that can browse the web, run Canva and Meta Business Suite, and take a photo \u2014 the",
-    "main tool of the course.",
-    "Internet access \u2014 academy Wi-Fi is provided in class; learners need their own data for home work.",
+    "No formal academic entry requirement. To benefit fully, a learner needs",
+    "A smartphone (Android or iPhone) that can browse the web, run Canva and Meta Business Suite, and take a photo \u2014 the main tool of the course",
+    "Internet access \u2014 academy Wi-Fi is provided in class; learners need their own data for home work",
     "A free Google/Gmail account, required before Session 3 (used for Google Business Profile, Analytics, Keyword Planner,",
-    "Ads and Canva). The instructor helps with creation in class.",
-    "A free Canva account (email sign-up is enough).",
-    "Free messaging/social accounts \u2014 at least one of WhatsApp Business, Instagram or Facebook for practice.",
-    "Basic smartphone ability \u2014 scrolling, typing, opening apps, taking a photo. Assumed, not taught.",
-    "Agreement to follow the Ethics and Professional Conduct rules in Section 15."
+    "Ads and Canva). The instructor helps with creation in class",
+    "A free Canva account (email sign-up is enough)",
+    "Free messaging/social accounts \u2014 at least one of WhatsApp Business, Instagram or Facebook for practice",
+    "Basic smartphone ability \u2014 scrolling, typing, opening apps, taking a photo. Assumed, not taught",
+    "Agreement to follow the Ethics and Professional Conduct rules in Section 15"
   ],
   "weeks": 3,
   "session_length_minutes": 105,
@@ -252,5 +250,6 @@
   "pdfs": {
     "teaching_manual": "Digital Marketing_Teaching_Manual.pdf",
     "full_course": "Digital Marketing_Full_Course.pdf"
-  }
+  },
+  "problem": "Digital Marketing | Cyber Elias Academy Digital Marketing is a practical, beginner-level short course. Over nine 105-minute sessions, a learner who only scrolls on their phone learns to plan, build and measure a small business's online presence \u2014 from what digital marketing is, through the main channels (content, search, email, WhatsApp, paid ads), to the numbers that show whether any of it worked. The course runs on one project: from Session 1 every learner builds a campaign plan for a small business, adding one section per session. The real product is that complete, integrated plan \u2014 goals, audience, channels, content, budget and measurement \u2014 presented and defended in Session 9."
 }

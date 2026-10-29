@@ -136,30 +136,27 @@
   "level": "Beginner (basic computer skills assumed)",
   "certificate": "Name",
   "toolset": "Google Drive (drive.google.com) \u2014 free web service",
-  "problem": "In 2026, most office work happens digitally \u2014 through email, cloud documents and collaboration tools. Yet most workers have",
+  "problem": "In 2026, most office work happens digitally \u2014 through email, cloud documents and collaboration tools. Yet most workers have no formal training in digital productivity. They use email chaotically, lose files, miss deadlines and waste hours on tasks that could be automated. This course fixes that in two weeks.",
   "assessment": "LO1",
   "tools": "Google Drive (drive.google.com) \u2014 free web service",
   "audience": [
-    "Primary Audience:",
     "Office workers who want to be more organised and productive",
     "Small business owners who manage their own digital work",
     "Students who need to organise assignments and research",
     "Church, school and NGO administrators who handle digital communications",
     "Anyone who feels overwhelmed by email, files and tasks",
-    "Digital Productivity | Cyber Elias Academy",
-    "Cyber Elias Academy \u00b7 Digital Productivity \u00b7 Page 4 of 226",
-    "What \"Beginner\" Means Here:",
-    "The learner has basic computer skills (typing, file management, internet) but has never used cloud-based productivity tools."
+    "What \"Beginner\" Means Here",
+    "The learner has basic computer skills (typing, file management, internet) but has never used cloud-based productivity tools"
   ],
   "entry_requirements": [
-    "Formal Entry Requirements:",
-    "None, but Typing & Computer Basics is strongly recommended.",
-    "What the Learner Actually Needs:",
+    "Formal Entry Requirements",
+    "None, but Typing & Computer Basics is strongly recommended",
+    "What the Learner Actually Needs",
     "A practice machine \u2014 provided at the academy",
     "An email address (Gmail preferred)",
     "Basic computer skills \u2014 file management, typing, internet",
     "Willingness to change habits and adopt new systems",
-    "What Is NOT Required:"
+    "What Is NOT Required"
   ],
   "fee_ngn": 30000,
   "weeks": 2,

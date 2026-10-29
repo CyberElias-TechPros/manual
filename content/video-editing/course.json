@@ -224,28 +224,23 @@
   "assessment": "focus",
   "tools": "Free CapCut (mobile and desktop), academy computers, optional free DaVinci Resolve introduction, free",
   "audience": [
-    "This course is for beginners who want a practical, employable craft skill. Typical learners are one or more of:",
-    "Aspiring freelance video editors who want small paid jobs for local businesses.",
-    "Church and mosque media volunteers who must turn service recordings into highlights and captioned sermons.",
-    "Small-business owners and staff \u2014 restaurants, salons, shops, event centres, gyms \u2014 who have phone footage but",
-    "cannot shape it into a promo.",
-    "Content creators and social media managers who can shoot but want edits that look and sound professional.",
-    "Event photographers and videographers who shoot but outsource (or avoid) editing.",
-    "NYSC members and school leavers looking for a digital skill they can charge for in naira.",
-    "Communication and media students needing practical post-production skill.",
-    "Absolute beginners with basic phone or computer confidence."
+    "This course is for beginners who want a practical, employable craft skill. Typical learners are one or more of Aspiring freelance video editors who want small paid jobs for local businesses",
+    "Church and mosque media volunteers who must turn service recordings into highlights and captioned sermons",
+    "Small-business owners and staff \u2014 restaurants, salons, shops, event centres, gyms \u2014 who have phone footage but cannot shape it into a promo",
+    "Content creators and social media managers who can shoot but want edits that look and sound professional",
+    "Event photographers and videographers who shoot but outsource (or avoid) editing",
+    "NYSC members and school leavers looking for a digital skill they can charge for in naira",
+    "Communication and media students needing practical post-production skill",
+    "Absolute beginners with basic phone or computer confidence"
   ],
   "entry_requirements": [
-    "There is no formal academic entry requirement. To join and benefit fully, a learner needs:",
-    "Basic computer or smartphone confidence \u2014 opening an application, creating and saving a file, using a browser,",
-    "copying files. This is assumed, not taught. A learner who cannot yet do this should take the CEA Computer Basics short",
-    "course first.",
-    "Access to a computer. Academy computers are provided; learners may bring their own laptop, but it is not required.",
-    "A free CapCut account (email sign-up is enough), installed in Session 2.",
-    "A USB flash drive of at least 16 GB for footage, project files and exports. Academy practice drives are available; learners",
-    "who cannot bring one should tell the instructor at enrolment.",
-    "Willingness to give and receive honest feedback on each other's cuts and to present work aloud in Session 9.",
-    "Commitment to the ethics and copyright rules in Section 15."
+    "There is no formal academic entry requirement. To join and benefit fully, a learner needs",
+    "Basic computer or smartphone confidence \u2014 opening an application, creating and saving a file, using a browser, copying files. This is assumed, not taught. A learner who cannot yet do this should take the CEA Computer Basics short course first",
+    "Access to a computer. Academy computers are provided; learners may bring their own laptop, but it is not required",
+    "A free CapCut account (email sign-up is enough), installed in Session 2",
+    "A USB flash drive of at least 16 GB for footage, project files and exports. Academy practice drives are available; learners who cannot bring one should tell the instructor at enrolment",
+    "Willingness to give and receive honest feedback on each other's cuts and to present work aloud in Session 9",
+    "Commitment to the ethics and copyright rules in Section 15"
   ],
   "weeks": 3,
   "session_length_minutes": 105,
@@ -254,5 +249,6 @@
   "pdfs": {
     "teaching_manual": "Video Editing_Teaching_Manual.pdf",
     "full_course": "Video Editing_Full_Course.pdf"
-  }
+  },
+  "problem": "Video Editing is a practical, beginner-level short course that turns a learner who can shoot or receive footage into someone who can organise, cut, sound-design, colour, caption, export and deliver a finished video. It is built around editing real clips in free software from the first session. Learners do not watch slides about editing \u2014 they edit."
 }

@@ -227,28 +227,24 @@
   "assessment": "knowledge check after S1; Practicals 1\u20132; Assignments 1\u20133. Capstone contribution: the audience, goals, platforms, pillars and",
   "tools": "A smartphone, free Meta Business Suite, free Canva, free schedulers, free platforms (Instagram,",
   "audience": [
-    "This course is designed for beginners. The typical learner is one or more of the following:",
-    "Small-business owners and staff \u2014 shop owners, tailors, salon owners, restaurateurs, barbers, event vendors \u2014 who",
-    "manage their own pages.",
-    "School leavers and graduates seeking a phone-based skill that can earn freelance income or lead to junior marketing and",
-    "assistant roles.",
-    "NYSC corps members who want to support a business, a church, a CDS group or a side project.",
-    "Church, school and NGO volunteers who post announcements and want their output to look and read better.",
-    "Existing social media managers and virtual assistants who post for others but have never had formal training.",
-    "Personal brand builders \u2014 comedians, faith creators, fitness coaches, students \u2014 who want to grow honestly.",
-    "What learners bring."
+    "This course is designed for beginners. The typical learner is one or more of the following",
+    "Small-business owners and staff \u2014 shop owners, tailors, salon owners, restaurateurs, barbers, event vendors \u2014 who manage their own pages",
+    "School leavers and graduates seeking a phone-based skill that can earn freelance income or lead to junior marketing and assistant roles",
+    "NYSC corps members who want to support a business, a church, a CDS group or a side project",
+    "Church, school and NGO volunteers who post announcements and want their output to look and read better",
+    "Existing social media managers and virtual assistants who post for others but have never had formal training",
+    "Personal brand builders \u2014 comedians, faith creators, fitness coaches, students \u2014 who want to grow honestly"
   ],
   "entry_requirements": [
-    "There is no formal academic entry requirement. To join and benefit fully, a learner needs:",
-    "A smartphone (Android or iPhone) with a working camera and enough storage for photos and a few short videos.",
-    "Basic ability to use a smartphone \u2014 typing, taking photos, installing an app, browsing (assumed, not taught).",
-    "A free email address (Gmail recommended) to create the accounts used in the course.",
-    "Free accounts on at least two platforms: Instagram, Facebook, TikTok, X or LinkedIn.",
-    "A free Canva account (email sign-up is enough).",
-    "Basic written English \u2014 able to write a caption or email of five to eight sentences.",
-    "Willingness to work with others \u2014 giving and receiving feedback, and role-playing comment replies in class.",
-    "Not required:",
-    "no laptop, no paid software, no ads budget, no prior marketing or design experience, no existing followers, and no need to"
+    "There is no formal academic entry requirement. To join and benefit fully, a learner needs",
+    "A smartphone (Android or iPhone) with a working camera and enough storage for photos and a few short videos",
+    "Basic ability to use a smartphone \u2014 typing, taking photos, installing an app, browsing (assumed, not taught)",
+    "A free email address (Gmail recommended) to create the accounts used in the course",
+    "Free accounts on at least two platforms: Instagram, Facebook, TikTok, X or LinkedIn",
+    "A free Canva account (email sign-up is enough)",
+    "Basic written English \u2014 able to write a caption or email of five to eight sentences",
+    "Willingness to work with others \u2014 giving and receiving feedback, and role-playing comment replies in class",
+    "Not required no laptop, no paid software, no ads budget, no prior marketing or design experience, no existing followers, and no need to"
   ],
   "weeks": 3,
   "session_length_minutes": 105,
@@ -257,5 +253,6 @@
   "pdfs": {
     "teaching_manual": "Social Media Management_Teaching_Manual.pdf",
     "full_course": "Social Media Management_Full_Course.pdf"
-  }
+  },
+  "problem": "Social Media Management is a practical, beginner-level course that turns a learner who only scrolls other people's pages into someone who can plan, create, schedule, engage and report for a small business, a church, an event brand or a personal client."
 }

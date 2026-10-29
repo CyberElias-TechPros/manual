@@ -223,27 +223,21 @@
   "assessment": "focus",
   "tools": "A smartphone with a camera, free CapCut, free Canva, free YouTube/TikTok/Instagram accounts, and academy",
   "audience": [
-    "This course is designed for absolute beginners. The typical learner is one or more of the following:",
-    "School leavers who want a practical, income-earning skill they can use immediately.",
-    "NYSC corps members who want to support a business, a church, or build a personal brand during service.",
-    "Small-business owners and staff \u2014 shop owners, tailors, salon owners, restaurant cooks, barbers \u2014 who need to promote",
-    "their own business but cannot pay an agency.",
-    "Church media volunteers who record services, events and announcements and want their output to look and sound better.",
-    "Aspiring freelancers who want to offer social media management or content services to local clients.",
-    "Social media managers and virtual assistants who post for others but have never had formal training.",
-    "Personal brand builders \u2014 comedians, faith creators, students, fitness coaches \u2014 who post on TikTok, Instagram or YouTube.",
-    "What learners bring."
+    "This course is designed for absolute beginners. The typical learner is one or more of the following",
+    "School leavers who want a practical, income-earning skill they can use immediately",
+    "NYSC corps members who want to support a business, a church, or build a personal brand during service",
+    "Small-business owners and staff \u2014 shop owners, tailors, salon owners, restaurant cooks, barbers \u2014 who need to promote their own business but cannot pay an agency",
+    "Church media volunteers who record services, events and announcements and want their output to look and sound better",
+    "Aspiring freelancers who want to offer social media management or content services to local clients",
+    "Social media managers and virtual assistants who post for others but have never had formal training",
+    "Personal brand builders \u2014 comedians, faith creators, students, fitness coaches \u2014 who post on TikTok, Instagram or YouTube"
   ],
   "entry_requirements": [
-    "There is no formal academic entry requirement. To join and benefit fully, a learner needs:",
-    "Content Creation | Cyber Elias Academy",
-    "Cyber Elias Academy \u00b7 Content Creation \u00b7 Page 5 of 268",
-    "A smartphone with a working camera. Android or iPhone both work. The phone should be able to record at least 1080p",
-    "video (almost all phones made in the last several years can).",
-    "At least 8 GB of free storage on the phone (or access to an academy computer for editing) so that footage can be stored",
-    "and edited.",
-    "A free CapCut account/app installed on the phone or available on an academy computer.",
-    "A free Canva account (email sign-up is enough).",
+    "There is no formal academic entry requirement. To join and benefit fully, a learner needs",
+    "A smartphone with a working camera. Android or iPhone both work. The phone should be able to record at least 1080p video (almost all phones made in the last several years can)",
+    "At least 8 GB of free storage on the phone (or access to an academy computer for editing) so that footage can be stored and edited",
+    "A free CapCut account/app installed on the phone or available on an academy computer",
+    "A free Canva account (email sign-up is enough)",
     "Free YouTube, TikTok or Instagram accounts for publishing practice. A learner may use any one of these; they do not need"
   ],
   "weeks": 3,
@@ -254,5 +248,6 @@
   "pdfs": {
     "teaching_manual": "Content Creation_Teaching_Manual.pdf",
     "full_course": "Content Creation_Full_Course.pdf"
-  }
+  },
+  "problem": "Content Creation is a practical, beginner-level course that turns a learner who only watches videos on their phone into someone who can plan, shoot, edit and publish their own content for a small business, a church, a personal brand or a client. The course is built around doing, not listening. From the very first session, learners are making decisions about their audience, standing up to shoot with their phones, and editing real clips in free software."
 }

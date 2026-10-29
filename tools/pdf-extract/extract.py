@@ -550,7 +550,10 @@ LABELS = {
     "audience_raw": r"target learner|designed for|who this course is for",
     "entry_requirements_raw": r"entry requirements|prerequisites|assumed knowledge",
     "mission_raw": r"course mission|^1(?:\.1)?\s+mission|our mission for this course",
-    "problem_raw": r"the problem this course solves|problem this course solves|why this course exists",
+    # Three editions of the same heading are in circulation across the 16 manuals; a course with no
+    # `problem` is the UI falling back to a bland blurb, so all three spellings are matched.
+    "problem_raw": r"the problem this course solves|problem this course solves|why this course exists"
+                   r"|why it exists|what this course is(?:,? and its real product)?",
     "progression": r"progression|lineage|what comes next",
     "running_example_raw": r"the running example|running example|project thread",
     "success_raw": r"what success looks like|definition of success",
@@ -559,36 +562,146 @@ LABELS = {
 _LABEL_STOP = re.compile(r"(?im)^(?:\s*(?:\d+(?:\.\d+)?[.)]?\s+)?)[*\s]*(" + "|".join(f"(?:{v})" for v in LABELS.values()) + r")\s*:?\s*(?:\n|$)")
 
 
-def scan_field(text: str, key: str, max_chars: int = 900) -> str:
+# --- page furniture ---------------------------------------------------------------
+# A manual's text layer carries a running header and footer on every page. Left in, it is glued into
+# the middle of a sentence — which is how `problem` once shipped as "...logistics, church" (the
+# paragraph broke at a page footer) and how the audience list gained a bullet reading "accounts."
+# (the tail of a wrapped line). Both are stripped here rather than in the UI, so the corpus itself is
+# the clean copy and `pnpm content:build` is reproducible.
+_CHROME = re.compile(
+    r"(?i)^\s*(?:"
+    r"page\s+\d+(?:\s+of\s+\d+)?"                                    # "Page 4 of 277"
+    r"|\d{1,3}\s*/\s*\d{1,3}"                                          # "12 / 277"
+    r"|[^|\n]{0,70}\|\s*cyber\s+elias\s+academy\s*$"                  # header: "Photography | Cyber Elias Academy"
+    r"|cyber\s+elias\s+academy\s*[^\n]{0,70}?\bpage\s+\d+[^\n]*$"     # footer: "Academy · Photography · Page 4 of 211"
+    r"|©\s*\d{4}[^\n]{0,70}$"                                            # the copyright strip on the title pages
+    r")\s*$"
+)
+# A heading that only announces the list under it is not itself an audience member.
+_LEADIN = re.compile(
+    r"(?i)^[\s*·\-]*(?:this\s+course\s+is\s+(?:designed|intended)\s+for[^.\n]*"
+    r"|who\s+this\s+course\s+is\s+for|target\s+learners?|primary\s+audience|secondary\s+audience"
+    r"|who\s+(?:should\s+attend|this\s+course\s+is\s+for)|what\s+learners\s+bring"
+    r"|typical\s+class\s+profile|prerequisites?|entry\s+requirements?)\s*[:.]?\s*$"
+)
+
+
+def clean_list(items: list[str], limit: int = 12) -> list[str]:
+    """Drop page chrome and list lead-ins, and re-join the PDF's hard line wraps."""
+    out: list[str] = []
+    for raw in items:
+        t = re.sub(r"\s+", " ", str(raw)).strip(" .\u2022*-\u2013\u2014:")
+        if not t or _CHROME.match(t) or _LEADIN.match(t):
+            continue
+        # a wrapped line starts lowercase (or with a bracket), or the bullet above stopped on a word
+        # that cannot end a sentence ("… if they"); either way it belongs to the bullet before it.
+        # Anything else starting with a capital is a new bullet.
+        dangling = bool(out) and out[-1].lower().split()[-1:] and out[-1].lower().split()[-1] in {
+            'a', 'and', 'any', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'from', 'has', 'have',
+            'if', 'in', 'into', 'is', 'it', 'of', 'on', 'or', 'should', 'than', 'that', 'the',
+            'their', 'them', 'they', 'to', 'with', 'you', 'your',
+        } and not re.search(r"[.!?\u201d\u2019]$", out[-1])
+        if out and (re.match(r"^[a-z(\u2018\u201c\[]", t) or dangling):
+            out[-1] = f"{out[-1]} {t}"
+            continue
+        if t.lower() not in {o.lower() for o in out}:
+            out.append(t)
+    return [o for o in out if len(o) >= 14][:limit]
+
+
+_SENT_END = re.compile(r"[.!?\u201d\u2019\"]$")
+
+
+def _field_tail(text: str, start: int, max_chars: int) -> str:
+    """The value of a field, read from the lines after its label.
+
+    Two things in these PDFs used to break this: a page footer sitting where the paragraph continues,
+    and a blank line at a page break. Both are jumped over; a running header ("Photography | Cyber
+    Elias Academy") is skipped rather than glued into the sentence.
+    """
+    lines: list[str] = []
+    blanks = 0
+    for raw in text[start: start + max_chars].split("\n"):
+        t = raw.strip()
+        if not t:
+            # stop at a blank line only once the sentence has finished — the paragraph continues on the
+            # next page, and stopping at the first break is what cut `problem` short in seven courses
+            if lines and (_SENT_END.search(lines[-1]) or blanks >= 1):
+                break
+            blanks += 1
+            continue
+        if _LABEL_STOP.match(t) or re.match(r"^(?:PART|SECTION)\b", t, re.I):
+            break
+        if _CHROME.match(t):
+            continue
+        if lines and lines[-1].endswith('-') and t[:1].islower():
+            # a word the PDF broke across the line end
+            lines[-1] = lines[-1][:-1] + t
+            continue
+        lines.append(t)
+        joined = " ".join(lines)
+        if len(joined) > max_chars or (_SENT_END.search(t) and len(joined) > 90):
+            break
+    return " ".join(lines)
+
+
+def scan_field(text: str, key: str, max_chars: int = 900, flowing: bool = False) -> str:
+    """Find a labelled field. `flowing` is for the prose fields (problem, mission, assessment): the
+    value may run past the label line, and a later heading may state it better, so every candidate is
+    collected and the first complete paragraph wins. Short label-value fields (`level`, `certificate`)
+    keep the one-line behaviour, or they would swallow the next paragraph."""
     pat = LABELS[key]
-    for m in re.finditer(r"(?im)^[ \t*" + "\u2022" + r"]*(?:" + pat + r")\s*:?\s*(.*)$", text):
-        rest = m.group(1).strip()
-        if rest and not re.fullmatch(r"[|:\-–—]*", rest):
+    candidates: list[str] = []
+    for m in re.finditer(r"(?im)^[ \t*" + "\u2022" + r"]*(?:\d+(?:\.\d+)*[.)]?\s+)?(?:" + pat + r")\s*:?\s*(.*)$", text):
+        # "Why it exists (the rationale)" — the parenthetical is the author's gloss, not the value
+        rest = re.sub(r"^\s*\([^)]{0,60}\)\s*[:.]?\s*$", "", m.group(1).strip())
+        # in a heading like "1.1 What this course is, and its real product" the label is only followed
+        # by the rest of the heading, never by the value — so a short tail means "keep reading below"
+        if flowing and len(rest) < 24:
+            rest = ""
+        if rest and not re.fullmatch(r"[|:\-\u2013\u2014]*", rest):
             value = rest
+            if flowing and not _SENT_END.search(value) and len(value) < 200:
+                more = _field_tail(text, m.end(), max_chars)
+                if more:
+                    value = f"{value} {more}"
         else:
-            tail = text[m.end(): m.end() + max_chars]
-            lines = []
-            for raw in tail.split("\n"):
-                t = raw.strip()
-                if not t:
-                    if lines:
+            value = _field_tail(text, m.end(), max_chars) if flowing else ""
+            if not flowing:
+                tail = text[m.end(): m.end() + max_chars]
+                lines = []
+                for raw in tail.split("\n"):
+                    t = raw.strip()
+                    if not t:
+                        if lines:
+                            break
+                        continue
+                    if _LABEL_STOP.match(t) or re.match(r"^(?:PART|SECTION)\b", t, re.I):
                         break
-                    continue
-                if _LABEL_STOP.match(t) or re.match(r"^(?:PART|SECTION)\b", t, re.I):
-                    break
-                lines.append(t)
-                if sum(len(x) for x in lines) > max_chars:
-                    break
-            value = " ".join(lines)
-        value = re.sub(r"\s+\n\s+", " ", value)
-        value = re.sub(r"\s+", " ", value).strip(" .:|\u2014-")
+                    lines.append(t)
+                    if sum(len(x) for x in lines) > max_chars:
+                        break
+                value = " ".join(lines)
+        value = re.sub(r"\s+", " ", value).strip()
+        # `strip(" .")` here used to eat the full stop at the end of a prose field, which left every
+        # `problem` reading as a run-on fragment in the UI. Prose keeps its terminator.
+        value = value if flowing else value.strip(" .:|\u2014-")
         # a stray label-only capture ("Certificate | awarded") keeps reading on
         if key == "certificate" and re.fullmatch(r"awarded|yes|on completion", value, re.I):
             nxt = text[m.end(): m.end() + max_chars].strip().split("\n")
             value = " ".join(x.strip() for x in nxt if x.strip() and not _LABEL_STOP.match(x.strip()))[:max_chars]
-        if len(value) >= 2:
-            return value
-    return ""
+        if _CHROME.match(value):
+            continue
+        if len(value) >= (40 if flowing else 2):
+            candidates.append(value)
+    if not candidates:
+        return ""
+    if flowing:
+        for c in candidates:
+            if len(c) >= 80 and _SENT_END.search(c):
+                return c
+        return max(candidates, key=len)
+    return candidates[0]
 
 
 def _bullets(text: str, key: str, limit: int = 12) -> list[str]:
@@ -659,11 +772,13 @@ def parse_course_design(full_text: str, course_name: str) -> dict:
             if m:
                 out[key] = re.sub(r"\s+", " ", m.group(1)).strip()
             continue
-        v = scan_field(region, label, 1300)
+        v = scan_field(region, label, 1300, flowing=True)
         if v:
             out[key] = v
-    out["audience"] = _bullets(region, "audience_raw") or bullets_after_heading(region, r"who this course is for|target learners?\b")
-    out["entry_requirements"] = _bullets(region, "entry_requirements_raw") or bullets_after_heading(region, r"entry requirements")
+    audience = _bullets(region, "audience_raw") or bullets_after_heading(region, r"who this course is for|target learners?\b")
+    entry = _bullets(region, "entry_requirements_raw") or bullets_after_heading(region, r"entry requirements")
+    out["audience"] = clean_list(audience)
+    out["entry_requirements"] = clean_list(entry, 8)
     if not out.get("audience") and out.get("level"):
         out["audience"] = [out["level"]]
     # ---- compact one-line fields (labels sit mid-paragraph in many courses) ----
@@ -972,15 +1087,22 @@ def main() -> int:
                     help="re-apply the mojibake repair to content/**/*.md without touching the PDFs")
     ap.add_argument("--meta-only", action="store_true",
                     help="re-parse only the Part-1 course design facts and merge them into content/<slug>/course.json")
+    ap.add_argument("--clean-lists", action="store_true",
+                    help="run content/*/course.json list fields through the same chrome/line-wrap cleaner, without reading the PDFs")
+    ap.add_argument("--only", metavar="FIELDS",
+                    help="with --meta-only: refresh just these comma-separated keys (e.g. problem,audience)")
     args = ap.parse_args()
 
     dirs = [p for p in sorted(ROOT.iterdir()) if p.is_dir() and list(p.glob("*_Teaching_Manual.pdf"))]
+    if args.clean_lists:
+        # no PDFs needed — this only rewrites content/*/course.json
+        pass
     if args.course:
         dirs = [d for d in dirs if d.name == args.course or slugify(d.name) == slugify(args.course)]
         if not dirs:
             sys.exit(f"course {args.course!r} not found")
-    elif not (args.all or args.meta_only or args.repair_only):
-        sys.exit("pass --all, --meta-only, --repair-only or --course <name>")
+    elif not (args.all or args.meta_only or args.repair_only or args.clean_lists):
+        sys.exit("pass --all, --meta-only, --clean-lists, --repair-only or --course <name>")
 
     if args.repair_only:
         fixed = touched = 0
@@ -992,6 +1114,23 @@ def main() -> int:
                 md.write_text(after, encoding="utf-8")
                 fixed += 1
         print(f"repaired mojibake in {fixed}/{touched} session files")
+        return 0
+
+    if args.clean_lists:
+        LIST_FIELDS = ("audience", "entry_requirements", "tools", "prerequisites", "outcomes")
+        changed = 0
+        for cj in sorted(OUT_CONTENT.glob("*/course.json")):
+            data = json.loads(cj.read_text(encoding="utf-8"))
+            before = dict(data)
+            for field in LIST_FIELDS:
+                if isinstance(data.get(field), list):
+                    cleaned = clean_list([str(x) for x in data[field]], limit=len(data[field]))
+                    if cleaned:
+                        data[field] = cleaned
+            if data != before:
+                cj.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+                changed += 1
+        print(f"cleaned the list fields of {changed} course.json files")
         return 0
 
     if args.meta_only:
@@ -1006,10 +1145,16 @@ def main() -> int:
             head = fix_mojibake("\n".join(doc[i].get_text() for i in range(min(40, doc.page_count))))
             doc.close()
             patch = parse_course_design(head, d.name.replace("_", " "))
+            if args.only:
+                keep = {k.strip() for k in args.only.split(",") if k.strip()}
+                unknown = keep - set(patch) - {"problem", "audience", "entry_requirements"}
+                if unknown:
+                    sys.exit(f"--only: no such extracted field(s): {', '.join(sorted(unknown))}")
+                patch = {k: v for k, v in patch.items() if k in keep}
             data = json.loads(cj.read_text())
             data.update({k: v for k, v in patch.items() if v not in (None, "", [], {})})
             data["name"] = d.name.replace("_", " ")
-            cj.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+            cj.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
             metas.append(data)
             print(f"{d.name:<24} fee={str(patch.get('fee_ngn')):>7} cat={str(patch.get('category'))[:26]:26} "
                   f"weeks={patch.get('weeks')} sess={patch.get('sessions_count')} len={patch.get('session_length_minutes')} "
