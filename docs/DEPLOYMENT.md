@@ -138,7 +138,7 @@ If `pnpm test` fails on the lint gate, the fix belongs in `content/<slug>/sessio
 | ban / unban | `/admin/users` → Ban (their sessions die on the next request; the reason is written to the audit log) |
 | erase a learner (NDPR) | ask them to use Settings → Delete my account (self-service, deletes rows, keeps a 90-day receipt stub); if they can't log in, run the DELETE statements in `docs/DEPLOYMENT.md` §7 against D1 and record it in the audit |
 | second admin | `wrangler d1 execute cea-learn --remote --command "UPDATE users SET role='admin' WHERE email='…'"` (dev/demo: `node tools/seed.mjs --promote <email>`) |
-| content gap | the 10 levels with no answer key in the PDFs are listed by `pnpm content:lint`; publish the keys in the manual and rebuild |
+| content gap | `pnpm content:lint` lists every question with no key in the PDFs (today: 2); retype them in the manual, re-run `tools/pdf-extract/extract.py --course <Name> --no-images`, then rebuild |
 
 ## 7. Backups, retention, erase
 

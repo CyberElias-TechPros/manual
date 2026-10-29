@@ -89,15 +89,28 @@ curious learner can start before committing. `register` accepts a `guestId` and
 Guests are excluded from leaderboards, cannot receive email, and their certificates are not
 issued (they cannot prove who they are).
 
-### 2.7 Ten levels have no answer key in the source PDFs
-`content/**` lint reports `answer-missing` for 10 levels (e.g. `data-entry/session-06`,
-`web-design/session-12`): the manual prints the questions but its answer table is missing or
-scanned shut. Rather than invent an answer, scoring now **excludes** unkeyed questions from
-the denominator and shows *"Unscored — your course manual has no answer key for this one, so
-a tutor reads it"* (`apps/api/src/scoring.ts`). A learner can therefore never be failed by a
-hole in the source document, and the app never grades on a guess.
-`OPEN`: the correct long-term fix is for the academy to publish the missing keys, then
-`pnpm content:build` picks them up.
+### 2.7 Two questions in the entire corpus have no answer key
+
+The lint once reported `answer-missing` for 10 levels / 94 questions. Most of that was **our
+extractor, not the manuals**: `tools/pdf-extract/extract.py` rejected any section heading whose
+title held a dash or a curly quote, so a heading like
+`M. KNOWLEDGE CHECK — VIVA QUESTION LIST WITH MODEL ANSWERS` was silently dropped and the key
+under it was filed as lesson prose (the level still *had* questions, they just had no answers — the
+symptom is a warning, not a missing section, which is why it hid for so long). `buildQuiz` then
+knew only two of the three key layouts this corpus uses. It now handles all three: an
+`ANSWER KEY` block labelled `A1.`, a key block that repeats the questions' own `1.` numbering, and
+answers interleaved under each question as `Model answer (honest):`. After re-extracting all 16
+courses: **989 of 991 questions carry a key from the source document**.
+
+What is left is two lines in the PDFs themselves — `web-design/session-10` q1 (the answer is
+printed on the same line as the key's heading, so there is no boundary to cut on) and
+`web-development/session-07` q3 (the key prints `Q3.` where it means `A3.`, so that answer is glued
+to the end of q2). Inventing answers for them was rejected on principle. Instead scoring
+**excludes** unkeyed questions from the denominator and shows *"Unscored — your course manual has
+no answer key for this one, so a tutor reads it"* (`apps/api/src/scoring.ts`): a learner can never
+be failed by a hole in the source document, and the app never grades on a guess.
+`OPEN`: retype those two lines in the manuals (or keep them tutor-marked) and `pnpm content:build`
+absorbs the fix.
 
 ### 2.8 Two levels have no figure in the source
 `social-media-management` levels 8 and 9 genuinely have no diagram page in the manual.

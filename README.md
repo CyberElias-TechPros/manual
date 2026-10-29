@@ -183,7 +183,7 @@ These are prerequisites that are COMPLETE. The app consumes them as input.
 | B4 | 64 stock photos (local) | ❌ **not in the repo** | `_shared_images/` does not exist. Nothing in the app depends on it; see `docs/GAP-ANALYSIS.md` §1 |
 | B5 | 16 SVG course covers | ✅ **authored here** | `assets/covers/<slug>.svg`, brand navy/gold, linked from the catalogue and OG metadata |
 | B6 | 48 Mermaid diagrams in §F | ❌ **not in the sources** | §F holds real fenced code (Excel, JS, HTML); that code feeds `CodeBlanks`. Roadmap item 2.7 (pre-render mermaid) is moot |
-| B7 | Knowledge checks + answers | 🟡 **981 of 991 keyed** | Quiz extraction yields 991 questions; 10 questions' levels have no answer key printed in the manual, and scoring treats those as "a tutor reads it" instead of guessing |
+| B7 | Knowledge checks + answers | 🟡 **989 of 991 keyed** | Quiz extraction yields 991 questions and every key comes from the manual itself — 2 answers are broken in the PDF (GAP-ANALYSIS §2.7), and scoring treats those as "a tutor reads it" instead of guessing |
 | B8 | Exercises + answer keys | ✅ | 422 exercises with prompts; model answers + code live in the server-only `keys/` and are revealed after a submission |
 | B9 | Case studies | ✅ | 141 branching scenarios (situation, facts, options, per-option feedback); the resolution comes from the server after a choice |
 | B10 | Rubrics | ✅ | 36-level §M/§L rubric criteria become self-assessment checklists; the mark allocation stays server-side |

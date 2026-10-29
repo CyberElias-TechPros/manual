@@ -62,7 +62,7 @@ black-box HTTP assertions run against both runtimes.
 | 2.5 case-study extraction | ✅ | 141 scenarios (one per level) with situation, facts, options, per-option feedback |
 | 2.6 diagram resolver, error on broken refs | 🟡 | 139/141 levels carry a PNG clipped from the manual (transcript + hotspots included); 2 levels have no figure in the PDF, so the build synthesises a flow diagram from the level's own procedure. Lint still fails a **missing file** reference |
 | 2.7 pre-render 48 Mermaid blocks | ❌ n/a | No mermaid exists in the source; §F is real code. Nothing to pre-render, nothing gained |
-| 2.8 content lint gate | ✅ | `lint.ts` (missing outcomes, quiz-thin, broken/dangling image refs, mojibake, naira format, unclosed fence, short lines, repeated heading…). Today: **0 critical · 2 warn (answer-missing) · 8 info**; `--fail-on-critical` in CI |
+| 2.8 content lint gate | ✅ | `lint.ts` (missing outcomes, quiz-thin, broken/dangling image refs, mojibake, naira format, unclosed fence, short lines, repeated heading…). Today: **0 critical · 1 warn · 1 info** — the whole report is the two questions whose answers are broken in the PDFs (GAP-ANALYSIS §2.7); `--fail-on-critical` in CI |
 | 2.9 asset optimization via sharp/WebP | 🟡 refused | No image pipeline (native dep, no visual gain on line-art clips); diagrams are pre-sized PNGs and served from the same origin, cached forever. GAP-ANALYSIS §4.5 |
 | 2.10 per-course lazy-loaded JSON | ✅ | `.content/courses/<slug>.json`; home/catalogue read only `index.json`; `useApi` fetches a course on demand |
 | 2.11 level 1 free, rest locked | ✅ | `isFree: number===1` + `assertAccess` → HTTP 402; the web test asserts exactly one free level per course |
@@ -193,7 +193,7 @@ black-box HTTP assertions run against both runtimes.
 | 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens — **no automated axe pass**; drag ARIA n/a (6.2) |
 | 10.6 security review | 🔶 | OWASP-shaped: parameterised SQL only, CSP with nonces-free strict sources, no `dangerouslySetInnerHTML` except JSON-LD, upload type+size+ownership checks, IDOR guards on progress/payments/uploads, CSRF double submit, no secrets in the bundle (leak audit). A third-party pen test is out of reach here |
 | 10.7 load test (200 concurrent) | ❌ | no k6/autocannon harness yet; the p95 budget is met by construction (static JSON reads, indexed queries) but unproven under load |
-| 10.8 content QA sweep | ✅ | the lint gate *is* the sweep (mojibake, broken refs, ₦ format, structure), plus the manual read of the two repaired encodings and the 10 unkeyed levels recorded as warnings rather than silently patched |
+| 10.8 content QA sweep | ✅ | the lint gate *is* the sweep (mojibake, broken refs, ₦ format, structure), plus the manual read of the two repaired encodings; the 2 remaining unkeyed questions are recorded as warnings rather than silently patched (92 of the original 94 were this repo's extractor, now fixed — §2.7) |
 | 10.9 admin workflow drill + SOP | 🔶 | `/admin` is walkable and `DEPLOYMENT.md` §6 is the written SOP (approve, reject, grant, refund, erase, publish); the drill with real staff hasn't happened |
 | **GATE 10** | 🔶 | tests, typecheck, lint and the leak audit are green in CI; the browser/device/load/a11y-automation half is open |
 
@@ -217,7 +217,7 @@ black-box HTTP assertions run against both runtimes.
 
 1. **Deploy** — `DEPLOYMENT.md` §2–5, then set `CEA_DEPLOY_ENABLED` so CI's deploy jobs turn on.
 2. **Measure** — Lighthouse CI on the deployed URL against 9.1's numbers; replace "by construction".
-3. **Answer keys for the 10 unkeyed levels** — the academy publishes them, `pnpm content:build` absorbs them.
+3. **Two answer-key lines in the source PDFs** — `web-design` level 10 q1 and `web-development` level 7 q3; retype them in the manual and `pnpm content:build` absorbs them (the other 92 unkeyed questions were ours and are fixed).
 4. **axe + Playwright pass** — closes the 10.5/10.3 halves and gates 11.1.
 5. **Receipt retention cron** (3.3 in GAP-ANALYSIS) and the tutor-mark queue for `needs a human` answers.
 6. **Feedback widget + table** (11.2) so the beta has a real intake.
