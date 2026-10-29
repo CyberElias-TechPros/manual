@@ -381,7 +381,7 @@ What was changed, and how it was checked:
 
 Deliberately **not** changed: no API route, no content schema, no award rule, no payment or
 certificate flow, no ad placements, no answer-key boundaries. The verification is therefore a compile
-plus the existing gates — `pnpm typecheck` 0, `pnpm test` (17 + 6 tests, leak audit 16/16), the corpus
+plus the existing gates — `pnpm typecheck` 0, `pnpm test` (18 + 10 tests, leak audit 16/16, a11y scan 31 pages / 0 findings), the corpus
 lint at 0 critical, `tools/route-walk.mjs` 36/36 with new markers for the stage rail and the course
 promise block, `tools/smoke-api.mjs` 53/53 against both runtimes, and `next build` (shared First Load
 JS must stay ≤150 KB).

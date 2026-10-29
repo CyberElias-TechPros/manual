@@ -16,9 +16,11 @@ Dates: built 2026-10-28, on branch `arena/d2855a1d-manual`.
 · ⚠️ cannot be verified from inside this repo (needs the academy's accounts, DNS or a browser)
 
 **How "verified" is earned here** — not by eyeballing:
-`pnpm test` = 23 Vitest assertions (parser, quiz extraction, corpus integration) + the leak
-audit + the corpus lint gate (0 critical); `pnpm typecheck` = 4 projects; `next build`; `tools/route-walk.mjs` = 35 routes fetched and asserted
+`pnpm test` = 28 Vitest cases (18 over the content pipeline, 10 in the app: parser, quiz extraction,
+corpus invariants, the level's feedback line) + the leak audit + the corpus lint gate (0 critical);
+`pnpm typecheck` = 4 projects; `next build`; `tools/route-walk.mjs` = 36 routes fetched and asserted
 (status, a page-defining phrase, no answer-key pattern in the HTML, a size ceiling);
+`tools/a11y-scan.mjs` = 31 rendered pages scanned for names, landmarks, headings, labels, ids;
 `tools/assert-bundle-size.mjs` = the corpus may not shrink; `node tools/smoke-api.mjs` = 53
 black-box HTTP assertions run against both runtimes.
 
