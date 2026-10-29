@@ -9,7 +9,7 @@ name: CI
 #   typecheck       four projects, source-only packages, no emit (see docs/GAP-ANALYSIS.md §4.5)
 #   test            unit + corpus integration + the leak audit + the answer-key gate
 #   build           `next build` must pass on the deployment runtime, not just dev
-#   smoke           the 51 black-box API assertions, run against the built app
+#   smoke           the 53 black-box API assertions, run against the built app
 #   routes + a11y   every page fetched, then scanned for names/landmarks/headings/labels in the HTML
 #
 # No image optimizer, no headless browser, no wrangler login: every step below runs on the

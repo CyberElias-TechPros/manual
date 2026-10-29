@@ -45,6 +45,7 @@ const PUBLIC = [
 const LEARNER = [
   '/dashboard', '/profile', '/settings',
   '/learn/microsoft-office/1?stage=quiz', '/learn/microsoft-office/1?stage=exercise',
+  '/learn/microsoft-office/1?stage=case', '/learn/microsoft-office/1?stage=finish',
   '/learn/microsoft-office/2', '/learn/cybersecurity/9', '/courses/typing-computer-basics',
 ]
 

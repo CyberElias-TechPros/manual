@@ -193,7 +193,7 @@ because a learner who just earned XP is being punished for learning.
 ### 4.1 One route table, two runtimes
 The API is a Hono app (`apps/api/src/app.ts`) mounted twice: a Cloudflare Worker
 (`worker.ts` → D1/KV/R2) and Next's `app/api/[[...path]]/route.ts` (node-env → node:sqlite,
-fs storage, mail-to-disk). `tools/smoke-api.mjs` runs the **same 51 assertions against both**,
+fs storage, mail-to-disk). `tools/smoke-api.mjs` runs the **same 53 assertions against both**,
 which is what keeps "dev mirrors prod" from becoming a slogan.
 
 ### 4.2 Secrets in a repo that must also run offline
@@ -248,7 +248,7 @@ level · a diagram and a case study everywhere · every course priced); `apps/we
 (6 assertions on the bundle reader, including that exactly one level per course is free);
 `tools/leak-audit.mjs` (no answer-bearing field in any learner file, and no path by which
 `keys/` could be served); the corpus lint gate with `--fail-on-critical`; and
-`tools/smoke-api.mjs` (51 black-box assertions: auth, CSRF, locks, XP, idempotency, quotas,
+`tools/smoke-api.mjs` (53 black-box assertions: auth, CSRF, locks, XP, idempotency, quotas,
 uploads, payments, certificates, admin) run against both runtimes; `tools/route-walk.mjs` (35
 routes fetched: expected status, a phrase that proves the page rendered *its* content, no
 answer-key pattern anywhere in the HTML, and a 900 KB ceiling per page so a hydration payload
@@ -370,5 +370,5 @@ Deliberately **not** changed: no API route, no content schema, no award rule, no
 certificate flow, no ad placements, no answer-key boundaries. The verification is therefore a compile
 plus the existing gates — `pnpm typecheck` 0, `pnpm test` (17 + 6 tests, leak audit 16/16), the corpus
 lint at 0 critical, `tools/route-walk.mjs` 36/36 with new markers for the stage rail and the course
-promise block, `tools/smoke-api.mjs` 51/51 against both runtimes, and `next build` (shared First Load
+promise block, `tools/smoke-api.mjs` 53/53 against both runtimes, and `next build` (shared First Load
 JS must stay ≤150 KB).
