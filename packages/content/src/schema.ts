@@ -142,6 +142,12 @@ export interface Session {
   flashcards: Flashcard[]
   checklist: string[]
   troubleshooting: { mistake: string; fix: string }[]
+  /** The plain-English pass (11.x): the hard words this level uses, each with a one-line plain meaning. */
+  glossary?: { term: string; plain: string }[]
+  /** True when a hand-rewritten level in `content-plain/` replaced the extracted markdown. */
+  plainOverridden?: boolean
+  /** Share of this level's prose sentences that run over 30 words — a rewrite signal, not a failure. */
+  hardSentences?: number
   /** 6.3 — code-completion blanks generated from this session's own snippets */
   codeBlanks?: { id: string; language: string; template: string; blanks: { answer: string; accepts: string[] }[]; explain: string }[]
   estWords: number

@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url'
 import { normalizeCourse, parseSessionFile, countWords } from './parse.js'
 import { buildChecklist, buildCodeBlanks, buildExercises, buildFlashcards, buildQuiz, buildScenarios, buildTroubleshooting } from './interactives.js'
 import { lintSession, summarise } from './lint.js'
+import { applyPlainPass, glossaryFor, longSentenceShare, plainPassIssues, sessionSource } from './plain.js'
 import type { Block, CatalogueIndex, Course, LintIssue, Section, Session } from './schema.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -66,8 +67,11 @@ export function buildCourse(slug: string, opts: { strict?: boolean } = {}) {
   const exists = (p: string) => existsSync(join(REPO, p))
 
   for (const file of files) {
-    const md = readFileSync(join(dir, file), 'utf8')
-    const raw = parseSessionFile(md, `content/${slug}/${file}`)
+    // The extracted markdown is the source of record; the plain-English pass is applied to what the
+    // build parses, so `content/` stays auditable and the learner reads the simpler text (plain.ts).
+    const plain = applyPlainPass(readFileSync(join(dir, file), 'utf8'), slug, file)
+    const md = plain.md
+    const raw = parseSessionFile(md, plain.source)
     const front = raw.front
     const sections: Section[] = raw.sections.map(s => ({
       letter: s.letter, kind: s.kind, title: s.title, blocks: s.blocks,
@@ -111,6 +115,10 @@ export function buildCourse(slug: string, opts: { strict?: boolean } = {}) {
       troubleshooting: buildTroubleshooting(sections),
       codeBlanks: buildCodeBlanks(lectureBlocks, sessionId),
       estWords,
+      // The words a beginner is not expected to already know, in one line each, from the shared table.
+      glossary: glossaryFor(md),
+      plainOverridden: plain.overridden,
+      hardSentences: longSentenceShare(md),
       source: { file: `content/${slug}/${file}`, pdf: courseJson.pdfs?.teaching_manual },
     } as Session
 
@@ -205,14 +213,19 @@ export function buildAll(outDir = OUT_DIR) {
   const courses: Course[] = []
   const allSessions: Session[][] = []
   const issues: LintIssue[] = []
+  const allMd: string[] = []
   mkdirSync(join(outDir, 'courses'), { recursive: true })
   mkdirSync(join(outDir, 'keys'), { recursive: true })
   mkdirSync(join(outDir, 'search'), { recursive: true })
 
   for (const slug of slugs) {
+    const dir = join(CONTENT_DIR, slug)
     const { course, sessions, keys, issues: iss } = buildCourse(slug)
     issues.push(...iss)
     course.sessions = sessions.map(s => ({ number: s.number, title: s.title, module: s.module, isFree: s.isFree, isCapstone: s.isCapstone }))
+    // "Does this entry ever apply to our corpus?" can only be asked of the *source*: the pass rewrites
+    // "utilize" into "use", so measuring the post-pass text would call every working swap dead.
+    for (const file of readSessionFiles(dir)) allMd.push(readFileSync(sessionSource(slug, file).path, 'utf8'))
     // Catalogue projections (see Course.tagline/description/outcomes in schema.ts).
     const exitSession = sessions.find(s => s.isCapstone) || sessions[sessions.length - 1]
     const problem = String(course.problem || '').replace(/\s+/g, ' ').trim()
@@ -230,6 +243,7 @@ export function buildAll(outDir = OUT_DIR) {
     writeFileSync(join(outDir, 'keys', `${slug}.json`), JSON.stringify(keys, null, 0))
     writeFileSync(join(outDir, 'search', `${slug}.json`), JSON.stringify(buildSearch(course, sessions)))
   }
+  issues.push(...plainPassIssues(allMd).map(m => ({ ...m, file: 'content-plain/plain-pass.json' })))
   courses.sort((a, b) => a.slug.localeCompare(b.slug))
   const totals = {
     courses: courses.length,

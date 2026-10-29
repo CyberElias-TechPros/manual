@@ -49,7 +49,7 @@ function check(name, ok, detail = '') {
 // The access policy is one decision in @cea/config, so the expectations below are derived from it
 // rather than hard-coded to one mode: CEA_ACCESS_MODE=paid puts the gating assertions back to testing
 // a 402, and the default (free) makes them test that nothing is gated. Same suite, both products.
-const { ACCESS, GAME } = await import('../packages/config/index.js')
+const { ACCESS, GAME, XP } = await import('../packages/config/index.js')
 const freeMode = ACCESS.mode === 'free'
 
 const email = process.env.CEA_SMOKE_EMAIL || 'smoke@cea.ng'
@@ -182,7 +182,9 @@ let paymentId = null
   const streakCount = typeof me.streak === 'object' ? me.streak?.count : me.streak
   check('summary shows xp and a live streak', (me.xp ?? 0) >= 40 && (streakCount ?? 0) >= 1, `xp=${me.xp} streak=${JSON.stringify(me.streak)}`)
   check('badges were granted', (me.badges ?? []).length >= 1, JSON.stringify(me.badges ?? []).slice(0, 120))
-  check('xpToday respects the daily cap', (sum.json?.xpToday ?? 0) <= 400 && (sum.json?.xpToday ?? 0) > 0, String(sum.json?.xpToday))
+  // The ceiling is the config's own daily cap, not a number remembered from when the only awards were
+  // reading and quizzes (5.9) — the wheel, the combo and the show-up bonus all add to the same day.
+  check('xpToday respects the daily cap', (sum.json?.xpToday ?? 0) <= XP.dailyCap && (sum.json?.xpToday ?? 0) > 0, `xpToday=${sum.json?.xpToday} cap=${XP.dailyCap}`)
   check('rank computed', !!me.rank?.current?.name, JSON.stringify(me.rank ?? {}).slice(0, 160))
 
   // 5.9 (gamification) — the HUD's data and the two rewards that are not a fixed number. Both are
@@ -198,9 +200,14 @@ let paymentId = null
   const segIds = GAME.wheel.segments.map(s => s.id)
   let spin = await call('POST', '/api/gamify/spin', {})
   const spinFirst = spin.json
-  check('the wheel spins and the prize is one of the configured segments',
-    spin.status === 200 && spinFirst?.spun === true && segIds.includes(spinFirst?.segment?.id) && (spinFirst.award?.awarded ?? spinFirst.award?.xp) !== undefined,
-    JSON.stringify(spinFirst ?? {}).slice(0, 160))
+  // A spin is a *per-day* budget, and the smoke suite runs more than once a day against the same
+  // learner, so the second run is legitimately told "spent". What must hold either way is that the
+  // answer is consistent with itself: a real prize comes from the configured table, and a refused one
+  // names the prize already won instead of drawing a new one.
+  const spinOk = spin.status === 200 && (
+    (spinFirst?.spun === true && segIds.includes(spinFirst?.segment?.id) && spinFirst.award?.awarded !== false)
+    || (spinFirst?.spun === false && spinFirst?.reason === 'spent' && segIds.includes(spinFirst?.last) && spinFirst?.spinsLeft === 0))
+  check('the wheel answers from the configured segments (or says the day is spent)', spinOk, JSON.stringify(spinFirst ?? {}).slice(0, 160))
   // Burn the rest of the day's budget (a 3-day streak earns a second spin), then ask for one more.
   let spinsLeft = spinFirst?.spinsLeft ?? 0
   while (spinsLeft > 0) {

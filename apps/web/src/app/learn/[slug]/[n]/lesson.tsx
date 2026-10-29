@@ -21,7 +21,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import Link from 'next/link'
 import {
   AdSlot, BlockList, Button, Checklist, CodeBlanks, DiagramView, ExerciseBox,
-  FlashcardDeck, Label, LockNote, Pill, ProgressBar, QuizRunner, ScenarioRunner, SectionRail,
+  FlashcardDeck, Label, LevelGlossary, LockNote, Pill, ProgressBar, QuizRunner, ScenarioRunner, SectionRail,
   Stars, Troubleshooting, announceAward, cx, mutate, request, useApi,
   useSectionRead, useSession,
 } from '@cea/ui'
@@ -38,6 +38,8 @@ type Level = {
   quiz: { title: string; questions: any[]; passPercent: number; source: string }
   exercises: any[]; scenarios: any[]; flashcards: any[]; checklist: string[]
   troubleshooting: any[]; codeBlanks?: any[]; estWords: number
+  /** 11.x — the hard words this level uses, each with a one-line plain meaning (attached by the build). */
+  glossary?: { term: string; plain: string }[]
 }
 type Payload = {
   course: { slug: string; displayTitle?: string; name?: string; feeNgn?: number; sessionsCount?: number }
@@ -515,6 +517,9 @@ function ReadStage({ lesson, sections, sub, flow, dataSaver }:
           </ul>
         </div>
       )}
+      {/* The plain-English strip goes above the reading, not after it: a learner who does not know a
+          word cannot get to the end of a section and still be lost. */}
+      {leadIn && <LevelGlossary terms={lesson.glossary} />}
       {leadIn && lesson.connectionToPrevious && (
         <p className="mt-5 text-[0.9375rem] text-ink-500 dark:text-light/60">
           <span className="font-medium text-ink-700 dark:text-light/80">Last time:</span> {lesson.connectionToPrevious}

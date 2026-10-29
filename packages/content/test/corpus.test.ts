@@ -31,8 +31,11 @@ describe('the 16-course corpus', () => {
     // every remaining warning is `answer-missing`: the source PDF has no answer key. The
     // app scores those questions as "a tutor reads it" rather than inventing an answer.
     expect(Object.keys(result.summary.byCode).sort()).toEqual(expect.arrayContaining(['answer-missing']))
+    // `plain-unused` is the plain-English pass telling a writer which table entries this corpus never
+    // meets. It is advice (info), not a defect: an entry costs nothing at read time, because a level
+    // only shows the terms it actually uses (11.x).
     for (const code of Object.keys(result.summary.byCode)) {
-      expect(['answer-missing', 'naira-format', 'diagram-missing', 'quiz-thin']).toContain(code)
+      expect(['answer-missing', 'naira-format', 'diagram-missing', 'quiz-thin', 'plain-unused']).toContain(code)
     }
   })
 

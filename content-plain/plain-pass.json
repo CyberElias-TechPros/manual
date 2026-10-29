@@ -1,0 +1,660 @@
+{
+  "_readme": [
+    "The plain-English layer. `content/` stays the auditable extraction from the trainers' PDFs; this file is",
+    "what we add on the way to the learner so a first-week reader is never stuck. Three jobs, one file:",
+    "  acronyms      — spelled out the first time each level mentions them, in words not more letters.",
+    "  substitutions — hard formal words replaced by the everyday one, in prose only (never in code).",
+    "  glossary      — the words that stay, because they ARE the subject, explained in one short line and",
+    "                  shown under the level the learner is reading.",
+    "Rules a gate checks (pnpm content:lint): an entry's `plain` is at most 20 words, uses no word from",
+    "`substitutions`, and does not hide another acronym inside it. Add a term with one line, not a paragraph."
+  ],
+  "acronyms": {
+    "HTML": "the markup that names what is on a page",
+    "CSS": "the rules that say how the page looks",
+    "JSON": "plain text that holds data in names and values",
+    "URL": "the web address you type or paste",
+    "HTTP": "the way a browser and a server talk to each other",
+    "HTTPS": "the same talk, scrambled so others cannot read it",
+    "DNS": "the book that turns a name into a number",
+    "DHCP": "the setting that hands out addresses on a network",
+    "IP": "the number that identifies one machine on a network",
+    "RAM": "fast, temporary memory that forgets when power goes off",
+    "CPU": "the chip that runs your instructions, one at a time",
+    "GPU": "a chip built to do many sums at once, for pictures",
+    "SSD": "storage with no moving parts, so it is fast and tough",
+    "HDD": "storage on a spinning disk — cheap, slow, fragile",
+    "BIOS": "the first program a PC runs, before Windows starts",
+    "UEFI": "the newer BIOS, with a mouse and a file browser",
+    "DOM": "the page as a tree the code can reach into",
+    "API": "a door one program uses to ask another for help",
+    "MFA": "a second proof it is you, usually a code on your phone",
+    "VPN": "a private tunnel for your traffic across a public network",
+    "LAN": "the network in one building",
+    "WAN": "a network that joins places far apart",
+    "VLAN": "one cable split into several separate networks",
+    "ISP": "the company that gives you the internet",
+    "NAT": "how one public address serves a whole building",
+    "SMTP": "how mail leaves your server on its way out",
+    "IMAP": "how mail is read from the server, kept in sync",
+    "KPI": "the one number that tells you if it is working",
+    "SEO": "the work that makes a page easier to find in search",
+    "CTR": "how many people click, out of how many see it",
+    "CPC": "what you pay each time someone clicks your ad",
+    "ROI": "what you made back, against what you spent",
+    "CRM": "the book of every customer and what you promised them",
+    "CMS": "a tool to change a site without touching code",
+    "PNG": "a sharp image that can hold clear edges and transparency",
+    "JPEG": "a photo format that shrinks by dropping detail",
+    "SVG": "a picture drawn from shapes, so it stays sharp at any size",
+    "RGB": "colour made from red, green and blue light",
+    "CMYK": "colour mixed from four inks, for printing",
+    "UI": "the parts of a product you touch and see",
+    "UX": "how the whole task feels to the person doing it",
+    "OS": "the program that runs the machine and its apps",
+    "CPU-usage": "how busy the chip is, as a share of what it can do",
+    "CSV": "a table saved as plain text, one line per row",
+    "PDF": "a fixed page, made to be read or printed, not edited",
+    "USB": "the plug nearly every small device uses",
+    "QR": "the square code a phone camera reads",
+    "WI-FI": "networking over radio instead of cable",
+    "FAQ": "the answers page for questions people keep asking"
+  },
+  "substitutions": {
+    "utilize": "use",
+    "utilizes": "uses",
+    "utilizing": "using",
+    "utilise": "use",
+    "leverage": "use",
+    "leverages": "uses",
+    "facilitate": "help",
+    "facilitates": "helps",
+    "prior to": "before",
+    "in order to": "to",
+    "in order that": "so that",
+    "commence": "start",
+    "commences": "starts",
+    "commencing": "starting",
+    "terminate": "end",
+    "terminates": "ends",
+    "subsequently": "then",
+    "additionally": "also",
+    "approximately": "about",
+    "sufficient": "enough",
+    "initiate": "start",
+    "initiates": "starts",
+    "ascertain": "find out",
+    "purchase": "buy",
+    "purchases": "buys",
+    "numerous": "many",
+    "a large number of": "many",
+    "in the event that": "if",
+    "with regard to": "about",
+    "regarding": "about",
+    "obtain": "get",
+    "obtains": "gets",
+    "obtained": "got",
+    "requires": "needs",
+    "requirement": "what you need",
+    "determine": "work out",
+    "determines": "works out",
+    "determined": "worked out",
+    "execute": "run",
+    "executes": "runs",
+    "executable": "runnable file",
+    "generate": "create",
+    "generates": "creates",
+    "generated": "created",
+    "provide": "give",
+    "provides": "gives",
+    "provided that": "only if",
+    "assist": "help",
+    "assists": "helps",
+    "at this point in time": "now",
+    "currently": "now",
+    "mandatory": "compulsory",
+    "enclosed please find": "here is",
+    "please do not hesitate to contact": "ask us anything",
+    "it should be noted that": "note that",
+    "for the purpose of": "to",
+    "in the absence of": "without",
+    "on a daily basis": "every day",
+    "as soon as possible": "as fast as you can",
+    "failure to": "not",
+    "shall be": "is",
+    "is able to": "can",
+    "has the ability to": "can",
+    "make use of": "use",
+    "due to the fact that": "because"
+  },
+  "glossary": [
+    {
+      "term": "server",
+      "plain": "a computer that stays on and answers requests from other machines."
+    },
+    {
+      "term": "client",
+      "plain": "the app or browser that asks a server for something."
+    },
+    {
+      "term": "port",
+      "plain": "a numbered door on a machine, so one address can serve many programs."
+    },
+    {
+      "term": "bandwidth",
+      "plain": "how much can travel down a link in one second."
+    },
+    {
+      "term": "latency",
+      "plain": "how long a message takes to get there and back."
+    },
+    {
+      "term": "ping",
+      "plain": "a small ask that only measures the wait for an answer."
+    },
+    {
+      "term": "gateway",
+      "plain": "the one machine a network sends everything else through."
+    },
+    {
+      "term": "subnet",
+      "plain": "one numbered block of addresses that talk inside it first."
+    },
+    {
+      "term": "firewall",
+      "plain": "a set of rules that decides what traffic may pass."
+    },
+    {
+      "term": "encryption",
+      "plain": "scrambling text so only a holder of the key can read it."
+    },
+    {
+      "term": "hash",
+      "plain": "a fixed-size fingerprint of some data, made one way only."
+    },
+    {
+      "term": "salt",
+      "plain": "random text added before hashing, so equal passwords look different."
+    },
+    {
+      "term": "phishing",
+      "plain": "a message that pretends to be trusted to steal what you type."
+    },
+    {
+      "term": "malware",
+      "plain": "any program written to harm a machine or its data."
+    },
+    {
+      "term": "ransomware",
+      "plain": "malware that locks your files and asks money to open them."
+    },
+    {
+      "term": "trojan",
+      "plain": "harmful code hiding inside something you wanted."
+    },
+    {
+      "term": "botnet",
+      "plain": "many hijacked machines taking orders from one place."
+    },
+    {
+      "term": "vulnerability",
+      "plain": "a weak spot in software that a bad actor can use."
+    },
+    {
+      "term": "exploit",
+      "plain": "a working recipe that uses a weak spot."
+    },
+    {
+      "term": "patch",
+      "plain": "a fix the makers send out for a known weak spot."
+    },
+    {
+      "term": "threat",
+      "plain": "something that could do harm, waiting for a weak spot."
+    },
+    {
+      "term": "risk",
+      "plain": "how likely harm is, times how bad it would be."
+    },
+    {
+      "term": "backup",
+      "plain": "a second copy, kept somewhere the first trouble cannot reach."
+    },
+    {
+      "term": "log",
+      "plain": "the running record of what a system did, with times."
+    },
+    {
+      "term": "virtual machine",
+      "plain": "a whole computer made by software, inside a real one."
+    },
+    {
+      "term": "container",
+      "plain": "an app packed with what it needs, without a whole second system."
+    },
+    {
+      "term": "snapshot",
+      "plain": "a saved picture of a disk or box, to go back to."
+    },
+    {
+      "term": "terminal",
+      "plain": "a window where you type commands instead of clicking."
+    },
+    {
+      "term": "shell",
+      "plain": "the program reading your typed commands and running them."
+    },
+    {
+      "term": "script",
+      "plain": "saved commands, so a task repeats itself the same way."
+    },
+    {
+      "term": "process",
+      "plain": "one running copy of one program."
+    },
+    {
+      "term": "thread",
+      "plain": "one line of work inside a running program."
+    },
+    {
+      "term": "deadlock",
+      "plain": "two jobs each waiting for the other to let go."
+    },
+    {
+      "term": "cache",
+      "plain": "a copy of the answer kept close, so the next ask is fast."
+    },
+    {
+      "term": "cookie",
+      "plain": "a small note a site leaves in your browser to remember you."
+    },
+    {
+      "term": "domain name",
+      "plain": "the readable address people type, mapped to numbers for machines."
+    },
+    {
+      "term": "hosting",
+      "plain": "renting a machine that stays on so your site can be seen."
+    },
+    {
+      "term": "certificate",
+      "plain": "proof, signed by a trusted third party, that an address is real."
+    },
+    {
+      "term": "frontend",
+      "plain": "the part of a site a person sees and touches."
+    },
+    {
+      "term": "backend",
+      "plain": "the part that stores data and makes decisions, out of sight."
+    },
+    {
+      "term": "endpoint",
+      "plain": "one named door on an API that does one job."
+    },
+    {
+      "term": "status code",
+      "plain": "the short number a server replies with to say how it went."
+    },
+    {
+      "term": "responsive",
+      "plain": "a layout that rearranges itself to fit the screen."
+    },
+    {
+      "term": "breakpoint",
+      "plain": "the width where a layout decides to change shape."
+    },
+    {
+      "term": "grid",
+      "plain": "rows and columns that hold parts of a layout in line."
+    },
+    {
+      "term": "semantic",
+      "plain": "choosing tags for their meaning, not only their look."
+    },
+    {
+      "term": "alt text",
+      "plain": "the words a screen reader says for an image."
+    },
+    {
+      "term": "contrast",
+      "plain": "how far apart two colours sit in lightness."
+    },
+    {
+      "term": "accessibility",
+      "plain": "built so a keyboard, a reader or a slow line still works."
+    },
+    {
+      "term": "repository",
+      "plain": "a project's files, with every change kept and dated."
+    },
+    {
+      "term": "commit",
+      "plain": "one saved set of changes, with a note about why."
+    },
+    {
+      "term": "branch",
+      "plain": "a side road of work that can be joined back later."
+    },
+    {
+      "term": "merge",
+      "plain": "joining two lines of changes into one."
+    },
+    {
+      "term": "merge conflict",
+      "plain": "two edits touching the same line, needing a human choice."
+    },
+    {
+      "term": "deploy",
+      "plain": "putting the built files where learners or users can reach them."
+    },
+    {
+      "term": "build",
+      "plain": "turning your source files into the ones a machine runs."
+    },
+    {
+      "term": "dependency",
+      "plain": "someone else's code your project needs to work."
+    },
+    {
+      "term": "variable",
+      "plain": "a name that holds one value you can read again."
+    },
+    {
+      "term": "function",
+      "plain": "a named block of steps you can call with inputs."
+    },
+    {
+      "term": "parameter",
+      "plain": "the name an input wears when it arrives in a function."
+    },
+    {
+      "term": "array",
+      "plain": "a list of values kept in order, numbered from zero."
+    },
+    {
+      "term": "object",
+      "plain": "values kept under names, in one curly bundle."
+    },
+    {
+      "term": "boolean",
+      "plain": "a value that is only ever true or false."
+    },
+    {
+      "term": "loop",
+      "plain": "steps that repeat, usually once per item in a list."
+    },
+    {
+      "term": "conditional",
+      "plain": "a check that picks which way the code goes."
+    },
+    {
+      "term": "syntax",
+      "plain": "the punctuation rules of a language."
+    },
+    {
+      "term": "runtime",
+      "plain": "while the program is actually running, as opposed to while written."
+    },
+    {
+      "term": "asynchronous",
+      "plain": "start the wait, keep working, handle the answer when it lands."
+    },
+    {
+      "term": "promise",
+      "plain": "a receipt for work still going, with a later answer."
+    },
+    {
+      "term": "query",
+      "plain": "a written ask for data, in the words a database understands"
+    },
+    {
+      "term": "schema",
+      "plain": "the agreed shape of your tables and their columns."
+    },
+    {
+      "term": "index",
+      "plain": "a sorted side-copy that makes lookups fast."
+    },
+    {
+      "term": "primary key",
+      "plain": "the column that says which row is which, once only."
+    },
+    {
+      "term": "foreign key",
+      "plain": "a column pointing at another table's key."
+    },
+    {
+      "term": "transaction",
+      "plain": "several writes that either all happen or none do."
+    },
+    {
+      "term": "normalization",
+      "plain": "splitting data so each fact is stored in one place."
+    },
+    {
+      "term": "pivot table",
+      "plain": "a summary that counts or totals a table by group."
+    },
+    {
+      "term": "cell range",
+      "plain": "a rectangle of cells, named by its corners."
+    },
+    {
+      "term": "absolute reference",
+      "plain": "a locked cell address that does not move when copied."
+    },
+    {
+      "term": "formula",
+      "plain": "a cell's own little sum, starting with an equals sign."
+    },
+    {
+      "term": "macro",
+      "plain": "recorded steps you can replay with one key."
+    },
+    {
+      "term": "mail merge",
+      "plain": "one letter, filled from a list, sent many ways."
+    },
+    {
+      "term": "conditional formatting",
+      "plain": "a cell that changes colour by its own value."
+    },
+    {
+      "term": "data validation",
+      "plain": "rules that refuse a wrong entry before it is saved."
+    },
+    {
+      "term": "mean",
+      "plain": "add the values, divide by how many there are."
+    },
+    {
+      "term": "median",
+      "plain": "the middle value once the list is sorted."
+    },
+    {
+      "term": "outlier",
+      "plain": "a value so far off it changes the story."
+    },
+    {
+      "term": "correlation",
+      "plain": "how much two numbers move together, up to a point."
+    },
+    {
+      "term": "percentage",
+      "plain": "a share written out of one hundred."
+    },
+    {
+      "term": "forecast",
+      "plain": "today's numbers pushed forward with a stated rule."
+    },
+    {
+      "term": "whitespace",
+      "plain": "the empty space that lets a page breathe."
+    },
+    {
+      "term": "hierarchy",
+      "plain": "making the most important thing look the most important."
+    },
+    {
+      "term": "leading",
+      "plain": "the vertical gap between lines of text."
+    },
+    {
+      "term": "kerning",
+      "plain": "the gap between two particular letters."
+    },
+    {
+      "term": "wireframe",
+      "plain": "a rough box drawing of a page, before any styling."
+    },
+    {
+      "term": "mockup",
+      "plain": "one page drawn properly, to agree on the look."
+    },
+    {
+      "term": "prototype",
+      "plain": "a clickable fake, used to test the flow."
+    },
+    {
+      "term": "usability test",
+      "plain": "watch someone do the task, and write down where they stick."
+    },
+    {
+      "term": "brand voice",
+      "plain": "the consistent way a company sounds in words."
+    },
+    {
+      "term": "keyword",
+      "plain": "the words a person types when they want to find something."
+    },
+    {
+      "term": "search intent",
+      "plain": "what the person typing actually means to do."
+    },
+    {
+      "term": "SERP",
+      "plain": "the results page a search hands back."
+    },
+    {
+      "term": "backlink",
+      "plain": "a link from someone else's page to yours."
+    },
+    {
+      "term": "anchor text",
+      "plain": "the visible words under a link."
+    },
+    {
+      "term": "on-page SEO",
+      "plain": "fixing your own words, titles and links to be findable."
+    },
+    {
+      "term": "impression",
+      "plain": "one time a thing was seen, clicked or not."
+    },
+    {
+      "term": "reach",
+      "plain": "how many different people saw it."
+    },
+    {
+      "term": "conversion",
+      "plain": "the wanted next step, taken by a visitor."
+    },
+    {
+      "term": "funnel",
+      "plain": "the steps from first look to paying, and the drop-offs."
+    },
+    {
+      "term": "landing page",
+      "plain": "the first page an ad sends someone to."
+    },
+    {
+      "term": "call to action",
+      "plain": "the one thing you want them to do next."
+    },
+    {
+      "term": "persona",
+      "plain": "one made-up learner who stands for a real group."
+    },
+    {
+      "term": "buyer journey",
+      "plain": "the road from not knowing you to paying you."
+    },
+    {
+      "term": "A/B test",
+      "plain": "two versions, shown at random, and the numbers choose."
+    },
+    {
+      "term": "bounce rate",
+      "plain": "how many leave after one page, without a second look."
+    },
+    {
+      "term": "session",
+      "plain": "one visit, counted as one block of time."
+    },
+    {
+      "term": "engagement rate",
+      "plain": "how many people did something, not just saw it."
+    },
+    {
+      "term": "lead",
+      "plain": "someone who showed interest and left a way to reach them."
+    },
+    {
+      "term": "nurture",
+      "plain": "useful messages that keep a lead warm over time."
+    },
+    {
+      "term": "unique selling point",
+      "plain": "the one thing you do that no rival claims."
+    },
+    {
+      "term": "analytics",
+      "plain": "the counts and charts that say what people did."
+    },
+    {
+      "term": "campaign",
+      "plain": "one planned push, with a start, an end and a number to hit."
+    },
+    {
+      "term": "target market",
+      "plain": "the specific people a product is written for."
+    },
+    {
+      "term": "sensitivity",
+      "plain": "how much an output moves when one input moves."
+    },
+    {
+      "term": "iteration",
+      "plain": "one pass of making it, testing it, and changing it."
+    },
+    {
+      "term": "deliverable",
+      "plain": "the thing you hand over at the end of a stage."
+    },
+    {
+      "term": "scope",
+      "plain": "the agreed list of what is in, and what is not."
+    },
+    {
+      "term": "stakeholder",
+      "plain": "anyone whose say can change the work."
+    },
+    {
+      "term": "milestone",
+      "plain": "a dated marker that says a stage is done."
+    },
+    {
+      "term": "retrospective",
+      "plain": "a meeting about how the work went, not what went wrong."
+    },
+    {
+      "term": "estimate",
+      "plain": "an honest guess at time or cost, with the reason attached."
+    },
+    {
+      "term": "sla",
+      "plain": "the promise of how fast a problem gets answered."
+    }
+  ]
+}
