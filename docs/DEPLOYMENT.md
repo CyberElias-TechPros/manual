@@ -21,7 +21,7 @@ Cloudflare Worker  apps/api  Hono + D1 (state) + KV (rate limits, catalogue cach
 
 The API is **one route table, two runtimes** (GAP-ANALYSIS §4.1): `apps/api/src/worker.ts` for
 Cloudflare, `apps/web/src/app/api/[[...path]]/route.ts` for Vercel/local. Both must pass
-`node tools/smoke-api.mjs` (51 assertions) before a release.
+`node tools/smoke-api.mjs` (53 assertions) before a release.
 
 ## 2. Environment variables
 
@@ -138,6 +138,7 @@ If `pnpm test` fails on the lint gate, the fix belongs in `content/<slug>/sessio
 | ban / unban | `/admin/users` → Ban (their sessions die on the next request; the reason is written to the audit log) |
 | erase a learner (NDPR) | ask them to use Settings → Delete my account (self-service, deletes rows, keeps a 90-day receipt stub); if they can't log in, run the DELETE statements in `docs/DEPLOYMENT.md` §7 against D1 and record it in the audit |
 | second admin | `wrangler d1 execute cea-learn --remote --command "UPDATE users SET role='admin' WHERE email='…'"` (dev/demo: `node tools/seed.mjs --promote <email>`) |
+| read new learner feedback (11.2) | `wrangler d1 execute cea-learn --remote --command "SELECT created_at, page, body FROM feedback WHERE status='new' ORDER BY created_at DESC LIMIT 50"` — then `UPDATE feedback SET status='read' WHERE …` so the next check starts where this one stopped |
 | content gap | `pnpm content:lint` lists every question with no key in the PDFs (today: 2); retype them in the manual, re-run `tools/pdf-extract/extract.py --course <Name> --no-images`, then rebuild |
 
 ## 7. Backups, retention, erase

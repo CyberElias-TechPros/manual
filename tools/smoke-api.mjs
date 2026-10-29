@@ -182,6 +182,12 @@ let paymentId = null
   check('notes come back', (noted.json?.notes ?? []).length >= 1)
   const bm = await call('POST', '/api/bookmarks', { course: slug, session: n })
   check('bookmarks work (4.10)', bm.status === 200)
+  // 11.2 — the level's feedback line is the beta's intake; it must store, and it must refuse a tap
+  // on the button alone, so the tutors never read an empty row.
+  const fb = await call('POST', '/api/feedback', { body: `[It was clear] level ${n} — the grid section could use one more example.`, page: `/learn/${slug}/${n}` })
+  check('level feedback is accepted (11.2)', fb.status === 200 && fb.json?.ok === true, JSON.stringify(fb.json ?? {}).slice(0, 120))
+  const fbBad = await call('POST', '/api/feedback', { body: '   ', page: `/learn/${slug}/${n}` })
+  check('feedback with no words is refused with a reason', fbBad.status === 422 && fbBad.json?.code === 'empty', `${fbBad.status} ${JSON.stringify(fbBad.json ?? {}).slice(0, 80)}`)
 
   const q = await call('GET', `/api/search?q=${encodeURIComponent('grid')}`)
   check('offline-capable search returns hits', q.status === 200 && (q.json?.hits?.length ?? 0) > 0, JSON.stringify(q.json ?? {}).slice(0, 120))

@@ -19,7 +19,7 @@ Dates: built 2026-10-28, on branch `arena/d2855a1d-manual`.
 `pnpm test` = 23 Vitest assertions (parser, quiz extraction, corpus integration) + the leak
 audit + the corpus lint gate (0 critical); `pnpm typecheck` = 4 projects; `next build`; `tools/route-walk.mjs` = 35 routes fetched and asserted
 (status, a page-defining phrase, no answer-key pattern in the HTML, a size ceiling);
-`tools/assert-bundle-size.mjs` = the corpus may not shrink; `node tools/smoke-api.mjs` = 51
+`tools/assert-bundle-size.mjs` = the corpus may not shrink; `node tools/smoke-api.mjs` = 53
 black-box HTTP assertions run against both runtimes.
 
 ---
@@ -33,7 +33,7 @@ black-box HTTP assertions run against both runtimes.
 | 0.3 | Worker API on Hono + D1 + `/api/health` | ✅ | `apps/api/src/{worker,app,routes}.ts`; health returns `{ok:true,db:"up"}` in both runtimes |
 | 0.4 | repo, `.gitignore`, branch model, conventional commits | 🟡 | repo + `.gitignore` (bundle/`var`/generated assets excluded); no `main`/`dev` split enforced and commits are not linted — one-person repo, revisit at handover |
 | 0.5 | secrets in Vercel + `wrangler secret` | 🔶 | no secret is committed; `JWT_SECRET` refuses dev defaults in production; **the real values are not set** (needs the accounts) → `DEPLOYMENT.md` §2 |
-| 0.6 | CI: lint+typecheck+build on PR, main deploys | ✅ (work) / ⚠️ (observed) | `.github/workflows/ci.yml` — content build, corpus gate, typecheck, tests+leak audit, `next build`, 51-assertion smoke, size floor; deploy jobs skip until `CEA_DEPLOY_ENABLED` |
+| 0.6 | CI: lint+typecheck+build on PR, main deploys | ✅ (work) / ⚠️ (observed) | `.github/workflows/ci.yml` — content build, corpus gate, typecheck, tests+leak audit, `next build`, 53-assertion smoke, size floor; deploy jobs skip until `CEA_DEPLOY_ENABLED` |
 | 0.7 | `learn.cea.ng` → Vercel, API → Worker, HTTPS | ⏳ | DNS + project creation belong to the academy; runbook written (`DEPLOYMENT.md` §3–5) |
 | 0.8 | Sentry + structured logs | 🔶 | every API response carries a structured log line (`log()` in `routes.ts`) and `/api/admin/audit`; no Sentry tenant |
 | **GATE 0** | both apps deploy green; test error visible | 🔶 | both run locally green; deployment ⏳ |
@@ -84,7 +84,7 @@ black-box HTTP assertions run against both runtimes.
 | 3.7 admin role + guarded routes | ✅ | `/admin/*` with a gate component + server checks (`role='admin'` or `x-cea-admin-key`); register/PATCH cannot set role |
 | 3.8 hardening (rate limit, enumeration, CSRF, cookies) | ✅ | KV-backed sliding windows with per-IP+per-email login limits, identical 401 for wrong user/password, double-submit CSRF on every mutation, secure cookie flags |
 | 3.9 email templates | 🔶 | welcome, reset, proof received, approved, rejected (with reason), streak-at-risk nudge, weekly digest — sent via `mail.ts`; **no HTML design pass** (plain, branded text) |
-| **GATE 3** | ✅ | register → confirm → log in → reset → delete account is in the smoke suite (51 assertions) |
+| **GATE 3** | ✅ | register → confirm → log in → reset → delete account is in the smoke suite (53 assertions) |
 
 ## Phase 4 — reading & progress
 
@@ -187,7 +187,7 @@ black-box HTTP assertions run against both runtimes.
 | item | status | note |
 |---|---|---|
 | 10.1 unit tests | ✅ | XP/streak/rank/gating/scoring are covered by the API smoke suite; parser + quiz extraction + corpus invariants by Vitest (`packages/content/test`, 17 tests) |
-| 10.2 API integration tests | ✅ | `tools/smoke-api.mjs` — 51 assertions: auth, CSRF, progress, quiz grading, gating (402), payment approval, uploads, certificates, admin, caps |
+| 10.2 API integration tests | ✅ | `tools/smoke-api.mjs` — 53 assertions: auth, CSRF, progress, quiz grading, gating (402), payment approval, uploads, certificates, admin, caps |
 | 10.3 E2E (Playwright) | 🔶 | `tools/route-walk.mjs` fetches and asserts all 36 routes in CI (status, content marker, no answer-key pattern, size ceiling), `tools/a11y-scan.mjs` scans the same rendered HTML for names/landmarks/headings/labels, and the smoke suite drives the API end to end — what is missing is real *browser* interaction (hydration, offline queue, upload widget), which needs Playwright in the beta phase |
 | 10.4 device/browser matrix | ⏳ | needs real hardware; the layout is mobile-first at 360 px and the PWA path is exercised manually |
 | 10.5 accessibility | 🔶 | focus-visible rings, labelled controls, `aria-current`, transcripts for every diagram, keyboard-reachable quiz/checkbox flows, reduced-motion, AA contrast tokens. Automated in CI by `node tools/a11y-scan.mjs` over 29 rendered pages while logged in as a learner (**0 findings**): accessible names, landmarks, heading order, form labels, duplicate ids, `aria-hidden` traps, `rel~="noopener"`, unique ids. Contrast ratio, focus order and computed style still need axe/Lighthouse against a deployed URL; drag ARIA n/a (6.2) |
@@ -202,7 +202,7 @@ black-box HTTP assertions run against both runtimes.
 | item | status |
 |---|---|
 | 11.1 beta with 10–20 learners | ⏳ needs a deployment |
-| 11.2 in-app feedback loop | 🔶 `/settings` has a support email path; no feedback widget/table |
+| 11.2 in-app feedback loop | 🟡 the Finish stage of every level asks one question — *Was level N clear?* — with three words to tap and an optional note, stored against the page it came from (`POST /api/feedback` → `feedback` table, asserted in the smoke suite). Once per course, never mid-task, and the note box only opens after a word is chosen. What is missing is the admin screen to read them: today the tutors run the SQL in DEPLOYMENT §6 |
 | 11.3 launch checklist | ✅ written — `DEPLOYMENT.md` §9 |
 | 11.4 public launch | ⏳ |
 | 11.5 re-engagement engine | ✅ streak-at-risk + weekly digest + "1 lesson from finishing" via the cron |
@@ -220,7 +220,7 @@ black-box HTTP assertions run against both runtimes.
 3. **Two answer-key lines in the source PDFs** — `web-design` level 10 q1 and `web-development` level 7 q3; retype them in the manual and `pnpm content:build` absorbs them (the other 92 unkeyed questions were ours and are fixed).
 4. **axe + Playwright pass** on a deployed URL — closes 10.5's contrast/focus-order half and 10.3's hydration half, and gates 11.1. The markup-level rules are automated already (`tools/a11y-scan.mjs`, in CI).
 5. **Receipt retention cron** (3.3 in GAP-ANALYSIS) and the tutor-mark queue for `needs a human` answers.
-6. **Feedback widget + table** (11.2) so the beta has a real intake.
+6. **An admin view for `feedback`** (11.2) — the intake and the table exist now; the tutors still read them with SQL.
 
 ## v2 backlog (11.8, as the README frames it)
 

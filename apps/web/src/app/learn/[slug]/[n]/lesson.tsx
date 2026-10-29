@@ -26,6 +26,7 @@ import {
   useSectionRead, useSession,
 } from '@cea/ui'
 import type { QuizResult } from '@cea/ui'
+import { LevelFeedback } from './level-feedback'
 import { XP, formatNgn } from '@cea/config'
 
 type Section = { letter: string; kind: string; title: string; blocks: any[]; wordCount: number }
@@ -656,6 +657,9 @@ function FinishStage({ lesson, checklist, onChecklist, readCount, needToRead, re
           {!user && <p className="mt-4 text-[0.8125rem] text-ink-500 dark:text-light/55">Sign in first, or this completion is not recorded anywhere.</p>}
         </div>
       )}
+      {/* 11.2 — asked on the Finish stage whether or not the level is already closed: by this point
+          the learner has read the level and taken the check, which is exactly when they know. */}
+      <LevelFeedback slug={slug} n={lesson.number ?? n} />
     </div>
   )
 }
