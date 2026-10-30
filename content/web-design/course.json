@@ -1,0 +1,292 @@
+{
+  "slug": "web-design",
+  "name": "Web Design",
+  "sessions": [
+    {
+      "number": 1,
+      "of": 12,
+      "title": "How the Web Works",
+      "module": "Week 1 \u2014 Module 1: HTML Foundations",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 2,
+      "of": 12,
+      "title": "HTML Basics",
+      "module": "Week 1 \u2014 Module 1: HTML Foundations",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 3,
+      "of": 12,
+      "title": "HTML Intermediate",
+      "module": "Week 1 \u2014 Module 1: HTML Foundations",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 4,
+      "of": 12,
+      "title": "CSS Basics",
+      "module": "Week 2 \u2014 Module 2: CSS Foundations",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 5,
+      "of": 12,
+      "title": "CSS Layout",
+      "module": "Week 2 \u2014 Module 2: CSS Foundations",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 6,
+      "of": 12,
+      "title": "CSS Responsive Design",
+      "module": "Week 2 \u2014 Module 2: CSS Foundations",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 7,
+      "of": 12,
+      "title": "Planning a Website",
+      "module": "Week 3 \u2014 Module 3: Building a Website",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 8,
+      "of": 12,
+      "title": "Building the Structure",
+      "module": "Week 3 \u2014 Module 3: Building a Website",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 9,
+      "of": 12,
+      "title": "Styling the Website",
+      "module": "Week 3 \u2014 Module: Building a Website",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 10,
+      "of": 12,
+      "title": "Interactivity and Media",
+      "module": "Week 4 \u2014 Module: Publishing and Capstone",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 11,
+      "of": 12,
+      "title": "Testing and Debugging",
+      "module": "Week 4 \u2014 Module: Publishing and Capstone",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 12,
+      "of": 12,
+      "title": "Final Project: Capstone \u2014 Finalise, Publish and Present",
+      "module": "Week 4 \u2014 Module: Publishing and Capstone",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "case_study",
+        "rubric",
+        "knowledge_check",
+        "assignment",
+        "reflection",
+        "instructor_notes"
+      ]
+    }
+  ],
+  "display_title": "Web Design Course Category: Web & Code \u2014 Front-End Development Target Duration: 4 weeks (12 sessions \u00d7 105 minutes = 21",
+  "sessions_per_week": 3,
+  "duration": "Key Skills",
+  "sessions_count": 12,
+  "level": "1 \u2014 Know",
+  "certificate": "Name",
+  "problem": "In Nigeria, every business needs a website, but most small businesses cannot afford professional web developers. This course teaches learners to build clean, functional, responsive websites using free tools and free hosting. A learner who completes this course can build a basic business website for themselves or for clients.",
+  "assessment": "LO1",
+  "audience": [
+    "Students and graduates who want to add web design to their skill set",
+    "Small business owners who want to build their own website",
+    "Church, school and NGO staff who manage their organisation's online presence",
+    "Freelancers who want to offer web design services",
+    "Anyone curious about how websites are built",
+    "What \"Beginner\" Means Here",
+    "The learner has basic computer skills (file management, typing, internet browsing) but has never written code. They may have used"
+  ],
+  "entry_requirements": [
+    "Formal Entry Requirements",
+    "None, but Typing & Computer Basics is strongly recommended",
+    "What the Learner Actually Needs",
+    "A practice machine \u2014 provided at the academy",
+    "A text editor (Visual Studio Code \u2014 free, pre-installed on academy machines)",
+    "A web browser (Google Chrome \u2014 pre-installed)",
+    "Basic computer skills \u2014 file management, typing, internet browsing",
+    "Willingness to learn and experiment",
+    "What Is NOT Required"
+  ],
+  "fee_ngn": 50000,
+  "weeks": 4,
+  "session_length_minutes": 105,
+  "category": "Web & Code \u2014 Front-End Development",
+  "study_mode": "In-person (primary), with online/hybrid option Session Length: 105 minutes (1 hour 45 minutes)",
+  "contact_hours": 21.0,
+  "declared_sessions_count": 12,
+  "pdfs": {
+    "teaching_manual": "Web Design_Teaching_Manual.pdf",
+    "full_course": "Web Design_Full_Course.pdf"
+  }
+}

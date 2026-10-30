@@ -1,0 +1,96 @@
+{
+  "course": "web-design",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "Internet vs. World Wide Web — Roads vs. Shops!",
+      "takeaway": "The Internet is the global network of cables/towers (the roads); the World Wide Web is the collection of websites running on it (the shops).",
+      "body": "People often use *Internet* and *Web* as if they are identical, yet they are different:\n- **The Internet:** The physical global network of cables, cell towers, and routers connecting devices (it also carries WhatsApp, email, and online games).\n- **The World Wide Web (WWW):** Thewebsites and pages (`https://...`) you open inside a browser on top of the Internet!"
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Browser, Server, and DNS — what happens when you visit a site",
+      "takeaway": "Your Browser (client) asks for a page, DNS looks up the server's number address, and the Server sends the website files back.",
+      "body": "When you type `www.adaezefashion.com` into Chrome, three steps happen in less than a second:\n1. **Client (your Browser):** Asks to view the website.\n2. **DNS (Domain Name System):** Acts like the **phonebook of the internet** — turning the human name `adaezefashion.com` into a numeric **IP address** computers use to find the right machine.\n3. **Server:** The remote computer storing the website's files, which sends the HTML, CSS, and images back to your browser!",
+      "check": {
+        "prompt": "What job does DNS do the moment you type a website name like `cea.ng` into your browser?",
+        "choices": [
+          { "id": "a", "text": "It designs the colours and fonts of the page" },
+          { "id": "b", "text": "It acts like a phonebook, translating the domain name into the server's numeric IP address" },
+          { "id": "c", "text": "It charges your phone battery" },
+          { "id": "d", "text": "It deletes old files from your desktop" }
+        ],
+        "correctId": "b",
+        "hint": "Computers find each other by number (IP), while humans remember names — DNS bridges the two!",
+        "explanation": "Spot on! DNS translates friendly web names into numeric IP addresses so your browser reaches the exact server."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "The 3 languages of every webpage: HTML, CSS & JavaScript",
+      "takeaway": "Think of a house: HTML is the block walls & structure, CSS is the paint & decoration, and JavaScript is the working switches & doors.",
+      "body": "Every website on earth is built with three teammates:\n- **HTML (Structure):** Put up the headings, paragraphs, buttons, and images — like the **bricks and rooms** of a house.\n- **CSS (Style):** Controls colours, fonts, spacing, and mobile layout — like the **paint, tiles, and curtains**.\n- **JavaScript (Behaviour):** Adds interactive actions like menus, carts, and pop-ups — like the **electricity and plumbing**!",
+      "check": {
+        "prompt": "In the house analogy of a webpage, what are the roles of HTML, CSS, and JavaScript?",
+        "choices": [
+          { "id": "a", "text": "HTML = structure/content, CSS = visual styling/layout, JavaScript = interactive behaviour" },
+          { "id": "b", "text": "HTML = internet cables, CSS = antivirus, JavaScript = printer driver" },
+          { "id": "c", "text": "All three only change font colours" },
+          { "id": "d", "text": "HTML = database, CSS = email, JavaScript = Wi-Fi" }
+        ],
+        "correctId": "a",
+        "hint": "Bricks (content/structure), Paint (look/layout), Electricity (interactivity)!",
+        "explanation": "Exactly! HTML builds the content structure, CSS styles how it looks, and JavaScript makes it interactive."
+      }
+    },
+    {
+      "letter": "G",
+      "kicker": "Step-by-step walkthrough",
+      "title": "Project folders & why Relative Paths (`images/logo.png`) win",
+      "takeaway": "Keep everything inside one tidy project folder (`index.html`, `css/`, `images/`) and use relative paths so links still work online!",
+      "body": "Always organise your website inside one clean project folder (`index.html`, `css/style.css`, `images/logo.png`).\n\n**Why use a relative path like `images/logo.png` instead of `C:\\Users\\Ada\\Desktop\\logo.png`?**\nBecause when you upload your website to a real web server, **nobody on the internet has Ada's laptop C: drive**! A relative path (`images/logo.png`) works everywhere — on your laptop AND on the live web."
+    },
+    {
+      "letter": "H",
+      "kicker": "Hands-on practice",
+      "title": "Local file vs. Live online — hosting makes it public",
+      "takeaway": "Saving `index.html` on your laptop only lets YOU open it; for the world to visit it, you upload (deploy) the files to a web host/server.",
+      "body": "Two gentle truths that save beginners hours of confusion:\n1. **Save with `.html`, not `.txt`:** If you save your page as `home.txt`, the browser prints raw `<p>` code on screen! Rename it to `index.html` so the browser renders it as a real webpage.\n2. **Local ≠ Online:** Building `index.html` on your PC keeps it only on your PC until you upload it to a **web host** (like GitHub Pages, Netlify, or Vercel).",
+      "check": {
+        "prompt": "You saved your first webpage as `home.txt`, and Chrome displays the raw HTML tags as plain text instead of a webpage. How do you fix it?",
+        "choices": [
+          { "id": "a", "text": "Rename/save the file with the `.html` extension (e.g. `index.html` or `home.html`)" },
+          { "id": "b", "text": "Buy a faster internet plan" },
+          { "id": "c", "text": "Delete all headings from the file" },
+          { "id": "d", "text": "Restart the Wi-Fi router" }
+        ],
+        "correctId": "a",
+        "hint": "Browsers check the file extension (`.txt` vs `.html`) to know whether to render HTML tags.",
+        "explanation": "Right on! Changing `.txt` to `.html` tells the browser to interpret the tags and render a real webpage."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Broken image icon on your page? Check these two things",
+      "takeaway": "Check spelling & capital letters (`Logo.PNG` ≠ `logo.png` on real servers!) and make sure the path is relative to your HTML file.",
+      "body": "When an image refuses to show:\n- Check exact file name and **lowercase spelling** (`images/logo.png`). Windows ignores capitals, whereas Linux web servers treat `Logo.png` and `logo.png` as two completely different files!\n- Make sure the image actually sits inside your project's `images/` folder.",
+      "check": {
+        "prompt": "Why do web designers write `images/logo.png` instead of `C:\\Users\\Ada\\Desktop\\site\\images\\logo.png`?",
+        "choices": [
+          { "id": "a", "text": "Because `C:\\Users\\Ada...` only exists on Ada's laptop and breaks as soon as the site goes online" },
+          { "id": "b", "text": "Because HTML forbids capital letters anywhere in a file" },
+          { "id": "c", "text": "Because PNG images only load on Sundays" },
+          { "id": "d", "text": "Because servers cannot store folders" }
+        ],
+        "correctId": "a",
+        "hint": "Think about what happens when another person's phone or a web server tries to find `C:\\Users\\Ada`!",
+        "explanation": "100% right! Relative paths (`images/logo.png`) travel cleanly inside your project folder from your laptop to any web server."
+      }
+    }
+  ]
+}

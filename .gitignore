@@ -1,0 +1,34 @@
+# --- build output & deps (CEA Learn) ---
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+*.tsbuildinfo
+.wrangler/
+.dev.vars
+.dev.vars.local
+
+# --- secrets: never commit (ROADMAP 0.5) ---
+.env
+.env.*
+!.env.example
+
+# --- generated content bundle (rebuilt by `pnpm content:build`) ---
+packages/content/.generated/
+apps/web/.content/
+# public/assets is a copy of /assets made by `node tools/link-assets.mjs`; the source of
+# truth is /assets (written by the PDF extractor), so the copy never goes in git.
+apps/web/public/assets/
+
+# --- local runtime state (dev database + uploaded proofs) ---
+apps/web/var/
+var/
+
+# --- misc ---
+.DS_Store
+*.log
+__pycache__/
+.venv*/

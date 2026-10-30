@@ -1,0 +1,56 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@cea/content": [
+        "../../packages/content/src/index.ts"
+      ],
+      "@cea/ui": [
+        "../../packages/ui/index.ts"
+      ],
+      "@cea/config": [
+        "../../packages/config/index.js"
+      ],
+      "@cea/api": [
+        "../../apps/api/src/index.ts"
+      ],
+      "@cea/api/*": [
+        "../../apps/api/src/*"
+      ],
+      "@cea/content/*": [
+        "../../packages/content/src/*"
+      ],
+      "@cea/ui/*": [
+        "../../packages/ui/*"
+      ]
+    },
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "../../node_modules/@types"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../apps/api/src/**/*.ts",
+    "../../packages/*/src/**/*.ts",
+    "../../packages/ui/*.ts",
+    "../../packages/ui/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".content"
+  ]
+}

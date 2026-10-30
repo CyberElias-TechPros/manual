@@ -1,0 +1,172 @@
+{
+  "slug": "digital-productivity",
+  "name": "Digital Productivity",
+  "sessions": [
+    {
+      "number": 1,
+      "of": 6,
+      "title": "Google Drive and File Organisation",
+      "module": "Week 1 \u2014 Module: Cloud Storage and Email",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 2,
+      "of": 6,
+      "title": "Email Management with Gmail",
+      "module": "Week 1 \u2014 Module: Cloud Storage and Email",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 3,
+      "of": 6,
+      "title": "Google Docs and Google Sheets",
+      "module": "Week 1 \u2014 Module: Cloud Storage and Email",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 4,
+      "of": 6,
+      "title": "Task Management",
+      "module": "Week 2 \u2014 Module 3: Task Management and Workflow",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "exercise",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 5,
+      "of": 6,
+      "title": "Workflow and Automation",
+      "module": "Week 2 \u2014 Module 3: Task Management and Workflow",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "exercise",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 6,
+      "of": 6,
+      "title": "Final Project \u2014 My Productivity System (Capstone)",
+      "module": "Week 2 \u2014 Module 3: Task Management and Workflow",
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "prereq_review",
+        "lecture",
+        "troubleshooting",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    }
+  ],
+  "display_title": "Digital Productivity Course Category: Office & Data \u2014 Cloud and Workflow Target Duration: 2 weeks (6 sessions \u00d7 105",
+  "study_mode": "ted document",
+  "duration": "Key Skills",
+  "sessions_count": 6,
+  "level": "Beginner (basic computer skills assumed)",
+  "certificate": "Name",
+  "toolset": "Google Drive (drive.google.com) \u2014 free web service",
+  "problem": "In 2026, most office work happens digitally \u2014 through email, cloud documents and collaboration tools. Yet most workers have no formal training in digital productivity. They use email chaotically, lose files, miss deadlines and waste hours on tasks that could be automated. This course fixes that in two weeks.",
+  "assessment": "LO1",
+  "tools": "Google Drive (drive.google.com) \u2014 free web service",
+  "audience": [
+    "Office workers who want to be more organised and productive",
+    "Small business owners who manage their own digital work",
+    "Students who need to organise assignments and research",
+    "Church, school and NGO administrators who handle digital communications",
+    "Anyone who feels overwhelmed by email, files and tasks",
+    "What \"Beginner\" Means Here",
+    "The learner has basic computer skills (typing, file management, internet) but has never used cloud-based productivity tools"
+  ],
+  "entry_requirements": [
+    "Formal Entry Requirements",
+    "None, but Typing & Computer Basics is strongly recommended",
+    "What the Learner Actually Needs",
+    "A practice machine \u2014 provided at the academy",
+    "An email address (Gmail preferred)",
+    "Basic computer skills \u2014 file management, typing, internet",
+    "Willingness to change habits and adopt new systems",
+    "What Is NOT Required"
+  ],
+  "fee_ngn": 30000,
+  "weeks": 2,
+  "session_length_minutes": 105,
+  "sessions_per_week": 3,
+  "category": "Office & Data \u2014 Cloud and Workflow",
+  "contact_hours": 10.5,
+  "declared_sessions_count": 6,
+  "pdfs": {
+    "teaching_manual": "Digital Productivity_Teaching_Manual.pdf",
+    "full_course": "Digital Productivity_Full_Course.pdf"
+  }
+}

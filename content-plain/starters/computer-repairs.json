@@ -1,0 +1,103 @@
+{
+  "course": "computer-repairs",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "Inside the box — every part has one clear job",
+      "takeaway": "Opening a desktop case is like looking under a car bonnet: once you know six main parts, nothing inside looks scary.",
+      "body": "When beginners first open a desktop computer, all the wires and chips look complicated. Good news: a computer is simply **a small team of separate parts**, and each part does **one plain job**!\n\nLearn how a city, a brain, a worktable, and a warehouse work together, and you already understand computer hardware."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Motherboard (the city) & CPU (the brain)",
+      "takeaway": "The Motherboard is the big flat board connecting every part together; the CPU is the brain chip that runs instructions.",
+      "body": "Meet the first two stars inside the case:\n- **Motherboard:** The large flat circuit board bolted inside the case. Think of it as **the city roads** where every other part plugs in and talks to each other.\n- **CPU (Processor):** A small square chip clipped onto the motherboard under a cooling fan/heatsink. It is **the brain** that calculates and executes every program instruction.",
+      "check": {
+        "prompt": "What are the jobs of the Motherboard and the CPU?",
+        "choices": [
+          { "id": "a", "text": "Motherboard connects all parts so they can communicate; CPU is the brain that runs instructions" },
+          { "id": "b", "text": "Motherboard displays pictures; CPU stores movies when power is off" },
+          { "id": "c", "text": "Motherboard cools the room; CPU converts wall AC to DC power" },
+          { "id": "d", "text": "Both are used only for playing audio through speakers" }
+        ],
+        "correctId": "a",
+        "hint": "Remember our analogy: the city roads (Motherboard) vs. the brain (CPU).",
+        "explanation": "Spot on! Every component plugs into the motherboard, and the CPU is the processor chip that carries out instructions."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "RAM vs. Storage (HDD / SSD) — Worktable vs. Filing Cabinet!",
+      "takeaway": "RAM is fast short-term memory wiped when power goes off; Storage (SSD or HDD) keeps your files permanently even unplugged.",
+      "body": "Beginners mix up **RAM** and **Storage** more than anything else — here is the easiest way to never confuse them again:\n- **RAM (Random Access Memory) = Your Desk / Worktable:** Holds the apps and files you have **open right now**. Super fast, **short-term** — when power goes off, the worktable clears!\n- **Storage (SSD or Hard Drive) = Your Filing Cabinet / Warehouse:** Keeps your Windows OS, photos, and videos **permanently**, even when unplugged for a year!\n\n*Common mistake:* Adding **more RAM** makes multitasking smoother, **not** more space to store movies! To store more videos, upgrade **Storage (SSD/HDD)**.",
+      "check": {
+        "prompt": "A friend says: 'My drive is full, so I will buy more RAM to store more movies.' What is the right correction?",
+        "choices": [
+          { "id": "a", "text": "They are right — RAM stores movies permanently" },
+          { "id": "b", "text": "RAM is only temporary working memory for open apps; to store more movies permanently, upgrade the SSD or Hard Drive (HDD)" },
+          { "id": "c", "text": "They should replace the cooling fan to gain movie storage" },
+          { "id": "d", "text": "Movies are stored inside the power supply unit" }
+        ],
+        "correctId": "b",
+        "hint": "Worktable (RAM, temporary) vs. Warehouse (Storage, permanent)!",
+        "explanation": "Exactly! RAM clears as soon as power goes off. Permanent files like movies live on your SSD or HDD."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 3",
+      "title": "Spinning HDD vs. Fast Silent SSD",
+      "takeaway": "An HDD has spinning metal platters (clicking/ticking = failing drive — back up now!); an SSD has no moving parts and is much faster.",
+      "body": "Two types of permanent storage drives exist:\n- **HDD (Hard Disk Drive):** Uses spinning magnetic platters inside. Cheaper for big sizes, slower, and fragile if dropped. **Warning sign:** A soft **clicking or ticking sound** plus slow file loading means the spinning HDD is failing — **back up the customer's data immediately** before it dies!\n- **SSD (Solid State Drive):** Pure flash chips with **zero moving parts** — silent, shock-resistant, and boots Windows 5× faster!"
+    },
+    {
+      "letter": "G",
+      "kicker": "Core idea · 4",
+      "title": "Power Supply Unit (PSU) — and the #1 safety rule!",
+      "takeaway": "The PSU converts dangerous high-voltage wall power into safe low-voltage DC — NEVER open a PSU casing, even unplugged!",
+      "body": "The **PSU (Power Supply Unit)** is the metal box where the wall power cord plugs in. It converts 220–240V AC wall electricity into safe 12V/5V/3.3V DC for computer parts.\n\n**CRITICAL SAFETY RULE:**\n**NEVER open the metal casing of a PSU**, even when unplugged! Large capacitors inside hold **deadly high voltage** long after power is disconnected. If a PSU is faulty, replace the whole unit!",
+      "check": {
+        "prompt": "Why must a technician NEVER unscrew and open a faulty Power Supply Unit (PSU), even after unplugging it?",
+        "choices": [
+          { "id": "a", "text": "Opening it deletes files on the SSD" },
+          { "id": "b", "text": "Internal capacitors store dangerous, potentially lethal high voltage even after unplugging" },
+          { "id": "c", "text": "Sunlight ruins the cooling fan blades" },
+          { "id": "d", "text": "It voids the monitor warranty" }
+        ],
+        "correctId": "b",
+        "hint": "Capacitors inside a power supply hold high electrical charge long after the wall plug is pulled.",
+        "explanation": "Safety first! PSU capacitors retain lethal voltage even unplugged — technicians replace a faulty PSU whole, never open it."
+      }
+    },
+    {
+      "letter": "H",
+      "kicker": "Hands-on walkthrough",
+      "title": "Cooling fans, heatsinks & static safety",
+      "takeaway": "Before touching inner boards, unplug power and touch unpainted metal on the case to discharge static electricity.",
+      "body": "Processors get hot fast, so a metal **heatsink and fan** sit right on top of the CPU with thermal paste.\n\nWhenever you work inside a PC:\n1. Shut down and **unplug** the power cable from the back.\n2. Touch bare unpainted metal on the case first so static electricity on your fingers cannot zap delicate RAM or motherboard chips."
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Fans spin, light is ON, screen stays BLACK? Check simple things first!",
+      "takeaway": "Check monitor power & video cable first, then check which display port is used, then reseat loose RAM sticks.",
+      "body": "When a desktop powers on (fans spin) yet the monitor stays black, work from **simplest outside checks to inside**:\n1. **Monitor power & input:** Is the monitor turned on and plugged in?\n2. **Video cable (HDMI / VGA):** Is it firmly plugged in at both ends — and plugged into the **graphics card** (if installed) rather than the motherboard port?\n3. **Reseat RAM:** Unplug power, unclip the RAM stick, and press it firmly back in until the side clips click!",
+      "check": {
+        "prompt": "A customer's PC makes a soft ticking sound from a spinning part inside and files open very slowly. What part is failing and what do you do FIRST?",
+        "choices": [
+          { "id": "a", "text": "The keyboard is dusty — wash the keys" },
+          { "id": "b", "text": "The spinning Hard Disk Drive (HDD) is failing — back up the customer's important files immediately before replacing it with an SSD" },
+          { "id": "c", "text": "The monitor cable is loose — buy a bigger screen" },
+          { "id": "d", "text": "Open the PSU with a screwdriver" }
+        ],
+        "correctId": "b",
+        "hint": "Only fans and HDDs spin — and slow file opening + ticking points straight to mechanical storage!",
+        "explanation": "Spot on! Ticking + slow file reads is classic mechanical HDD failure. Always back up customer data first before the drive stops spinning altogether!"
+      }
+    }
+  ]
+}

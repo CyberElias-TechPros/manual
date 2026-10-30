@@ -1,0 +1,84 @@
+{
+  "course": "digital-productivity",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What 'the Cloud' actually is — no sky involved!",
+      "takeaway": "Cloud storage simply means saving your files on secure internet servers (like Google Drive) instead of only on one phone or laptop.",
+      "body": "Think of keeping cash under your mattress vs. keeping money in a bank account:\n- **Local storage only:** If your phone falls in water or your laptop is stolen, your only copy is gone.\n- **Cloud storage (Google Drive):** Your files live safely online linked to your Google account. Log in from **any** phone or laptop and your files are waiting for you!"
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "The 3 folder rules: Shallow, Numbered, and Predictable",
+      "takeaway": "Keep folders shallow (2–3 levels max), numbered (`01_Admin`, `02_Sales`), and named consistently so anyone finds any file in 5 seconds.",
+      "body": "A messy Google Drive wastes hours every month. Follow three golden rules:\n1. **Shallow:** Avoid burying files 8 folders deep — 2 to 3 levels is plenty.\n2. **Numbered:** Prefix main folders (`01_Clients`, `02_Invoices`, `03_Marketing`) so they stay in your chosen order instead of jumping alphabetically.\n3. **Predictable file names:** Write `2026-09_Adaeze_Invoice_04.pdf` instead of `final_new2.pdf`!",
+      "check": {
+        "prompt": "Why do we keep Google Drive folders 'shallow, numbered, and predictable'?",
+        "choices": [
+          { "id": "a", "text": "Because Google charges extra money for unnumbered folders" },
+          { "id": "b", "text": "So folders stay in a logical order and you can find any file in seconds instead of digging through chaos" },
+          { "id": "c", "text": "Because Drive deletes files whose names have spaces" },
+          { "id": "d", "text": "So nobody else can ever view your files" }
+        ],
+        "correctId": "b",
+        "hint": "Imagine searching urgently for a September invoice while a client waits on the phone.",
+        "explanation": "Exactly! Shallow, numbered folders and consistent file names stop files from getting lost in deep, confusing subfolders."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Sharing safely: Viewer vs. Commenter vs. Editor",
+      "takeaway": "Viewer can only read, Commenter can leave suggestions without changing your words, and Editor can change or delete content.",
+      "body": "When you share a file in Google Drive, choose the **least power needed**:\n- **Viewer:** Can read/download only (great for sending a finished price list or invoice to a client).\n- **Commenter:** Can highlight and leave margin notes, **without** editing your actual text (great for a boss or supervisor reviewing a draft).\n- **Editor:** Full power to rewrite or delete (only for trusted teammates building the file with you)."
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 3",
+      "title": "The 'Anyone with the link' WhatsApp trap",
+      "takeaway": "Never set an 'Anyone with the link = Editor' link and drop it in a public WhatsApp group — strangers can forward it and wipe your file!",
+      "body": "**Watch out for this real-world mistake:**\nIf you set a file to **Anyone with the link** (especially as *Editor*) and post it in a busy WhatsApp group:\n- Anyone can forward that link outside the group.\n- Strangers can view private customer data or accidentally delete your work!\n\n**Fix:** Keep sensitive files **Restricted** and share directly with specific people's email addresses (as *Viewer* or *Commenter*).",
+      "check": {
+        "prompt": "Which Google Drive permission lets your supervisor leave notes on your draft WITHOUT changing your text?",
+        "choices": [
+          { "id": "a", "text": "Editor" },
+          { "id": "b", "text": "Commenter" },
+          { "id": "c", "text": "Owner" },
+          { "id": "d", "text": "Public Administrator" }
+        ],
+        "correctId": "b",
+        "hint": "Viewer can only read; Editor can rewrite everything; which one sits safely in the middle?",
+        "explanation": "Spot on! Commenter lets someone add feedback notes without altering your actual document."
+      }
+    },
+    {
+      "letter": "G",
+      "kicker": "Step-by-step walkthrough",
+      "title": "Finding any file fast with Drive Search",
+      "takeaway": "Combine file type and keywords — like `type:pdf invoice` or the search filter chips — to pull up exact files in two seconds.",
+      "body": "Even with hundreds of files, Google Drive's search bar at the top finds things instantly:\n- Type **`type:pdf invoice`** (or click the **PDFs** + **Date modified** filter chips) to find all PDF invoices from a specific month like September 2026.\n- You can also navigate straight into your numbered `02_Invoices/2026-09` folder!"
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Deleted a file by mistake? You have 30 days in Trash!",
+      "takeaway": "Google Drive keeps deleted files in Trash (Bin) for 30 days — open Trash, right-click the file, and click Restore.",
+      "body": "Accidentally deleted an important file? Breathe easy:\n1. Open **Trash** (or **Bin**) on the left menu of Google Drive.\n2. Deleted items stay there for **30 days** before permanent removal.\n3. Right-click your file and click **Restore** — it jumps right back to its original folder!",
+      "check": {
+        "prompt": "How long does Google Drive keep a deleted file in the Trash before deleting it forever, and how do you bring it back?",
+        "choices": [
+          { "id": "a", "text": "24 hours; email Google headquarters" },
+          { "id": "b", "text": "30 days; open Trash, right-click the file, and choose Restore" },
+          { "id": "c", "text": "Forever; press Ctrl + S" },
+          { "id": "d", "text": "It cannot be recovered once deleted" }
+        ],
+        "correctId": "b",
+        "hint": "Think of one calendar month inside the Trash / Bin tab.",
+        "explanation": "Correct! Drive holds deleted files in Trash for 30 days, and right-click → Restore puts them right back."
+      }
+    }
+  ]
+}

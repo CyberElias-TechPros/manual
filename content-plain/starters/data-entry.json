@@ -1,0 +1,103 @@
+{
+  "course": "data-entry",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What data entry is — turning messy paper into clean records",
+      "takeaway": "Data entry means typing real-world facts (names, sales, stock, dates) accurately into a spreadsheet or database so a business can trust its numbers.",
+      "body": "Every shop, clinic, school, and company runs on information. When receipts sit in a nylon bag, nobody knows total profit!\n\n- **Data entry:** Accurately capturing and typing raw facts into structured rows and columns.\n- **Data management:** Organising, backing up, securing, and analysing those records over time."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "The 4 core data types every spreadsheet uses",
+      "takeaway": "Every cell you type belongs to one of four main types: Text, Numbers, Dates, or Currency (percentages are just a way of showing numbers!).",
+      "body": "Spreadsheets treat cells differently depending on their **data type**:\n1. **Text:** Names, addresses, product titles, and **phone numbers** (e.g. `Chinedu Okafor`, `08031234567` — stored as text so the leading `0` does not vanish!).\n2. **Numbers:** Quantities, scores, ages (`12`, `450`).\n3. **Dates:** Calendar days (`29/10/2026`).\n4. **Currency:** Money amounts (`₦15,000.00`).\n\n*Watch out:* **Percentages** are a number display format, **not** one of the four main data types!",
+      "check": {
+        "prompt": "What are the FOUR main data types taught in data entry?",
+        "choices": [
+          { "id": "a", "text": "Text, Numbers, Dates, and Percentages" },
+          { "id": "b", "text": "Text, Numbers, Dates, and Currency" },
+          { "id": "c", "text": "Words, Pictures, Videos, and Audio" },
+          { "id": "d", "text": "Rows, Columns, Sheets, and Tabs" }
+        ],
+        "correctId": "b",
+        "hint": "Remember the trap: percentages are just a number format — money is the fourth main type!",
+        "explanation": "Spot on! The four main data types are Text, Numbers, Dates, and Currency."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "The Nigerian date rule: `DD/MM/YYYY`",
+      "takeaway": "In Nigeria (and the UK), always write Day first, Month second, and 4-digit Year third — like 29/10/2026.",
+      "body": "Mixing up day and month is one of the costliest data mistakes in offices!\n- **Standard Nigerian format:** **`DD/MM/YYYY`** (for example, `05/11/2026` means 5th November 2026, **not** May 11th).\n- Always use a **4-digit year** (`2026`, not `26`) so there is zero confusion."
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 3",
+      "title": "Why you NEVER type the `₦` symbol or commas by hand!",
+      "takeaway": "Type plain digits like 15000 into the cell, then apply Currency formatting — typing '₦15,000' by hand turns it into text that Excel cannot add!",
+      "body": "Here is the #1 beginner mistake in Excel:\n- If you manually type `₦15,000` with the Naira sign, Excel often treats the cell as **Text** (a word) instead of a **Number**!\n- When you later run `=SUM(...)`, Excel ignores text cells and your total comes out wrong!\n\n**The professional rule:**\n1. Type **plain digits only**: `15000`\n2. Select the column and choose **Currency (`₦`)** format so Excel displays `₦15,000` while keeping real math underneath!",
+      "check": {
+        "prompt": "Your friend typed '₦15,000' by hand into Excel and says SUM refuses to add it. Why?",
+        "choices": [
+          { "id": "a", "text": "Excel cannot calculate Naira amounts above 10,000" },
+          { "id": "b", "text": "Typing the ₦ symbol manually made Excel store it as Text; enter 15000 and apply Currency formatting instead" },
+          { "id": "c", "text": "They forgot to restart the computer after typing" },
+          { "id": "d", "text": "Numbers must always be typed in capital letters" }
+        ],
+        "correctId": "b",
+        "hint": "Excel can only add real numbers — symbols typed by hand turn numbers into text strings.",
+        "explanation": "Exactly! Always enter raw digits (`15000`) and let Excel's Currency format add the `₦` and comma visually."
+      }
+    },
+    {
+      "letter": "G",
+      "kicker": "Step-by-step walkthrough",
+      "title": "Clean formatting for names and phone numbers",
+      "takeaway": "Write names in Title Case ('Ngozi Eze') and format phone columns as Text so the starting zero in 0803... stays intact.",
+      "body": "Two small habits instantly make your sheet look like a pro built it:\n- **Names in Title Case:** Write `Ngozi Eze` — not `ngozi eze` and not `NGOZI EZE`.\n- **Phone numbers (digits only, Text format):** Format the column as **Text** (or start with an apostrophe `'08031234567`) so Excel keeps the leading `0` and remove random spaces or dashes."
+    },
+    {
+      "letter": "H",
+      "kicker": "Hands-on practice",
+      "title": "Accuracy beats raw speed every time",
+      "takeaway": "One wrong zero turns ₦50,000 into ₦500,000 — check headers, keep one fact per column, and verify totals.",
+      "body": "Before submitting any sheet, run a 30-second visual check:\n- Numbers & currency naturally align to the **right** side of an Excel cell.\n- Text naturally aligns to the **left** side.\n- If one price suddenly hugs the **left** edge of its cell, Excel thinks it is **Text** — fix it immediately!",
+      "check": {
+        "prompt": "What is the standard date format used across Nigerian businesses and government forms?",
+        "choices": [
+          { "id": "a", "text": "MM/DD/YY (Month first)" },
+          { "id": "b", "text": "DD/MM/YYYY (Day / Month / 4-digit Year)" },
+          { "id": "c", "text": "YYYY-DD-MM" },
+          { "id": "d", "text": "Month only, without the year" }
+        ],
+        "correctId": "b",
+        "hint": "In Nigeria we say '29th of October, 2026' — Day, Month, full Year.",
+        "explanation": "Correct! DD/MM/YYYY (for example, 29/10/2026) is the standard Nigerian date format."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Seeing `#####` in a cell? Don't panic!",
+      "takeaway": "`#####` only means the column is too narrow to show the full number or date — double-click the column border to widen it.",
+      "body": "New learners often think `#####` means they broke a formula. Good news: your data is completely safe!\n- Move your mouse between the column letters at the top (e.g. between `C` and `D`).\n- **Double-click** that line, and the column widens automatically to fit every digit.",
+      "check": {
+        "prompt": "Why did `08031234567` turn into `8031234567` (missing the first zero) when typed into a plain cell, and how do you fix it?",
+        "choices": [
+          { "id": "a", "text": "Excel treated it as a math number and dropped the leading zero; format the column as Text first" },
+          { "id": "b", "text": "The zero key on the keyboard is broken" },
+          { "id": "c", "text": "Nigerian phone numbers are only 10 digits" },
+          { "id": "d", "text": "Format the phone number as Currency" }
+        ],
+        "correctId": "a",
+        "hint": "In math, 08 equals 8 — so phone numbers should be stored as Text, not math numbers.",
+        "explanation": "Spot on! Formatting phone columns as Text preserves the leading zero because you never do arithmetic on a phone number."
+      }
+    }
+  ]
+}

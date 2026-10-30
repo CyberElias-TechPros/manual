@@ -1,0 +1,58 @@
+{
+  "course": "social-media-management",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What a Social Media Manager actually gets paid to do",
+      "takeaway": "Social media management is running a business's online presence consistently to build trust, community, and real customer sales.",
+      "body": "Many shop owners in Port Harcourt or Lagos are busy serving walk-in customers all day — their Instagram goes silent for three months!\n\nA **Social Media Manager (SMM)** takes that load off their shoulders with **five core tasks**:\n1. **Planning** (content calendar & strategy)\n2. **Creating** (captions, graphics, short videos)\n3. **Publishing** (scheduling at the right times)\n4. **Engaging** (replying to comments & DMs warmly)\n5. **Reporting** (tracking what actually brought enquiries & sales)."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Picking the right platform for each job",
+      "takeaway": "TikTok = fast short-video discovery, Instagram = visual shopfront & Reels, Facebook = local communities & ads, LinkedIn = B2B professionals, X = real-time conversation.",
+      "body": "Each platform has a distinct strength:\n- **TikTok:** Short, fast-moving video for reaching brand-new people quickly.\n- **Instagram:** Visual storefront — Reels, carousels, Stories, and DMs for fashion, food, beauty, and lifestyle.\n- **Facebook:** Broad local reach, groups, events, and targeted local ads.\n- **LinkedIn:** Professional B2B services, corporate training, and careers.\n- **X (Twitter):** Fast news, commentary, and customer service.",
+      "check": {
+        "prompt": "What are the FIVE core tasks of a professional Social Media Manager?",
+        "choices": [
+          { "id": "a", "text": "Planning, Creating, Publishing, Engaging, and Reporting" },
+          { "id": "b", "text": "Buying followers, Spamming groups, Guessing passwords, Arguing in comments, Deleting posts" },
+          { "id": "c", "text": "Repairing laptops, Installing Windows, Soldering boards, Printing flyers, Driving delivery bikes" },
+          { "id": "d", "text": "Only posting 'Good morning' once a month" }
+        ],
+        "correctId": "a",
+        "hint": "Plan the calendar → Create posts → Publish consistently → Engage replies/DMs → Report results!",
+        "explanation": "Spot on! Those five repeatable tasks turn chaotic posting into a reliable business system."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Realistic starter pricing & why 'Consistency' wins",
+      "takeaway": "Consistency means showing up on a reliable schedule so customers know the business is active and trustworthy — and a realistic small-business Starter package starts around ₦20,000+/month.",
+      "body": "Two practical business realities:\n- **Consistency:** Posting 3 quality times every single week beats posting 10 times in one weekend and vanishing for two months! Consistency tells buyers: *'This shop is open, reliable, and safe to order from.'*\n- **Realistic Starter Pricing:** For a small local restaurant or boutique starting out, a sustainable entry **Starter package** is around **₦20,000/month** (charging ₦500 cannot cover your data/time, and ₦500,000 is far above a tiny neighbourhood restaurant's starter budget)."
+    },
+    {
+      "letter": "K",
+      "kicker": "Ethics & client trust",
+      "title": "Why you NEVER buy fake followers or promise '10,000 followers in 30 days'!",
+      "takeaway": "Bought bot followers never buy food or clothes, destroy engagement reach, and ruin trust — promise consistent work and real local growth instead!",
+      "body": "What if a client says: *'Just buy me 2,000 followers today'* or asks you to guarantee *'10,000 followers in one month'*?\n\n**Say NO politely and firmly:**\n1. Fake bot followers **never buy anything**.\n2. Because bots never like or comment, the algorithm sees 0% engagement and **buries** the page so even real customers stop seeing posts!\n3. Never hold a client's page hostage, never buy bots, and never make fake viral guarantees — promise **consistent output, honest reporting, and steady real-customer enquiries**.",
+      "check": {
+        "prompt": "A client says: 'Just buy me 2,000 cheap followers so my restaurant looks big.' What is the right professional response?",
+        "choices": [
+          { "id": "a", "text": "Buy the bots secretly and charge double" },
+          { "id": "b", "text": "Explain that bought bot accounts never buy meals and kill your reach in the algorithm — build real local customers with consistent Reels and local promos instead" },
+          { "id": "c", "text": "Promise 50,000 organic followers by Friday" },
+          { "id": "d", "text": "Change their password and lock them out" }
+        ],
+        "correctId": "b",
+        "hint": "Bots don't eat jollof rice — and dead engagement signals to Instagram that your content isn't worth showing!",
+        "explanation": "100% right! Protecting a client's account health and focusing on real local buyers is what separates a trusted pro from an amateur."
+      }
+    }
+  ]
+}

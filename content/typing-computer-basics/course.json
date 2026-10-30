@@ -1,0 +1,181 @@
+{
+  "slug": "typing-computer-basics",
+  "name": "Typing Computer Basics",
+  "sessions": [
+    {
+      "number": 1,
+      "of": 6,
+      "title": "Understanding the Computer",
+      "module": null,
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 2,
+      "of": 6,
+      "title": "Keyboard Mouse Typing",
+      "module": null,
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 3,
+      "of": 6,
+      "title": "Files Folders Digital Workplace",
+      "module": null,
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 4,
+      "of": 6,
+      "title": "Internet Safe Browsing",
+      "module": null,
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 5,
+      "of": 6,
+      "title": "Email Online Communication",
+      "module": null,
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    },
+    {
+      "number": 6,
+      "of": 6,
+      "title": "Demonstrated Independence Capstone",
+      "module": null,
+      "sections": [
+        "identification",
+        "outcomes",
+        "materials",
+        "opening",
+        "prereq_review",
+        "lecture",
+        "demo",
+        "guided_practical",
+        "exercise",
+        "case_study",
+        "troubleshooting",
+        "assignment",
+        "knowledge_check",
+        "reflection",
+        "instructor_notes"
+      ]
+    }
+  ],
+  "display_title": "Typing & Computer Basics Course Category: Office & Data \u2014 Foundation Course Target Duration: 2 weeks (6 sessions \u00d7 105",
+  "duration": "Key Skills",
+  "sessions_count": 6,
+  "level": "1 \u2014 Know",
+  "certificate": "Name",
+  "problem": "In Port Harcourt and across Nigeria, millions of people are excluded from employment, education and basic digital services because they cannot confidently operate a computer. This is not an intelligence problem \u2014 it is a training problem. Fourteen hours of supervised, practical, beginner-friendly instruction removes the fear and replaces it with competence.",
+  "assessment": "LO1",
+  "audience": [
+    "Complete beginners of any age who have never used a computer",
+    "Parents and older learners returning to work or study",
+    "Students who use a phone daily but have never used a desktop workflow",
+    "NYSC members and job seekers who need to demonstrate basic computer literacy",
+    "Small-business owners who currently pay someone else to handle their digital tasks",
+    "Church, school and NGO staff who need to create documents and manage information",
+    "What \"Absolute Beginner\" Means Here"
+  ],
+  "entry_requirements": [
+    "Formal Entry Requirements",
+    "What the Learner Actually Needs",
+    "A practice machine \u2014 provided at the academy during sessions. No laptop needed to enrol",
+    "Comfortable clothing \u2014 for long typing sessions",
+    "Willingness to practise \u2014 the only true prerequisite",
+    "Basic English reading ability \u2014 enough to read a street sign or a simple text message",
+    "What Is NOT Required"
+  ],
+  "fee_ngn": 20000,
+  "weeks": 2,
+  "session_length_minutes": 105,
+  "sessions_per_week": 3,
+  "category": "Office & Data \u2014 Foundation",
+  "study_mode": "In-person (primary), with online/hybrid option Session Length: 105 minutes (1 hour 45",
+  "contact_hours": 10.5,
+  "declared_sessions_count": 6,
+  "pdfs": {
+    "teaching_manual": "Typing Computer Basics_Teaching_Manual.pdf",
+    "full_course": "Typing Computer Basics_Full_Course.pdf"
+  }
+}

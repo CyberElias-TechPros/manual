@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "noEmit": true, "baseUrl": ".", "paths": { "@cea/content": ["../../packages/content/src/index.ts"], "@cea/content/*": ["../../packages/content/src/*"], "@cea/ui": ["../../packages/ui/index.ts"], "@cea/config": ["../../packages/config/index.js"] } },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".next", ".content", "dist"]
+}

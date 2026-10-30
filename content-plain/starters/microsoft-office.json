@@ -1,0 +1,110 @@
+{
+  "course": "microsoft-office",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What Microsoft Word is — and why every office uses it",
+      "takeaway": "Microsoft Word is a writing app for creating neat letters, CVs, reports, proposals, and flyers ready to print or share.",
+      "body": "Think of **Microsoft Word** as clean paper that never runs out of ink and lets you fix any typo in one second.\n\nBusinesses, schools, churches, and freelancers use Word every day to create:\n- Job CVs and application letters\n- Invoices, receipts, and contracts\n- Reports, church programmes, and handouts"
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Tour of the Word screen — 5 places to know",
+      "takeaway": "Title Bar shows the file name, Ribbon holds all tool tabs, Document Area is your paper, and Status Bar counts your words.",
+      "body": "When you open a blank document in Word, five parts surround your page:\n- **Title Bar (very top):** Shows the file name (starts as *Document1* until you save it).\n- **Quick Access Toolbar (top-left):** Tiny one-click icons for **Save**, **Undo**, and **Redo**.\n- **The Ribbon & Tabs:** Strips like **File**, **Home**, **Insert**, and **Layout** holding your formatting buttons.\n- **Document Area:** The white sheet where you type.\n- **Status Bar (very bottom):** Shows page count, word count, and the zoom slider.",
+      "check": {
+        "prompt": "Which strip near the top of Microsoft Word holds tabs like Home, Insert, and Layout with all your formatting buttons?",
+        "choices": [
+          { "id": "a", "text": "The Status Bar" },
+          { "id": "b", "text": "The Ribbon" },
+          { "id": "c", "text": "The Windows Taskbar" },
+          { "id": "d", "text": "The Recycle Bin" }
+        ],
+        "correctId": "b",
+        "hint": "It stretches across the top right below the Title Bar and organizes buttons into tabs.",
+        "explanation": "That's it! The Ribbon organizes all of Word's tools into clear tabs like Home, Insert, and Layout."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Typing smoothly & fixing mistakes fast",
+      "takeaway": "Let Word wrap lines automatically; only press Enter for a new paragraph, and press Ctrl + Z whenever you make a mistake.",
+      "body": "Typing in Word is much easier than an old typewriter:\n- **Word wrap:** Keep typing at the end of a line — Word moves to the next line automatically.\n- **Enter:** Press only when you want to start a **new paragraph**.\n- **Backspace** deletes to the left; **Delete** removes to the right.\n- **`Ctrl + Z` (Undo):** Your magic safety net! Made a mistake or deleted a whole paragraph by accident? Press `Ctrl + Z` and it comes right back."
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 3",
+      "title": "Saving your work early (`Ctrl + S`) — never keep 'Document1'",
+      "takeaway": "Save in the first two minutes with a clear name in a real folder, then press Ctrl + S every few minutes so power cuts never erase your work.",
+      "body": "If light goes off or a laptop battery dies before you save, unsaved typing disappears!\n\nFollow the **2-Minute Save Habit**:\n1. Press **`Ctrl + S`** as soon as you start a document.\n2. Choose a clear folder (like `Documents/Clients`), **not** a messy Desktop.\n3. Give it a real name like `Adaeze_CV_2026.docx` — **never** leave it named `Document1`!\n4. Tap **`Ctrl + S`** every few paragraphs to update your saved copy.",
+      "check": {
+        "prompt": "What does the keyboard shortcut Ctrl + S do, and why is saving as 'Document1' on the Desktop a bad habit?",
+        "choices": [
+          { "id": "a", "text": "It shuts down the PC; Document1 uses too much battery" },
+          { "id": "b", "text": "It saves your file; 'Document1' tells nobody what is inside when you have 20 files later" },
+          { "id": "c", "text": "It checks spelling; Desktop files delete themselves at midnight" },
+          { "id": "d", "text": "It prints the page; Word blocks the name Document1" }
+        ],
+        "correctId": "b",
+        "hint": "Imagine searching for an urgent CV next month when ten files are all named Document1, Document2...",
+        "explanation": "Exactly! Ctrl + S saves your progress instantly, and a descriptive name in a proper folder means you can find the right file in seconds."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 4",
+      "title": "Making headings and key words stand out (Home tab)",
+      "takeaway": "Select the text first, then use Bold (Ctrl+B), font size, or alignment on the Home tab so your page is easy to scan.",
+      "body": "In Word, the golden rule of formatting is **Select first, then click the tool**:\n- Drag across words (or double-click a word) to highlight them.\n- **`Ctrl + B` (Bold):** Makes titles and totals strong.\n- **`Ctrl + I` (Italic)** & **`Ctrl + U` (Underline):** Add gentle emphasis.\n- **Bullets & Numbering:** Turn messy lists into clean steps."
+    },
+    {
+      "letter": "G",
+      "kicker": "Step-by-step walkthrough",
+      "title": "Why professionals export to PDF before sending",
+      "takeaway": "Keep .docx for editing, and export a .pdf copy to send to clients or employers so your layout never shifts on their phone.",
+      "body": "Have you ever opened someone's `.docx` file on a phone and seen lines jump to the wrong page? That happens when their phone lacks your font.\n\n**Exporting to PDF (`File → Save As` or `Export → PDF`)** solves this:\n- Your fonts, spacing, and page breaks stay **locked** identically on every phone and computer.\n- People cannot accidentally type over your CV or invoice.\n- Always keep your `.docx` master copy for future edits, and send the `.pdf`!",
+      "check": {
+        "prompt": "Why should you export a CV or invoice to PDF before sending it on WhatsApp or email?",
+        "choices": [
+          { "id": "a", "text": "So the layout, fonts, and spacing stay identical on every device and aren't edited by mistake" },
+          { "id": "b", "text": "Because WhatsApp refuses to send .docx files" },
+          { "id": "c", "text": "Because PDF files automatically translate English into French" },
+          { "id": "d", "text": "So you can never edit your own CV again" }
+        ],
+        "correctId": "a",
+        "hint": "Think about how fonts and margins behave on different phones.",
+        "explanation": "Spot on! A PDF freezes your exact layout so every employer or client sees the clean page you designed."
+      }
+    },
+    {
+      "letter": "H",
+      "kicker": "Hands-on practice",
+      "title": "Essential Word shortcuts worth keeping in your fingers",
+      "takeaway": "Four shortcuts — Ctrl+S (Save), Ctrl+Z (Undo), Ctrl+C (Copy), and Ctrl+V (Paste) — save hours every week.",
+      "body": "Practise these four combinations until they feel automatic:\n- **`Ctrl + S`** — Save right now\n- **`Ctrl + Z`** — Undo last mistake\n- **`Ctrl + C`** — Copy selected text\n- **`Ctrl + V`** — Paste copied text"
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Computer froze before you saved? Check AutoRecover!",
+      "takeaway": "Reopen Word right away and check the Document Recovery panel on the left, then turn on AutoSave / frequent AutoRecover.",
+      "body": "If a friend loses a page after a crash:\n1. Reopen Word immediately — look at the **Document Recovery** pane on the left for an auto-saved draft.\n2. Check `File → Info → Manage Document → Recover Unsaved Documents`.\n3. From today onward, save at the very start (`Ctrl + S`) so **AutoRecover** protects you every few minutes!",
+      "check": {
+        "prompt": "A friend typed a full page without saving once, and the PC went off. What habit prevents this pain next time?",
+        "choices": [
+          { "id": "a", "text": "Only type one sentence per day" },
+          { "id": "b", "text": "Save the file with a clear name right at the start and press Ctrl + S every few minutes" },
+          { "id": "c", "text": "Export to PDF before typing any words" },
+          { "id": "d", "text": "Unplug the keyboard while thinking" }
+        ],
+        "correctId": "b",
+        "hint": "Saving early gives the file a home on disk and lets Ctrl + S update it in half a second.",
+        "explanation": "Exactly right! Naming and saving in the first minute — plus quick Ctrl + S taps — keeps your work safe from any power cut."
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+/** CEA Learn UI kit — imported by apps/web only (0.1: one design system, two runtimes). */
+export * from './primitives'
+export * from './blocks'
+export * from './catalog'
+export * from './quiz'
+export * from './interactives'
+export * from './shell'
+export * from './game'
+export * from './glossary'
+export * from './micro-deck'
+export * from './session-map'

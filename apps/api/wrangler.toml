@@ -1,0 +1,56 @@
+# CEA LEARN API — Cloudflare Worker (roadmap 3.1, 7.1).
+#
+# IDs below are placeholders on purpose: `wrangler deploy` will tell you which
+# one to create, and the create/apply commands are in apps/api/README.md.
+# Secrets are NEVER in this file:
+#   wrangler secret put JWT_SECRET
+#   wrangler secret put ADMIN_KEY
+#   wrangler secret put RESEND_API_KEY
+# Bindings, ids and the one-time create/apply commands: docs/DEPLOYMENT.md
+
+name = "cea-learn-api"
+main = "src/worker.ts"
+compatibility_date = "2024-12-30"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cea-learn"
+database_id = "REPLACE_ME_d1_database_id"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_ME_kv_rate_limits"
+
+[[kv_namespaces]]
+binding = "CONTENT_KV"
+id = "REPLACE_ME_kv_content"   # small published JSON (index + search), written by tools/publish-content.mjs
+
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "cea-learn-uploads"   # payment proof images, private
+
+[[r2_buckets]]
+binding = "CONTENT_R2"
+bucket_name = "cea-learn-content"    # course + answer-key JSON
+
+# 5.7 — 18:30 UTC is 19:30 in Africa/Lagos: evening is when a streak is still
+# salvageable, and the digest inside the same run self-guards to one per week.
+[triggers]
+crons = ["30 18 * * *"]
+
+[vars]
+PUBLIC_URL = "https://learn.cea.ng"
+APP_ENV = "production"
+CRON_PATH = "/api/admin/nudges/run?kind=both"
+MAIL_FROM = "CEA Learn <learn@cea.ng>"
+
+[observability]
+enabled = true
+
+[limits]
+cpu_ms = 5000
+
+[placement]
+mode = "smart"

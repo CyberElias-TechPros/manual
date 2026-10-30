@@ -1,0 +1,77 @@
+{
+  "course": "graphic-design",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What graphic design really is — communication, not just 'decoration'",
+      "takeaway": "Graphic design is arranging words, images, colours, and space to send a clear message to a specific audience.",
+      "body": "Good design is not about piling rainbow colours and ten fonts onto a church flyer! **Graphic design is visual problem-solving**.\n\nBefore touching Canva, Photoshop, or CorelDRAW, every great designer asks two questions:\n1. **Purpose:** What action should this design make someone take?\n2. **Audience:** Who is looking at it (busy market shoppers, corporate CEOs, university students)?"
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "The 6 core principles of design",
+      "takeaway": "Every strong design rests on six pillars: Purpose/Audience, Hierarchy, Contrast, Alignment, Balance, and White Space.",
+      "body": "Memorise these **six core principles** — they let you diagnose and fix *any* poster, flyer, or social post:\n1. **Purpose & Audience:** Who is it for, and what is the goal?\n2. **Hierarchy:** What the eye sees **first, second, and third**.\n3. **Contrast:** Clear visual difference (light vs. dark, big vs. small).\n4. **Alignment:** Invisible lines keeping edges neat and connected.\n5. **Balance:** Even visual weight across the layout.\n6. **White space:** Breathing room around elements!",
+      "check": {
+        "prompt": "Instead of saying 'This flyer is bad because it looks ugly', how does a trained designer critique a weak flyer?",
+        "choices": [
+          { "id": "a", "text": "Name the exact design principle broken (like weak hierarchy, low contrast, or zero white space) and explain how to fix it" },
+          { "id": "b", "text": "Say 'My cousin did not like the vibe'" },
+          { "id": "c", "text": "Count how many megabytes the PNG file takes" },
+          { "id": "d", "text": "Add seven more fonts until it looks busy" }
+        ],
+        "correctId": "a",
+        "hint": "'Ugly' is just personal opinion — principles like Hierarchy and Contrast tell you *why* and *how* to fix it!",
+        "explanation": "Spot on! Naming the specific principle (hierarchy, contrast, alignment, white space) turns vague criticism into an actionable fix."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Hierarchy — guiding the viewer's eye 1st → 2nd → 3rd",
+      "takeaway": "If every line is the same size and boldness, NOTHING stands out! Make the main headline biggest, key details second, fine print third.",
+      "body": "Imagine a concert flyer where the event title, date, venue, and sponsor phone number are **all 18pt yellow text**. Your eye doesn't know where to look!\n\n**Hierarchy** guides the eye in order of importance:\n1. **First (Biggest / Boldest):** Main hook or title (*\"PORT HARCOURT TECH EXPO\"*)\n2. **Second (Medium):** Date, time, and main offer (*\"Sat Nov 14 · Free Entry\"*)\n3. **Third (Smallest):** Address, contact handle, and fine details.",
+      "check": {
+        "prompt": "Your friend's business flyer uses the exact same font size and colour for every single line of text. Which principle is missing?",
+        "choices": [
+          { "id": "a", "text": "File compression" },
+          { "id": "b", "text": "Visual Hierarchy (and Contrast) — make the headline larger/bolder so the eye sees 1st, 2nd, and 3rd clearly" },
+          { "id": "c", "text": "Cloud storage" },
+          { "id": "d", "text": "Screen resolution" }
+        ],
+        "correctId": "b",
+        "hint": "When everything shouts at the exact same volume, nobody hears the main message first!",
+        "explanation": "Exactly! Varying size, weight, and contrast creates clear hierarchy so readers grasp the message in two seconds."
+      }
+    },
+    {
+      "letter": "G",
+      "kicker": "Core idea · 3",
+      "title": "Contrast & Alignment — instant readability and polish",
+      "takeaway": "High contrast (dark ink on pale background, or crisp white on deep navy) makes text effortless to read; alignment kills messiness.",
+      "body": "Two fast fixes that rescue 80% of amateur designs:\n- **Contrast:** Pale yellow text on a white background forces people to squint. Pair **dark on light** or **light on dark**!\n- **Alignment:** Don't scatter boxes randomly across a page. Line headings, body text, and logos cleanly along one crisp left edge or centred axis."
+    },
+    {
+      "letter": "K",
+      "kicker": "Core idea · 4",
+      "title": "White Space — empty space is NOT 'wasted' space!",
+      "takeaway": "White space (empty breathing room of any colour) prevents clutter, makes luxury brands feel calm, and spotlights what matters.",
+      "body": "Clients often say: *'There is still space in the corner — make the logo bigger and add five more photos!'*\n\nResist gently! **White space** (negative space, whatever background colour you use) gives the eye **room to breathe**. Without generous margins and padding, even good text feels cramped, cheap, and exhausting to read.",
+      "check": {
+        "prompt": "Why is 'white space' (empty breathing room) essential on a poster or webpage?",
+        "choices": [
+          { "id": "a", "text": "It saves printer electricity" },
+          { "id": "b", "text": "It prevents visual clutter, makes text easy to read, and draws focus to the important elements" },
+          { "id": "c", "text": "It forces every background to be pure white `#ffffff`" },
+          { "id": "d", "text": "It hides spelling mistakes" }
+        ],
+        "correctId": "b",
+        "hint": "Think of a neat boutique display vs. a crammed market table where nothing can be seen clearly.",
+        "explanation": "Yes! White space (in any background colour) gives your message room to breathe and makes the whole layout look trustworthy."
+      }
+    }
+  ]
+}

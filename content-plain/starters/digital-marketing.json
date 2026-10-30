@@ -1,0 +1,70 @@
+{
+  "course": "digital-marketing",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What digital marketing is — meeting customers on their phones",
+      "takeaway": "Digital marketing means promoting products or services through digital channels (phones, search engines, social media, WhatsApp, email) where customers already spend their day.",
+      "body": "Think of a Port Harcourt baker or tailor: flyers on electric poles get rained on, whereas **digital marketing** puts your work straight onto the phone screen of someone searching *'birthday cake near Rumuola'* right now!"
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "The 8 main digital marketing channels (vs. offline TV/radio)",
+      "takeaway": "Digital channels run on devices/internet (Search/SEO, Google Business Profile, Social Media, Paid Ads, Content, Email, WhatsApp/Messaging, Video) — traditional Television is offline!",
+      "body": "Know the **8 digital channels** that work together online:\n1. **Search (SEO)** — showing up on Google searches\n2. **Google Business Profile (Local Maps)** — showing address, hours & reviews\n3. **Social Media** (Instagram, TikTok, Facebook)\n4. **Paid Digital Ads** (Meta Ads, Google Ads)\n5. **Content Marketing** (helpful articles/guides)\n6. **Video Marketing** (YouTube, Reels, TikTok)\n7. **Email Marketing**\n8. **WhatsApp & Direct Messaging**\n\n*(Note: Traditional **Television**, radio, and roadside billboards are **offline/traditional** channels, not one of the eight digital channels!)*",
+      "check": {
+        "prompt": "Which of the following is a traditional OFFLINE channel rather than one of the eight digital marketing channels?",
+        "choices": [
+          { "id": "a", "text": "Google Business Profile" },
+          { "id": "b", "text": "Traditional broadcast Television" },
+          { "id": "c", "text": "Search Engine Optimisation (SEO)" },
+          { "id": "d", "text": "Email marketing" }
+        ],
+        "correctId": "b",
+        "hint": "Seven billion phones use Google, social, and email online — broadcast TV is traditional offline media!",
+        "explanation": "Correct! Broadcast television is a traditional offline channel, unlike SEO, Google Business Profile, social media, and email."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "The 4-Stage Marketing Funnel: Awareness → Consideration → Conversion → Retention",
+      "takeaway": "Strangers rarely buy in 1 second! They move from Awareness (discover you) → Consideration (compare & trust) → Conversion (pay/order) → Retention (buy again & refer).",
+      "body": "Every real customer travels through **four stages**:\n1. **Awareness:** *'Oh, I didn't know this tailor existed!'* (sees a Reel or Google Map pin).\n2. **Consideration:** *'Are they legit and good?'* (checks reviews, prices, past work).\n3. **Conversion:** *'Take my money!'* (sends WhatsApp order and pays).\n4. **Retention:** *'They delivered on time — I'm ordering again and telling my sister!'*",
+      "check": {
+        "prompt": "A shopper already found two cake pages on Instagram and is now reading customer reviews and comparing price lists before choosing. Which funnel stage are they in?",
+        "choices": [
+          { "id": "a", "text": "Awareness" },
+          { "id": "b", "text": "Consideration" },
+          { "id": "c", "text": "Retention" },
+          { "id": "d", "text": "Unsubscribe" }
+        ],
+        "correctId": "b",
+        "hint": "They already know you exist (past Awareness) and haven't paid yet (before Conversion) — they are weighing their options!",
+        "explanation": "Spot on! Reading reviews and comparing options happens in the Consideration stage."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "How channels connect & honest ethics",
+      "title": "Why channels work as a chain — and why fake Google reviews backfire!",
+      "takeaway": "Connect Social + Google Business Profile + WhatsApp so customers don't drop off when searching your name — and earn real reviews honestly instead of writing fake 5-star ones!",
+      "body": "Two real-world lessons:\n- **Broken chain = lost sale:** If someone sees a tailor's Facebook post, searches his name on Google to check his shop address, and finds **zero Google Business Profile**, they often buy from a competitor who showed up on Google Maps!\n- **Never post fake reviews:** Google detects and penalises fake 5-star reviews (and can suspend the business profile!). Instead, ask happy real customers for an honest review right after delivery using a direct review link.",
+      "check": {
+        "prompt": "Your friend asks you to post a fake 5-star Google review for her salon even though you have never visited. What is the best advice?",
+        "choices": [
+          { "id": "a", "text": "Write ten fake reviews from ten accounts today" },
+          { "id": "b", "text": "Decline — fake reviews mislead buyers and risk Google suspending her profile; help her send a one-tap review link to real happy clients instead" },
+          { "id": "c", "text": "Post 1-star reviews on rival salons" },
+          { "id": "d", "text": "Delete her Google Business Profile" }
+        ],
+        "correctId": "b",
+        "hint": "Google's spam filters flag fake reviews and penalise listings — real customer reviews build lasting ranking and trust.",
+        "explanation": "Exactly right! Asking genuine satisfied clients right after great service builds unstoppable, penalty-free local rankings."
+      }
+    }
+  ]
+}

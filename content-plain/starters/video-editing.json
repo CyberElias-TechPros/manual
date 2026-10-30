@@ -1,0 +1,75 @@
+{
+  "course": "video-editing",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "What a video editor actually does — storytelling, not flashy transitions!",
+      "takeaway": "An editor decides WHAT the viewer sees and hears, in WHAT order, and for HOW LONG so the story feels clear and engaging.",
+      "body": "Beginners think editing means spinning star transitions every 3 seconds. Real editors know better!\n\n**Video editing is invisible storytelling:**\n- Cutting dead pauses, 'umms', and shaky mistakes.\n- Choosing the clearest angle and best emotional reaction.\n- Pacing sound, visuals, and captions so viewers watch to the very last second."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Before touching the timeline: Ingest → Organise → Log → Backup",
+      "takeaway": "Professional editors ALWAYS start with four calm steps in order: Ingest, Organise, Log, and Backup — BEFORE making a single cut!",
+      "body": "Never drag files straight off a phone cable or SD card into CapCut/Premiere! Follow the first **4 stages of the 10-stage post-production workflow** in order:\n1. **Ingest:** Copy all raw camera/phone clips and audio into your project folder on disk.\n2. **Organise:** Sort into tidy folders (`01_Footage`, `02_Audio`, `03_Graphics`, `04_Exports`).\n3. **Log:** Watch clips quickly, rename/tag the best takes, and note unusable shots.\n4. **Backup:** Copy the folder onto a second drive or cloud (**'One copy is no copy!'**).",
+      "check": {
+        "prompt": "What are the FIRST FOUR stages of the professional post-production workflow, in order?",
+        "choices": [
+          { "id": "a", "text": "Export → Upload → Delete → Organise" },
+          { "id": "b", "text": "Ingest → Organise → Log → Backup" },
+          { "id": "c", "text": "Colour grade → Sound effects → Captions → Thumbnail" },
+          { "id": "d", "text": "Film → Post straight to TikTok → Rename later" }
+        ],
+        "correctId": "b",
+        "hint": "Bring files in (Ingest), put in folders (Organise), review/label takes (Log), make a second safe copy (Backup)!",
+        "explanation": "Spot on! Ingest → Organise → Log → Backup keeps every project fast, tidy, and crash-proof before cutting begins."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "'One copy is no copy' — protect client footage like gold!",
+      "takeaway": "NEVER format an SD card or delete phone clips right after copying to one laptop — wait until a verified SECOND backup exists!",
+      "body": "Why do pros repeat **'One copy is no copy'**?\nImagine shooting a client's wedding, copying clips to your laptop, wiping your phone/SD card immediately, and then your laptop hard drive fails that night. You cannot re-shoot a wedding!\n\n- Keep **at least two separate copies** (e.g. Laptop SSD + External Drive / Cloud) and verify the clips play **before** deleting originals from your phone or memory card."
+    },
+    {
+      "letter": "G",
+      "kicker": "Step-by-step walkthrough",
+      "title": "Aspect Ratios & Resolution — matching TikTok vs. YouTube",
+      "takeaway": "Use vertical 9:16 for TikTok/Reels/Shorts, widescreen 16:9 for YouTube, and match your project resolution (1080p) to your delivery target!",
+      "body": "Set your project settings **before** editing so you never have to re-layout titles later:\n- **`9:16` (Vertical, `1080 × 1920`):** Full-screen phone vertical for **TikTok, Instagram Reels, and YouTube Shorts**.\n- **`16:9` (Horizontal Widescreen, `1920 × 1080`):** Standard landscape for **YouTube, TVs, and laptops**.\n- **`1:1` or `4:5`:** Square/portrait feed posts.\n\n*Watch out:* If you shoot sharp **1080p** video for YouTube and accidentally set your timeline project to **720p**, you throw away sharpness and your final export looks soft!",
+      "check": {
+        "prompt": "Which aspect ratio is built for full-screen vertical videos on TikTok, Instagram Reels, and YouTube Shorts?",
+        "choices": [
+          { "id": "a", "text": "16:9 (horizontal widescreen)" },
+          { "id": "b", "text": "9:16 (vertical portrait)" },
+          { "id": "c", "text": "21:9 (cinema ultra-wide)" },
+          { "id": "d", "text": "4:3 (old box TV)" }
+        ],
+        "correctId": "b",
+        "hint": "Hold your phone upright — narrow width (9) and tall height (16)!",
+        "explanation": "Exactly! 9:16 (`1080 × 1920`) fills a vertical phone screen edge-to-edge on TikTok, Reels, and Shorts."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Never lose quality or client trust on Day 1",
+      "takeaway": "Keep raw files untouched (non-destructive editing), match 1080p timeline settings, and verify two backups before wiping cards.",
+      "body": "Modern video editors are **non-destructive**: trimming a clip on the timeline never cuts your original video file on disk — unless you delete or move the source folder! Keep all assets inside your numbered project folder from start to finish.",
+      "check": {
+        "prompt": "True or False: It is safe to delete original wedding footage from your phone the exact second you finish copying it onto one laptop.",
+        "choices": [
+          { "id": "a", "text": "True — one laptop copy never fails" },
+          { "id": "b", "text": "False — 'one copy is no copy'; verify playback and keep a second independent backup before deleting originals" }
+        ],
+        "correctId": "b",
+        "hint": "What happens if that single laptop gets stolen or its drive fails tonight?",
+        "explanation": "Correct — False! Always keep at least two verified copies in separate places before clearing camera cards or phone storage."
+      }
+    }
+  ]
+}

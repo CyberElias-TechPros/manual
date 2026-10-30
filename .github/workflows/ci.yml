@@ -1,0 +1,108 @@
+name: CI
+
+# 0.6 — lint + typecheck + build on every PR; `main` additionally deploys (the deploy steps
+# are written so they no-op until the academy's project IDs and secrets exist).
+#
+# What is checked, in order, and why each step earns its place:
+#   content:build   the app is the bundle; a parser regression is the most likely break
+#   lint:content    GATE 2 — the corpus may never regress to a critical lint issue
+#   typecheck       four projects, source-only packages, no emit (see docs/GAP-ANALYSIS.md §4.5)
+#   test            unit + corpus integration + the leak audit + the answer-key gate
+#   build           `next build` must pass on the deployment runtime, not just dev
+#   smoke           the 59 black-box API assertions, run against the built app
+#   routes + a11y   every page fetched, then scanned for names/landmarks/headings/labels in the HTML
+#
+# No image optimizer, no headless browser, no wrangler login: every step below runs on the
+# packages in this repo alone, so a fork can be green.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # The extractor is the only Python in the pipeline and it is optional for CI: the
+      # corpus it produces is committed under content/ + assets/.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.15.0
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the content bundle
+        run: pnpm content:build
+
+      - name: Lint the corpus (GATE 2)
+        run: pnpm --filter @cea/content lint:content
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Tests + leak audit
+        run: pnpm test
+
+      - name: Build the web app
+        run: pnpm --filter @cea/web build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      # The route handler in apps/web mounts the same Hono app as the Worker, so building the
+      # web app and pointing the smoke suite at it tests the API contract in one process.
+      - name: Smoke-test the API + walk every route (against the built app)
+        run: |
+          pnpm --filter @cea/web start &
+          pid=$!
+          for i in $(seq 1 40); do
+            sleep 2
+            curl -fsS http://127.0.0.1:3000/api/health > /dev/null && break
+          done
+          node tools/smoke-api.mjs http://127.0.0.1:3000
+          node tools/route-walk.mjs http://127.0.0.1:3000
+          node tools/a11y-scan.mjs http://127.0.0.1:3000
+          kill $pid
+
+      - name: Assert the corpus has not shrunk
+        run: node tools/assert-bundle-size.mjs
+
+  # Deploy only from main, and only once the academy's bindings exist. Both steps are written
+  # to skip cleanly when the secret is absent, so a fork never shows a red X it cannot fix.
+  deploy:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish content to KV/R2 (Worker source of truth)
+        if: ${{ vars.CEA_DEPLOY_ENABLED == 'true' }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm content:build
+          node tools/publish-content.mjs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Deploy the Worker
+        if: ${{ vars.CEA_DEPLOY_ENABLED == 'true' }}
+        run: pnpm --filter @cea/api deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Vercel deploy is triggered by its own GitHub app
+        if: ${{ vars.CEA_DEPLOY_ENABLED != 'true' }}
+        run: echo "CEA_DEPLOY_ENABLED is not set — skipping deploy (Vercel builds from the repo when connected)."

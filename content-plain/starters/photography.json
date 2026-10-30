@@ -1,0 +1,70 @@
+{
+  "course": "photography",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "The 5 words behind every great photograph",
+      "takeaway": "Whether shot on a smartphone or a pro camera, a strong photo nails five things: Clarity, Light, Composition, Moment, and Purpose.",
+      "body": "Expensive gear never rescues bad light or a blurry hand! Every memorable photograph combines **five qualities**:\n1. **Clarity:** The main subject is crisp and sharp.\n2. **Light:** Bright enough to see clean detail without harsh washout.\n3. **Composition:** Thoughtful framing — nothing distracting photobombs the edges.\n4. **Moment:** Captured at the right expression or action.\n5. **Purpose:** Fits its job (WhatsApp product catalog, portrait, event)."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Light direction — why standing in front of a bright window turns faces dark!",
+      "takeaway": "Face your subject TOWARD the window or soft light — putting a bright window BEHIND them tricks the camera into turning them into a dark shadow!",
+      "body": "Have you ever snapped someone standing **in front of a bright window** and their face came out pitch-black?\n\n- **Why it happens (Backlighting):** The camera sees the super-bright window behind them and darkens the whole shot so the window doesn't glow white — leaving your subject's face in shadow!\n- **Instant fix:** Turn around so **you** have your back to the window and the soft window light falls **onto** your subject's face (or product handbag)!",
+      "check": {
+        "prompt": "You photograph a friend standing with a bright sunny window right BEHIND her, and her face comes out dark and almost invisible. Why?",
+        "choices": [
+          { "id": "a", "text": "The camera exposed for the bright background window (backlighting), underexposing her face — turn so the window light faces her!" },
+          { "id": "b", "text": "Phone cameras cannot photograph people indoors" },
+          { "id": "c", "text": "The memory card is full" },
+          { "id": "d", "text": "Windows block colour sensors" }
+        ],
+        "correctId": "a",
+        "hint": "Put the light source in FRONT of (or 45° beside) your subject, not blazing right behind them!",
+        "explanation": "Spot on! Strong backlighting fools automatic exposure — turning your subject to face the window gives flattering, clear light immediately."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "The Exposure Triangle — Aperture, Shutter Speed & ISO",
+      "takeaway": "Aperture = how wide the lens opens, Shutter Speed = how long light enters, and ISO = how sensitive the sensor is to light.",
+      "body": "Three controls balance brightness (**exposure**) and look:\n- **Aperture (`f/1.8`, `f/8`):** **How wide the lens opens** (wide opening lets in more light and blurs the background softly).\n- **Shutter Speed (`1/500s`, `1/30s`):** **How long the shutter stays open** (fast freezes motion; too slow causes motion blur).\n- **ISO (`100`, `3200`):** **How sensitive the digital sensor is** (low ISO = clean & smooth; sky-high ISO in the dark adds grainy 'noise'!).",
+      "check": {
+        "prompt": "In the Exposure Triangle, what do Aperture, Shutter Speed, and ISO control?",
+        "choices": [
+          { "id": "a", "text": "Aperture = how wide the lens opens, Shutter Speed = how long light enters, ISO = sensor light sensitivity" },
+          { "id": "b", "text": "Aperture = battery life, Shutter Speed = zoom distance, ISO = Wi-Fi speed" },
+          { "id": "c", "text": "All three only add colour filters" },
+          { "id": "d", "text": "Aperture = speaker volume, Shutter Speed = file name, ISO = folder path" }
+        ],
+        "correctId": "a",
+        "hint": "Opening width (Aperture), time open (Shutter Speed), sensor boost (ISO)!",
+        "explanation": "Nailed it! Balancing Aperture, Shutter Speed, and ISO gives you full control over brightness, sharpness, and grain."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Fixing blurry or too-dark WhatsApp product photos",
+      "takeaway": "Clean your lens first, steady your hands + use faster shutter/better light for blur, and move products near soft daylight instead of dark corners.",
+      "body": "Two everyday fixes every creator uses daily:\n1. **Whole photo looks smeared/blurry?** Either **camera shake** (hands moved during a slow shutter speed — brace your elbows or add more light!) or **missed focus** (tap the subject on screen and wipe finger grease off the lens!).\n2. **Handbag looks sharp yet too dark for WhatsApp Business?** Move the bag next to an open window / shaded doorway in natural daylight and bounce light onto the shadow side with a plain white cardboard sheet!",
+      "check": {
+        "prompt": "What are the FIVE quality words this course uses to judge whether a photograph works well?",
+        "choices": [
+          { "id": "a", "text": "Clarity, Light, Composition, Moment, and Purpose" },
+          { "id": "b", "text": "Price, Brand, Megapixels, Tripod, and Flash" },
+          { "id": "c", "text": "Red, Green, Blue, Black, and White" },
+          { "id": "d", "text": "Zoom, Crop, Filter, Sticker, and Caption" }
+        ],
+        "correctId": "a",
+        "hint": "Sharpness (Clarity), illumination (Light), framing (Composition), timing (Moment), and job (Purpose).",
+        "explanation": "100% right! Clarity, Light, Composition, Moment, and Purpose work together on every camera from an Android phone to a cinema rig."
+      }
+    }
+  ]
+}

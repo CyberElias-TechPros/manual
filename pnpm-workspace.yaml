@@ -1,0 +1,16 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "tools"
+# Dependency build scripts, decided per package (pnpm >= 12; `pnpm approve-builds` writes
+# this map). All three are false on purpose, and knowing why keeps a fresh clone from
+# re-litigating it:
+#   esbuild  — its postinstall only verifies the platform binary that arrives as an optional
+#              dependency, and `tsx`/`vitest` work without it (the toolchain is unblocked).
+#   sharp    — there is no image pipeline in this app (see docs/GAP-ANALYSIS.md §4.5).
+#   workerd  — only `wrangler dev` needs it, and `pnpm dev` runs the same API on Node.
+# If a future step does need one: pnpm approve-builds <pkg> (or pnpm rebuild <pkg>).
+allowBuilds:
+  esbuild: false
+  sharp: false
+  workerd: false

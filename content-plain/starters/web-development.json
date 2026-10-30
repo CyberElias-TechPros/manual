@@ -1,0 +1,84 @@
+{
+  "course": "web-development",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "Where JavaScript fits — bringing webpages to life!",
+      "takeaway": "HTML builds the page content, CSS styles how it looks, and JavaScript adds brains — calculations, clicks, carts, and live updates.",
+      "body": "You already know a static webpage shows words and pictures. **JavaScript (JS)** is what turns a poster into a **working app**!\n\n- **HTML:** Structure (headings, buttons, inputs).\n- **CSS:** Look and layout (colours, fonts, spacing).\n- **JavaScript:** Action & logic (calculating a 5% shop discount, updating a cart total, validating a form)."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "Linking `js/app.js` at the bottom of `<body>`",
+      "takeaway": "Write `<script src=\"js/app.js\"></script>` right before `</body>` so all HTML elements load BEFORE JavaScript tries to use them!",
+      "body": "Keep your JavaScript in its own clean file (like `js/app.js`) and connect it right before the closing `</body>` tag:\n\n```html\n  <script src=\"js/app.js\"></script>\n</body>\n```\n\n**Why at the bottom of `<body>` instead of inside `<head>`?**\nBecause browsers read top-to-bottom! Putting `<script>` at the bottom lets your visible HTML load first so the screen feels fast and every button/heading already exists when your JS runs.",
+      "check": {
+        "prompt": "Which line properly links an external file at `js/app.js`, and where in `index.html` do we usually place it?",
+        "choices": [
+          { "id": "a", "text": "`<script src=\"js/app.js\"></script>` right before the closing `</body>` tag" },
+          { "id": "b", "text": "`<link href=\"js/app.js\">` at the very top before `<html>`" },
+          { "id": "c", "text": "`<js file=\"app.js\" />` inside a CSS file" },
+          { "id": "d", "text": "`<style src=\"js/app.js\"></style>`" }
+        ],
+        "correctId": "a",
+        "hint": "External JS uses `<script src=\"...\"></script>` after the page's HTML content.",
+        "explanation": "Spot on! `<script src=\"js/app.js\"></script>` right before `</body>` ensures your HTML elements exist before the script runs."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Variables (`const` & `let`) and the DevTools Console",
+      "takeaway": "A variable is a labelled box storing a value (`const` if it stays fixed, `let` if it changes), and `console.log()` prints to DevTools.",
+      "body": "Think of a **variable** as a neat storage box with a name sticker on the front:\n- **`const`** — for values that **won't be reassigned** (`const vatRate = 0.075;`)\n- **`let`** — for values that **change later** (`let cartTotal = 0;`)\n\nPress **`F12`** (or right-click → **Inspect → Console**) in Chrome to open the **Console** — your X-ray window where `console.log(cartTotal)` prints values and shows helpful error line numbers!"
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 3",
+      "title": "The 4 core JavaScript data types",
+      "takeaway": "`string` = text in quotes, `number` = plain digits for math, `boolean` = `true`/`false`, and `undefined` = declared box with no value yet.",
+      "body": "JavaScript treats values according to their **type**:\n- **`string`:** Text wrapped in quotes — `\"Port Harcourt\"` or `'₦7,500'`.\n- **`number`:** Raw digits with **no quotes and no commas** — `7500` or `0.05`.\n- **`boolean`:** Yes/No switch — `true` or `false` (no quotes!).\n- **`undefined`:** A variable created with `let x;` before anything is put inside.",
+      "check": {
+        "prompt": "What happens if you write `let price = \"two thousand\"; console.log(price * 2);`?",
+        "choices": [
+          { "id": "a", "text": "It prints `4000`" },
+          { "id": "b", "text": "It produces `NaN` (Not a Number) because you cannot multiply words — store `2000` as a number without quotes!" },
+          { "id": "c", "text": "It crashes Windows" },
+          { "id": "d", "text": "It turns the screen blue" }
+        ],
+        "correctId": "b",
+        "hint": "Math (`*`, `-`, `/`) needs a real numeric value like `2000`, not English words in quotes!",
+        "explanation": "Exactly! Multiplying non-numeric text gives `NaN`. Keep prices as plain numbers (`let price = 2000;`) so math works cleanly."
+      }
+    },
+    {
+      "letter": "G",
+      "kicker": "Step-by-step walkthrough",
+      "title": "Real shop math: calculating a 5% discount in 2 lines",
+      "takeaway": "Multiply price by `0.05` for the discount, then subtract it from price to get the final amount to pay.",
+      "body": "Suppose a Lagos shop sells a bag for **₦7,500** with a **5% (`0.05`)** discount:\n\n```js\nconst price = 7500;\nconst discount = price * 0.05;      // 375\nconst finalPrice = price - discount; // 7125\nconsole.log(finalPrice);\n```\n\nNotice there are **no quotes** and **no `₦` or comma** inside `7500` — we add `'₦'` only when displaying the final message to the shopper!"
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Watch out for the `'4500' + 450 = '4500450'` string trap!",
+      "takeaway": "In JavaScript, `+` glues strings together — `'4500' + 450` becomes `'4500450'`, so convert text inputs with `Number(...)` before adding!",
+      "body": "Why did `'4500' + 450` become `'4500450'` instead of `4950`?\nBecause `'4500'` is in **quotes** (a `string`), so `+` glues the characters end-to-end!\n\n**Easy fix:** Keep money values as real numbers (`4500 + 450` → `4950`) or wrap form text in `Number(inputValue)` before adding.",
+      "check": {
+        "prompt": "A bag costs `7500` and has a 5% (`0.05`) discount. Which JavaScript snippet computes the final price accurately?",
+        "choices": [
+          { "id": "a", "text": "`const discount = 7500 * 0.05; const finalPrice = 7500 - discount;`" },
+          { "id": "b", "text": "`const finalPrice = \"₦7,500\" - \"5%\";`" },
+          { "id": "c", "text": "`const finalPrice = 7500 + 5;`" },
+          { "id": "d", "text": "`const finalPrice = true;`" }
+        ],
+        "correctId": "a",
+        "hint": "5% as a decimal is `0.05`, and prices in calculations are plain numbers without symbols.",
+        "explanation": "Boom — `7500 * 0.05` gives `375`, and `7500 - 375` gives `7125`!"
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "course": "online-teaching",
+  "session": 1,
+  "cards": [
+    {
+      "letter": "D",
+      "kicker": "Warm-up",
+      "title": "Share what you know — from one room to anywhere!",
+      "takeaway": "Online teaching lets you teach mathematics, coding, tailoring, languages, or exam prep to learners anywhere using simple free tools.",
+      "body": "You do **not** need a TV studio to teach online well! Clear explanations, structured short lessons, and choosing the **right teaching mode** matter far more than expensive cameras."
+    },
+    {
+      "letter": "E",
+      "kicker": "Core idea · 1",
+      "title": "The 4 Modes of Online Teaching",
+      "takeaway": "Match the mode to the learner: Live (real-time), Recorded/Self-paced (watch anytime), Cohort (group starting & finishing together), and One-to-One (personal coaching).",
+      "body": "Every online class uses one (or a blend) of **four teaching modes**:\n1. **Live (Synchronous):** Teacher and learners meet at the same hour on Zoom / Google Meet. *Advantage:* instant Q&A energy. *Limitation:* network drops or busy work schedules can make learners miss class.\n2. **Recorded (Self-paced):** Pre-recorded videos learners watch anytime (even at midnight!), pause, and replay.\n3. **Cohort:** A group starts Week 1 together and finishes Week 6 together with shared milestones and accountability (ideal for a 6-week church or bootcamp class!).\n4. **One-to-One:** Personal weekly tutoring/mentoring tailored to one student.",
+      "check": {
+        "prompt": "Which mode fits a busy nurse who wants to watch lessons at midnight after shift, pause to take notes, and replay tricky parts?",
+        "choices": [
+          { "id": "a", "text": "Live-only morning class with no replay" },
+          { "id": "b", "text": "Recorded (self-paced) lessons" },
+          { "id": "c", "text": "Physical chalkboard only" },
+          { "id": "d", "text": "Radio call-in show" }
+        ],
+        "correctId": "b",
+        "hint": "She needs complete freedom over time, pausing, and rewatching.",
+        "explanation": "Spot on! Recorded self-paced lessons shine whenever learners need flexible hours and replay control."
+      }
+    },
+    {
+      "letter": "F",
+      "kicker": "Core idea · 2",
+      "title": "Free tools that cover your entire classroom",
+      "takeaway": "Zoom / Google Meet hosts live calls, OBS records your screen, Canva designs slides, YouTube (Unlisted) hosts videos free, and Google Forms runs quizzes.",
+      "body": "Match each free tool to its exact job:\n- **Zoom / Google Meet:** Hosting live video classes or 1-to-1 tutoring calls.\n- **OBS Studio (or Loom):** Recording your screen and voice cleanly on your laptop.\n- **Canva:** Designing clear visual slides without walls of tiny text.\n- **YouTube (Unlisted):** Free, data-friendly video hosting where only students with your link can watch!\n- **Google Forms:** Collecting quick quizzes, assignments, and feedback.",
+      "check": {
+        "prompt": "A church wants 30 members to start a 6-week study together on Week 1, discuss weekly, and graduate together on Week 6. Which mode fits best?",
+        "choices": [
+          { "id": "a", "text": "Cohort mode — everyone progresses through the 6 weeks together with shared community accountability" },
+          { "id": "b", "text": "Unscheduled solo reading with zero group contact" },
+          { "id": "c", "text": "Hiring 30 separate private tutors" },
+          { "id": "d", "text": "Deleting the syllabus" }
+        ],
+        "correctId": "a",
+        "hint": "When a group starts together, moves week-by-week together, and finishes together, what do we call that mode?",
+        "explanation": "Exactly! Cohort courses combine structure, deadlines, and peer encouragement so completion rates soar."
+      }
+    },
+    {
+      "letter": "K",
+      "kicker": "Common fixes",
+      "title": "Keep lessons short, audio clear, and data bills friendly!",
+      "takeaway": "Good sound matters more than 4K video — record in a quiet room, keep video chunks 5–12 minutes long, and always check understanding.",
+      "body": "Learners forgive a modest webcam, yet they close a lesson immediately if audio echoes or hisses! Speak close to your microphone in a quiet room (curtains/clothes absorb echo!) and break 1-hour lectures into crisp 8-minute videos.",
+      "check": {
+        "prompt": "Which free tool pair is best for (1) recording your computer screen offline and (2) hosting class videos privately via a shareable link at ₦0?",
+        "choices": [
+          { "id": "a", "text": "OBS Studio for recording + YouTube (Unlisted) for hosting" },
+          { "id": "b", "text": "Notepad for recording + Calculator for hosting" },
+          { "id": "c", "text": "MS Paint + Recycle Bin" },
+          { "id": "d", "text": "Excel + Solitaire" }
+        ],
+        "correctId": "a",
+        "hint": "OBS records crisp screen lessons locally, and Unlisted YouTube links stream smoothly on Nigerian mobile networks!",
+        "explanation": "100% right! OBS + Unlisted YouTube gives any teacher a professional ₦0 video classroom."
+      }
+    }
+  ]
+}
